@@ -24,17 +24,16 @@ public class UserLikeService {
     ) {
         // TODO : accommodation과 합치고 다시 수정
         var accommodationEntity = accommodationRepository.findById(accommodationId)
-            .orElseThrow(() -> new ExampleException(ExampleErrorCode.TEST));
+            .orElseThrow(() -> new ExampleException(ExampleErrorCode.ACCOMMODATION_NOT_EXIST));
 
         var authEntity = authRepository.findById(userId)
             .orElseThrow(() -> new ExampleException(ExampleErrorCode.TEST));
 
         Optional<UserLikeEntity> isExistUserLike = userLikeRepository.findByAccommodationId(accommodationId);
 
-        // TODO : 실패 reponse 수정 필요
         if (isExistUserLike.isPresent()) {
             UserLikeEntity userLikeEntity = isExistUserLike.get();
-            throw new ExampleException(ExampleErrorCode.TEST);
+            throw new ExampleException(ExampleErrorCode.ALREADY_ADD_LIKE);
         } else {
             UserLikeEntity addUserLike = UserLikeEntity.builder()
                 .accommodation(accommodationEntity)
