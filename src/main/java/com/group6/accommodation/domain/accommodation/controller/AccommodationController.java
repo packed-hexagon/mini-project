@@ -1,5 +1,6 @@
 package com.group6.accommodation.domain.accommodation.controller;
 
+import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDto;
 import com.group6.accommodation.domain.accommodation.service.AccommodationService;
 import com.group6.accommodation.global.util.Response;
@@ -27,5 +28,16 @@ public class AccommodationController {
                 .build();
     }
 
+    @GetMapping(path = "/accommodation/{id}")
+    public Response<AccommodationDetailDto> read(
+            @PathVariable(name = "id") Long id
+    ) {
+        AccommodationDetailDto accommodationDetail = accommodationService.findById(id);
 
+        return Response.<AccommodationDetailDto>builder()
+                .resultCode(String.valueOf(HttpStatus.OK.value()))
+                .resultMessage(HttpStatus.OK.name())
+                .data(accommodationDetail)
+                .build();
+    }
 }
