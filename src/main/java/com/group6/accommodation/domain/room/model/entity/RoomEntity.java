@@ -1,10 +1,14 @@
 package com.group6.accommodation.domain.room.model.entity;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
@@ -21,13 +25,13 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "room")
 public class RoomEntity {
-	@EmbeddedId
-	private RoomId id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "room_id", nullable = false)
+	private Long roomId;
 
-	@MapsId("accommodationId")
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "accommodation_id", nullable = false)
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	@JoinColumn(name="accommodation_id", referencedColumnName = "accommodation_id")
 	private AccommodationEntity accommodation;
 
 	@Column(name = "room_title", nullable = false, length = 32)

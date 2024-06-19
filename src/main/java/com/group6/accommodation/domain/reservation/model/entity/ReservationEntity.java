@@ -1,36 +1,44 @@
 package com.group6.accommodation.domain.reservation.model.entity;
 
+import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
+import com.group6.accommodation.domain.room.model.entity.RoomEntity;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "reservation")
 public class ReservationEntity {
-	@EmbeddedId
-	private ReservationId id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "reservation_id", nullable = false)
+	private Long reservationId;
 
-	@MapsId("userId")
-	@ManyToOne(fetch = FetchType.LAZY, optional = false)
-	@OnDelete(action = OnDeleteAction.CASCADE)
-	@JoinColumn(name = "user_id", nullable = false)
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	@JoinColumn(name="user_id", referencedColumnName = "user_id")
 	private UserEntity user;
+
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	@JoinColumn(name="accommodation_id", referencedColumnName = "accommodation_id")
+	private AccommodationEntity accommodation;
+
+	@ManyToOne(cascade = CascadeType.REMOVE)
+	@JoinColumn(name="room_id", referencedColumnName = "room_id")
+	private RoomEntity room;
 
 	@Column(name = "headcount", nullable = false)
 	private Integer headcount;
