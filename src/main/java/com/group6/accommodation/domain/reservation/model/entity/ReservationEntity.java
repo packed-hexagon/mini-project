@@ -14,6 +14,7 @@ import java.time.LocalDate;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -43,7 +44,7 @@ public class ReservationEntity {
 	@Column(name = "price", nullable = false)
 	private Integer price;
 
-	@ColumnDefault("CURRENT_TIMESTAMP")
+	@CreationTimestamp
 	@Column(name = "created_at", nullable = false)
 	private Instant createdAt;
 
