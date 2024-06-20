@@ -15,7 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @Builder
-public class PostReserveResponseDto {
+public class ReserveResponseDto {
     private Long id;
     private Long userId;
     private Long accommodationId;
@@ -24,4 +24,5 @@ public class PostReserveResponseDto {
     private LocalDate startDate;
     private LocalDate endDate;
     private Instant createdAt;
+    private Instant deletedAt;
 }

@@ -5,7 +5,7 @@ import com.group6.accommodation.domain.accommodation.repository.AccommodationRep
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
-import com.group6.accommodation.domain.reservation.model.dto.PostReserveResponseDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
@@ -13,6 +13,7 @@ import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.util.ResponseApi;
+import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -28,7 +29,7 @@ public class ReserveService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ResponseApi<PostReserveResponseDto> postReserve(Long accommodationId, Long roomId,
+    public ResponseApi<ReserveResponseDto> postReserve(Long accommodationId, Long roomId,
         PostReserveRequestDto postReserveRequestDto) {
         // 임시 유저 아이디
         Long userId = 1L;
@@ -61,7 +62,7 @@ public class ReserveService {
             .price(postReserveRequestDto.getPrice())
             .build());
 
-        PostReserveResponseDto result = PostReserveResponseDto.builder()
+        ReserveResponseDto result = ReserveResponseDto.builder()
             .userId(userId)
             .id(reservation.getReservationId())
             .price(reservation.getPrice())
@@ -74,5 +75,28 @@ public class ReserveService {
 
 
         return ResponseApi.success(HttpStatus.CREATED, result);
+    }
+
+    @Transactional
+    public ResponseApi<ReserveResponseDto> cancelReserve(Long reservationId) {
+        ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
+            () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
+
+        reservation.setDeletedAt(Instant.now());
+
+        ReserveResponseDto result = ReserveResponseDto.builder()
+            .id(reservation.getReservationId())
+            .userId(reservation.getUser().getId())
+            .accommodationId(reservation.getAccommodation().getId())
+            .price(reservation.getPrice())
+            .headcount(reservation.getHeadcount())
+            .startDate(reservation.getStartDate())
+            .endDate(reservation.getEndDate())
+            .createdAt(reservation.getCreatedAt())
+            .deletedAt(reservation.getDeletedAt())
+            .build();
+
+
+        return ResponseApi.success(HttpStatus.OK, result);
     }
 }
