@@ -16,13 +16,13 @@ public class UserLikeController {
     private final UserLikeService userLikeService;
 
     // 숙박시설 찜하기
-    @PostMapping("/{accommodationID}")
+    @PostMapping("/{accommodationId}")
     public Response<?> addLikes (
-        @PathVariable Long accommodationID
+        @PathVariable("accommodationId") Long accommodationID
 //        @AuthenticationPrincipal User user
     ) {
 //        var loginUserId = Long.parseLong(user.getUserId());
-        var addLike = userLikeService.addLikes(accommodationID, 123L);
+        var addLike = userLikeService.addLikes(accommodationID, 1L);
         return Response.builder()
             .resultCode("201")
             .resultMessage("Created")

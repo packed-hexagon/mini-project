@@ -4,4 +4,6 @@ import com.group6.accommodation.domain.accommodation.model.entity.AccommodationE
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AccommodationRepository extends JpaRepository<AccommodationEntity, Long> {
+
+
 }
