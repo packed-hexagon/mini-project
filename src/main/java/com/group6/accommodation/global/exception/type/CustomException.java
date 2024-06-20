@@ -15,4 +15,10 @@ public class CustomException extends HttpStatusCodeException {
 		this.statusCode = errorCode.getCode();
 		this.info = errorCode.getInfo();
 	}
+
+	public CustomException(HttpStatus statusCode, String info) {
+        super(statusCode, info);
+        this.statusCode = statusCode;
+		this.info = info;
+	}
 }
