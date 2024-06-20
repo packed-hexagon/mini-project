@@ -14,14 +14,18 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.time.LocalDate;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
-@Setter
 @Entity
+@Builder
 @Table(name = "reservation")
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReservationEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
