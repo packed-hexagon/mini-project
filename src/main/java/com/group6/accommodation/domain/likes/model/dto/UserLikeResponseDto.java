@@ -8,22 +8,24 @@ import com.group6.accommodation.domain.likes.model.entity.UserLikeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
 @Builder
-@JsonNaming(value = PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class UserLikeDto {
+public class UserLikeResponseDto {
 
     public UserEntity user;
     public AccommodationEntity accommodation;
 
-    public static UserLikeDto toDto (UserLikeEntity userLikeEntity) {
-        return UserLikeDto.builder()
+    public static UserLikeResponseDto toDto (UserLikeEntity userLikeEntity) {
+        return UserLikeResponseDto.builder()
             .user(userLikeEntity.getUser())
             .accommodation(userLikeEntity.getAccommodation())
             .build()

@@ -2,7 +2,7 @@ package com.group6.accommodation.domain.likes.service;
 
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
-import com.group6.accommodation.domain.likes.model.dto.UserLikeDto;
+import com.group6.accommodation.domain.likes.model.dto.UserLikeResponseDto;
 import com.group6.accommodation.domain.likes.model.entity.UserLikeEntity;
 import com.group6.accommodation.domain.likes.model.entity.UserLikeId;
 import com.group6.accommodation.domain.likes.repository.UserLikeRepository;
@@ -22,7 +22,7 @@ public class UserLikeService {
     private final UserRepository userRepository;
 
     @Transactional
-    public UserLikeDto addLikes(
+    public UserLikeResponseDto addLike(
         Long accommodationId, Long userId
     ) {
         // 해당 숙박 정보가 있는지 확인
@@ -42,7 +42,6 @@ public class UserLikeService {
         Optional<UserLikeEntity> isExistUserLike = userLikeRepository.findByAccommodationIdAndUserId(accommodationId, userId);
 
         if (isExistUserLike.isPresent()) {
-            UserLikeEntity userLikeEntity = isExistUserLike.get();
             throw new UserLikeException(UserLikeErrorCode.ALREADY_ADD_LIKE);
         } else {
             UserLikeEntity addUserLike = UserLikeEntity.builder()
@@ -53,20 +52,20 @@ public class UserLikeService {
                 ;
             addUserLike = userLikeRepository.save(addUserLike);
 //            accommodationRepository.incrementLikeCount(accommodationId);
-            return UserLikeDto.toDto(addUserLike);
+            return UserLikeResponseDto.toDto(addUserLike);
         }
     }
 
     @Transactional
-    public Object cancelLikes(
+    public String cancelLike(
         Long accommodationId, long userId
     ) {
         // 해당 숙박 정보가 있는지 확인
-        var accommodationEntity = accommodationRepository.findById(accommodationId)
+        accommodationRepository.findById(accommodationId)
             .orElseThrow(() -> new UserLikeException(UserLikeErrorCode.ACCOMMODATION_NOT_EXIST));
 
         // 로그인한 객체 가져오기
-        var authEntity = userRepository.findById(userId)
+        userRepository.findById(userId)
             .orElseThrow(() -> new UserLikeException(UserLikeErrorCode.UNAUTHORIZED));
 
         // 이미 찜했는지 여부 확인
@@ -74,7 +73,7 @@ public class UserLikeService {
 
         if (isExistUserLike.isPresent()) {
             userLikeRepository.delete(isExistUserLike.get());
-            return "delete complete";
+            return "Delete Success";
         } else {
             throw new UserLikeException(UserLikeErrorCode.ACCOMMODATION_NOT_LIKED);
         }
