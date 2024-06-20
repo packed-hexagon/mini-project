@@ -2,13 +2,13 @@ package com.group6.accommodation.domain.accommodation.controller;
 
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDto;
+import com.group6.accommodation.domain.accommodation.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.service.AccommodationService;
-import com.group6.accommodation.global.util.Response;
+import com.group6.accommodation.global.util.ResponseApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -17,27 +17,24 @@ public class AccommodationController {
 
     private final AccommodationService accommodationService;
 
+    // 숙소 전체 조회
     @GetMapping(path = "/accommodation")
-    public Response<List<AccommodationDto>> readAll() {
-        List<AccommodationDto> accommodationList = accommodationService.findAll();
+    public ResponseEntity<ResponseApi<PagedDto<AccommodationDto>>> readAllPaged(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "5") int size
+    ) {
+        ResponseApi<PagedDto<AccommodationDto>> accommodationPage = accommodationService.findAllPage(page, size);
 
-        return Response.<List<AccommodationDto>>builder()
-                .resultCode(String.valueOf(HttpStatus.OK.value()))
-                .resultMessage(HttpStatus.OK.name())
-                .data(accommodationList)
-                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(accommodationPage);
     }
 
+    // 숙소 단건 조회
     @GetMapping(path = "/accommodation/{id}")
-    public Response<AccommodationDetailDto> read(
+    public ResponseEntity<ResponseApi<AccommodationDetailDto>> read(
             @PathVariable(name = "id") Long id
     ) {
-        AccommodationDetailDto accommodationDetail = accommodationService.findById(id);
+        ResponseApi<AccommodationDetailDto> accommodationDetail = accommodationService.findById(id);
 
-        return Response.<AccommodationDetailDto>builder()
-                .resultCode(String.valueOf(HttpStatus.OK.value()))
-                .resultMessage(HttpStatus.OK.name())
-                .data(accommodationDetail)
-                .build();
+        return ResponseEntity.status(HttpStatus.OK).body(accommodationDetail);
     }
 }

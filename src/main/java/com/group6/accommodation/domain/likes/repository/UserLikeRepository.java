@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserLikeRepository extends JpaRepository<UserLikeEntity, UserLikeId> {
 
-    Optional<UserLikeEntity> findByAccommodationId(Long accommodationId);
+    Optional<UserLikeEntity> findByAccommodationIdAndUserId(Long accommodationId, Long userId);
 
 }

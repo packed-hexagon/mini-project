@@ -10,20 +10,18 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Builder
-public class UserDto {
+public class UserRegisterResponseDto {
     private Long userId;
     private String email;
-    private String password;
     private String name;
     private String phoneNumber;
 
-    public static UserDto toDto(UserEntity user) {
-        return UserDto.builder()
-                .userId(user.getId())
-                .email(user.getEmail())
-                .password(user.getEncryptedPassword())
-                .name(user.getName())
-                .phoneNumber(user.getPhoneNumber())
+    public static UserRegisterResponseDto toResponse(UserEntity userEntity) {
+        return UserRegisterResponseDto.builder()
+                .userId(userEntity.getId())
+                .name(userEntity.getName())
+                .email(userEntity.getEmail())
+                .phoneNumber(userEntity.getPhoneNumber())
                 .build();
     }
 }

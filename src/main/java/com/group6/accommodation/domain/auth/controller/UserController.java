@@ -1,12 +1,13 @@
 package com.group6.accommodation.domain.auth.controller;
 
-import com.group6.accommodation.domain.auth.model.dto.UserDto;
-import com.group6.accommodation.domain.auth.model.dto.UserRegisterRequest;
-import com.group6.accommodation.domain.auth.model.dto.UserRegisterResponse;
+import com.group6.accommodation.domain.auth.model.dto.UserRegisterRequestDto;
+import com.group6.accommodation.domain.auth.model.dto.UserRegisterResponseDto;
 import com.group6.accommodation.domain.auth.service.UserService;
-import com.group6.accommodation.global.util.Response;
+import com.group6.accommodation.global.util.ResponseApi;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,24 +15,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api")
+@RequestMapping
 public class UserController {
 
     private final UserService userService;
 
-    @GetMapping
-    public void test() {
-    }
-
     @PostMapping("/test")
-    public void post() {
-        
+    public ResponseEntity<?> test() {
+        return ResponseEntity.status(HttpStatus.CREATED).body("Resource created successfully");
     }
 
-    @PostMapping
-    public void register(
-            @RequestBody UserRegisterRequest request
+    @PostMapping("/open-api/user/register")
+    public ResponseEntity<ResponseApi<UserRegisterResponseDto>> register(
+            @Valid
+            @RequestBody UserRegisterRequestDto request
     ) {
-        userService.register(request);
+        ResponseApi<UserRegisterResponseDto> response = userService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
