@@ -32,4 +32,20 @@ public class UserLikeController {
             .build()
             ;
     }
+
+    // 숙박시설 찜 삭제하기
+    @DeleteMapping("/{accommodationId}")
+    public Response<?> removeLikes(
+        @PathVariable("accommodationId") Long accommodationID
+//        @AuthenticationPrincipal User user
+    ) {
+//        var loginUserId = Long.parseLong(user.getUserId());
+        var cancelLike = userLikeService.cancelLikes(accommodationID, 1L);
+        return Response.builder()
+            .resultCode("204")
+            .resultMessage("No Content")
+            .data(cancelLike)
+            .build()
+            ;
+    }
 }

@@ -57,5 +57,26 @@ public class UserLikeService {
         }
     }
 
+    @Transactional
+    public Object cancelLikes(
+        Long accommodationId, long userId
+    ) {
+        // 해당 숙박 정보가 있는지 확인
+        var accommodationEntity = accommodationRepository.findById(accommodationId)
+            .orElseThrow(() -> new UserLikeException(UserLikeErrorCode.ACCOMMODATION_NOT_EXIST));
 
+        // 로그인한 객체 가져오기
+        var authEntity = userRepository.findById(userId)
+            .orElseThrow(() -> new UserLikeException(UserLikeErrorCode.UNAUTHORIZED));
+
+        // 이미 찜했는지 여부 확인
+        Optional<UserLikeEntity> isExistUserLike = userLikeRepository.findByAccommodationIdAndUserId(accommodationId, userId);
+
+        if (isExistUserLike.isPresent()) {
+            userLikeRepository.delete(isExistUserLike.get());
+            return "delete complete";
+        } else {
+            throw new UserLikeException(UserLikeErrorCode.ACCOMMODATION_NOT_LIKED);
+        }
+    }
 }
