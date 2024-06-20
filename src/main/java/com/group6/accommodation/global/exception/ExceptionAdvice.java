@@ -2,6 +2,7 @@ package com.group6.accommodation.global.exception;
 
 import com.group6.accommodation.global.exception.type.AccommodationException;
 import com.group6.accommodation.global.exception.type.ReservationException;
+import com.group6.accommodation.global.exception.type.UserLikeException;
 import com.group6.accommodation.global.util.ResponseApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,12 @@ public class ExceptionAdvice {
 
 	@ExceptionHandler(AccommodationException.class)
 	public ResponseEntity<ResponseApi<?>> accommodationException(AccommodationException ex) {
+		log.warn(ex.getMessage());
+		return ResponseEntity.status(ex.getStatusCode()).body(ResponseApi.failed(ex));
+	}
+
+	@ExceptionHandler(UserLikeException.class)
+	public ResponseEntity<ResponseApi<?>> userLikeException(UserLikeException ex) {
 		log.warn(ex.getMessage());
 		return ResponseEntity.status(ex.getStatusCode()).body(ResponseApi.failed(ex));
 	}
