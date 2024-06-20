@@ -1,6 +1,7 @@
 package com.group6.accommodation.global.exception.type;
 
 import com.group6.accommodation.global.exception.error.ErrorCode;
+import java.util.Map;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpStatusCodeException;
@@ -16,9 +17,9 @@ public class CustomException extends HttpStatusCodeException {
 		this.info = errorCode.getInfo();
 	}
 
-	public CustomException(HttpStatus statusCode, String info) {
-        super(statusCode, info);
+	public CustomException(HttpStatus statusCode, Map<String, String> info) {
+        super(statusCode, info.toString());
         this.statusCode = statusCode;
-		this.info = info;
+		this.info = info.toString();
 	}
 }

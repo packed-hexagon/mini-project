@@ -6,6 +6,8 @@ import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.exception.type.UserLikeException;
 import com.group6.accommodation.global.exception.type.ValidException;
 import com.group6.accommodation.global.util.ResponseApi;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,19 +25,15 @@ public class ExceptionAdvice {
 	public ResponseEntity<?> notValidException(MethodArgumentNotValidException ex) {
 		BindingResult result = ex.getBindingResult();
 
-		StringBuilder errMessage = new StringBuilder();
+		Map<String, String> errorMessages = new HashMap<>();
+
 		for (FieldError error : result.getFieldErrors()) {
-			errMessage.append("[")
-					.append(error.getField())
-					.append("]")
-					.append(": ")
-					.append(error.getDefaultMessage());
+			errorMessages.put(error.getField(), error.getDefaultMessage());
 		}
-		ValidException validException = new ValidException(HttpStatus.BAD_REQUEST, errMessage.toString());
+		ValidException validException = new ValidException(HttpStatus.BAD_REQUEST, errorMessages);
 
 		log.warn(validException.getMessage());
-		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseApi.failed(validException));
-
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseApi.failed(validException, errorMessages));
 	}
 
 	@ExceptionHandler(AuthException.class)
