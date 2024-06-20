@@ -1,15 +1,14 @@
 package com.group6.accommodation.domain.auth.model.dto;
 
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
-import com.group6.accommodation.global.exception.error.AuthErrorCode;
-import java.util.Optional;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.stereotype.Component;
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
 @Builder
 public class UserDto {
     private Long userId;
@@ -20,6 +19,7 @@ public class UserDto {
 
     public static UserDto toDto(UserEntity user) {
         return UserDto.builder()
+                .userId(user.getId())
                 .email(user.getEmail())
                 .password(user.getEncryptedPassword())
                 .name(user.getName())

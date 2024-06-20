@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum ExampleErrorCode implements ErrorCode{
 
-	TEST(HttpStatus.BAD_REQUEST, "예제입니다.")
+	TEST(HttpStatus.BAD_REQUEST, "예제입니다."),
 	;
 
 	private final HttpStatus code;
