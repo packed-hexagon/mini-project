@@ -1,9 +1,9 @@
 package com.group6.accommodation.global.exception.error;
 
 
-import org.springframework.http.HttpStatusCode;
+import org.springframework.http.HttpStatus;
 
 public interface ErrorCode {
-	HttpStatusCode getCode();
+	HttpStatus getCode();
 	String getInfo();
 }

@@ -6,9 +6,8 @@ import com.group6.accommodation.domain.likes.model.dto.UserLikeDto;
 import com.group6.accommodation.domain.likes.model.entity.UserLikeEntity;
 import com.group6.accommodation.domain.likes.model.entity.UserLikeId;
 import com.group6.accommodation.domain.likes.repository.UserLikeRepository;
-import com.group6.accommodation.global.exception.error.ExampleErrorCode;
 import com.group6.accommodation.global.exception.error.UserLikeErrorCode;
-import com.group6.accommodation.global.exception.type.ExampleException;
+import com.group6.accommodation.global.exception.type.UserLikeException;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -28,11 +27,11 @@ public class UserLikeService {
     ) {
         // 해당 숙박 정보가 있는지 확인
         var accommodationEntity = accommodationRepository.findById(accommodationId)
-            .orElseThrow(() -> new ExampleException(UserLikeErrorCode.ACCOMMODATION_NOT_EXIST));
+            .orElseThrow(() -> new UserLikeException(UserLikeErrorCode.ACCOMMODATION_NOT_EXIST));
 
         // 로그인한 객체 가져오기
         var authEntity = userRepository.findById(userId)
-            .orElseThrow(() -> new ExampleException(UserLikeErrorCode.UNAUTHORIZED));
+            .orElseThrow(() -> new UserLikeException(UserLikeErrorCode.UNAUTHORIZED));
 
         // userLikeId 생성
         UserLikeId userLikeId = new UserLikeId();
@@ -40,11 +39,11 @@ public class UserLikeService {
         userLikeId.setAccommodationId(accommodationId);
 
         // 이미 찜했는지 여부 확인
-        Optional<UserLikeEntity> isExistUserLike = userLikeRepository.findByAccommodationId(accommodationId);
+        Optional<UserLikeEntity> isExistUserLike = userLikeRepository.findByAccommodationIdAndUserId(accommodationId, userId);
 
         if (isExistUserLike.isPresent()) {
             UserLikeEntity userLikeEntity = isExistUserLike.get();
-            throw new ExampleException(UserLikeErrorCode.ALREADY_ADD_LIKE);
+            throw new UserLikeException(UserLikeErrorCode.ALREADY_ADD_LIKE);
         } else {
             UserLikeEntity addUserLike = UserLikeEntity.builder()
                 .id(userLikeId)
@@ -57,4 +56,6 @@ public class UserLikeService {
             return UserLikeDto.toDto(addUserLike);
         }
     }
+
+
 }
