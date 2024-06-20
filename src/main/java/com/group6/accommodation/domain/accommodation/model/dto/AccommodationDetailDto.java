@@ -9,15 +9,20 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccommodationDto {
+public class AccommodationDetailDto {
 
     private Long id;
     private String title;
     private String address;
     private String address2;
+    private int areacode;
+    private int sigungucode;
     private String category;
     private String image;
     private String thumbnail;
+    private double latitude;
+    private double longitude;
+    private int mlevel;
+    private String tel;
     private int likeCount;
-
 }
