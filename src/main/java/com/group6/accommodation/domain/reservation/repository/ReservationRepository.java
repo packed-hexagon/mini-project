@@ -7,6 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
 
-    Boolean existsByAccommodationAndRoomAndDeletedAtNull(AccommodationEntity accommodation, RoomEntity room);
+    Boolean existsByAccommodationAndRoomAndDeletedAtNotNull(AccommodationEntity accommodation, RoomEntity room);
 
 }
