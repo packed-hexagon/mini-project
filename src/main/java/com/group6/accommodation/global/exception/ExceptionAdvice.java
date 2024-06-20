@@ -1,6 +1,7 @@
 package com.group6.accommodation.global.exception;
 
 import com.group6.accommodation.global.exception.type.AccommodationException;
+import com.group6.accommodation.global.exception.type.AuthException;
 import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.exception.type.UserLikeException;
 import com.group6.accommodation.global.exception.type.ValidException;
