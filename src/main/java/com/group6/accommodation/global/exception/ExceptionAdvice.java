@@ -1,6 +1,6 @@
 package com.group6.accommodation.global.exception;
 
-import com.group6.accommodation.lobal.exception.type.ReservationException;
+import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.util.ResponseApi;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
