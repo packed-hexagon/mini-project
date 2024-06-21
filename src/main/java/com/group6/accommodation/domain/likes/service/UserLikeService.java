@@ -63,7 +63,7 @@ public class UserLikeService {
                 .build()
                 ;
             userLikeRepository.save(addUserLike);
-//            accommodationRepository.incrementLikeCount(accommodationId);
+            accommodationRepository.incrementLikeCount(accommodationId);
 
             var result =  UserLikeResponseDto.toDto(addUserLike);
             return ResponseApi.success(HttpStatus.CREATED, result);
@@ -87,6 +87,7 @@ public class UserLikeService {
 
         if (isExistUserLike.isPresent()) {
             userLikeRepository.delete(isExistUserLike.get());
+            accommodationRepository.decrementLikeCount(accommodationId);
             return ResponseApi.success(HttpStatus.NO_CONTENT, "Delete Success");
         } else {
             throw new UserLikeException(UserLikeErrorCode.ACCOMMODATION_NOT_LIKED);
