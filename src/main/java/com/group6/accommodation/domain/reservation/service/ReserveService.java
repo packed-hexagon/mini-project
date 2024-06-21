@@ -91,9 +91,11 @@ public class ReserveService {
     public ResponseApi<ReserveResponseDto> cancelReserve(Long reservationId) {
         ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
             () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
-        
+
+        System.out.println(reservation);
+
         // 이미 예약이 취소되어 있는 경우
-        if(reservation.getDeletedAt() == null) {
+        if(reservation.getDeletedAt() != null) {
             throw new ReservationException(ReservationErrorCode.ALREADY_CANCEL);
         }
         
