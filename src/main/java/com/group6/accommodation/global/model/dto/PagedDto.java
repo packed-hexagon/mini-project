@@ -1,4 +1,4 @@
-package com.group6.accommodation.domain.accommodation.model.dto;
+package com.group6.accommodation.global.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
