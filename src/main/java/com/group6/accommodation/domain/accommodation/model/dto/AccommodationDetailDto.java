@@ -15,7 +15,7 @@ public class AccommodationDetailDto {
     private String title;
     private String address;
     private String address2;
-    private int areacode;
+    private String areacode;
     private int sigungucode;
     private String category;
     private String image;

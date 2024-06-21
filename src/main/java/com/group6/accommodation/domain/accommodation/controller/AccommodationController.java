@@ -3,7 +3,11 @@ package com.group6.accommodation.domain.accommodation.controller;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDto;
 import com.group6.accommodation.domain.accommodation.model.dto.PagedDto;
+import com.group6.accommodation.domain.accommodation.model.enums.Area;
+import com.group6.accommodation.domain.accommodation.model.enums.Category;
 import com.group6.accommodation.domain.accommodation.service.AccommodationService;
+import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
+import com.group6.accommodation.global.exception.type.AccommodationException;
 import com.group6.accommodation.global.util.ResponseApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,9 +25,25 @@ public class AccommodationController {
     @GetMapping(path = "/accommodation")
     public ResponseEntity<ResponseApi<PagedDto<AccommodationDto>>> readAllPaged(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size
+            @RequestParam(required = false) String area,
+            @RequestParam(required = false) String category
     ) {
-        ResponseApi<PagedDto<AccommodationDto>> accommodationPage = accommodationService.findAllPage(page, size);
+
+        ResponseApi<PagedDto<AccommodationDto>> accommodationPage;
+
+        // 임시 기본 사이즈 설정
+        int customSize = (area == null && category == null) ? 5 : 2;
+
+        if (area != null && category == null) {
+            accommodationPage = accommodationService.findByAreaPaged(area, page, customSize);
+        } else if (category != null && area == null) {
+            accommodationPage = accommodationService.findByCategoryPaged(category, page, customSize);
+        } else if (area == null && category == null){
+            accommodationPage = accommodationService.findAllPage(page, customSize);
+        } else {
+            throw new AccommodationException(
+                    AccommodationErrorCode.NOT_BOTH_AREA_CATEGORY);
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body(accommodationPage);
     }

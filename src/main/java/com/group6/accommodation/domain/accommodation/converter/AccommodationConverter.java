@@ -3,6 +3,8 @@ package com.group6.accommodation.domain.accommodation.converter;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
+import com.group6.accommodation.domain.accommodation.model.enums.Area;
+import com.group6.accommodation.domain.accommodation.model.enums.Category;
 import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,13 +17,12 @@ import java.util.stream.Collectors;
 public class AccommodationConverter {
 
     public AccommodationDto toDto(AccommodationEntity accommodation) {
-
         return AccommodationDto.builder()
                 .id(accommodation.getId())
                 .title(accommodation.getTitle())
                 .address(accommodation.getAddress())
                 .address2(accommodation.getAddress2())
-                .category(accommodation.getCategory())
+                .category(Category.getNameByCode(accommodation.getCategory()))
                 .image(accommodation.getImage())
                 .thumbnail(accommodation.getThumbnail())
                 .likeCount(accommodation.getLikeCount()).build();
@@ -37,9 +38,9 @@ public class AccommodationConverter {
                 .title(accommodation.getTitle())
                 .address(accommodation.getAddress())
                 .address2(accommodation.getAddress2())
-                .areacode(accommodation.getAreacode())
+                .areacode(Area.getNameByCode(accommodation.getAreacode()))
                 .sigungucode(accommodation.getSigungucode())
-                .category(accommodation.getCategory())
+                .category(Category.getNameByCode(accommodation.getCategory()))
                 .image(accommodation.getImage())
                 .thumbnail(accommodation.getThumbnail())
                 .latitude(accommodation.getLatitude())
