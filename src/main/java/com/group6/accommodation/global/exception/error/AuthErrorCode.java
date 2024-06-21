@@ -8,7 +8,8 @@ import org.springframework.http.HttpStatus;
 @RequiredArgsConstructor
 public enum AuthErrorCode implements ErrorCode {
 
-    USER_REGISTER_REQUEST_IS_NULL(HttpStatus.BAD_REQUEST, "모든 값을 넣어주세요.")
+    ALREADY_EXIST_EMAIL(HttpStatus.BAD_REQUEST, "이미 존재하는 이메일입니다."),
+    ALREADY_EXIST_PHONE_NUMBER(HttpStatus.BAD_REQUEST, "이미 존재하는 휴대폰 번호입니다."),
     ;
 
     private final HttpStatus code;

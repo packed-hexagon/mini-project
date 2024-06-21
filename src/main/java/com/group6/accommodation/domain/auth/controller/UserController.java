@@ -1,9 +1,10 @@
 package com.group6.accommodation.domain.auth.controller;
 
-import com.group6.accommodation.domain.auth.model.dto.UserDto;
-import com.group6.accommodation.domain.auth.model.dto.UserRegisterRequest;
+import com.group6.accommodation.domain.auth.model.dto.UserRegisterRequestDto;
+import com.group6.accommodation.domain.auth.model.dto.UserRegisterResponseDto;
 import com.group6.accommodation.domain.auth.service.UserService;
 import com.group6.accommodation.global.util.ResponseApi;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,10 +26,11 @@ public class UserController {
     }
 
     @PostMapping("/open-api/user/register")
-    public ResponseApi<UserDto> register(
-            @RequestBody UserRegisterRequest request
+    public ResponseEntity<ResponseApi<UserRegisterResponseDto>> register(
+            @Valid
+            @RequestBody UserRegisterRequestDto request
     ) {
-        UserDto response = userService.register(request);
-        return ResponseApi.success(HttpStatus.CREATED, response);
+        ResponseApi<UserRegisterResponseDto> response = userService.register(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }
