@@ -58,12 +58,12 @@ jobs:
           chmod 600 private_key.pem
           ssh -i private_key.pem user@yusuengdo.ddns.net << 'EOF'
           cd /home/user/
-          MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}" \
-          MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}" \
-          MYSQL_USER="${{ secrets.MYSQL_USER }}" \
-          MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
-          SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
-          SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
+          export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
+          export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
+          export MYSQL_USER="${{ secrets.MYSQL_USER }}"
+          export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" 
+          export SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" 
+          export SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
           docker-compose down
           docker-compose pull
           docker-compose up
