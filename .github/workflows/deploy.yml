@@ -64,6 +64,7 @@ jobs:
 
       - name: Deploy to VirtualBox
         run: |
+          java --version
           echo "${{ secrets.VB_PRIVATE_KEY }}" > private_key.pem
           chmod 600 private_key.pem
           ssh -i private_key.pem user@yusuengdo.ddns.net << 'EOF'
