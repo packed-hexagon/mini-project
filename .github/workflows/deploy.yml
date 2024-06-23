@@ -49,7 +49,7 @@ jobs:
         run: |
           echo "${{ secrets.VB_PRIVATE_KEY }}" > private_key.pem
           chmod 600 private_key.pem
-          scp -i private_key.pem docker-compose.yml newuser@yusuengdo.ddns.net:/home/newuser/
+          scp -i private_key.pem docker-compose.yml user@yusuengdo.ddns.net:/home/user/
           rm private_key.pem
 
       - name: Deploy to VirtualBox
