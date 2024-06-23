@@ -17,9 +17,8 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'temurin' # 또는 'adopt' 등 다른 배포판
+          distribution: 'temurin'
 
-      # 테스트 없이 빌드
       - name: Build with Gradle
         run: ./gradlew clean build --exclude-task test --parallel --build-cache
 
@@ -49,31 +48,37 @@ jobs:
         env:
           VB_PRIVATE_KEY: ${{ secrets.VB_PRIVATE_KEY }}
         run: |
-          echo "${{ secrets.VB_PRIVATE_KEY }}" > private_key.pem
+          echo "$VB_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           scp -i private_key.pem docker-compose.yml user@yusuengdo.ddns.net:/home/user/
           rm private_key.pem
 
       - name: Set environment variables on remote server
+        env:
+          VB_PRIVATE_KEY: ${{ secrets.VB_PRIVATE_KEY }}
         run: |
-          ssh -i ${{ secrets.VB_PRIVATE_KEY }} user@yusuengdo.ddns.net << 'EOF'
-          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /home/user/.env
+          echo "$VB_PRIVATE_KEY" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -i private_key.pem user@yusuengdo.ddns.net << 'EOF'
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" > /home/user/.env
           echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> /home/user/.env
           echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> /home/user/.env
           echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/user/.env
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> /home/user/.env
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> /home/user/.env
           EOF
-
+          rm private_key.pem
 
       - name: Deploy to VirtualBox
+        env:
+          VB_PRIVATE_KEY: ${{ secrets.VB_PRIVATE_KEY }}
         run: |
-          echo "${{ secrets.VB_PRIVATE_KEY }}" > private_key.pem
+          echo "$VB_PRIVATE_KEY" > private_key.pem
           chmod 600 private_key.pem
           ssh -i private_key.pem user@yusuengdo.ddns.net << 'EOF'
           cd /home/user/
-          docker-compose down
-          docker-compose pull
-          docker-compose up
+          docker-compose --env-file .env down
+          docker-compose --env-file .env pull
+          docker-compose --env-file .env up -d
           EOF
           rm private_key.pem
