@@ -52,18 +52,22 @@ jobs:
           scp -i private_key.pem docker-compose.yml user@yusuengdo.ddns.net:/home/user/
           rm private_key.pem
 
+      - name: set environment
+        run: |
+          export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
+          export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
+          export MYSQL_USER="${{ secrets.MYSQL_USER }}"
+          export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
+          export SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}"
+          export SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
+
+
       - name: Deploy to VirtualBox
         run: |
           echo "${{ secrets.VB_PRIVATE_KEY }}" > private_key.pem
           chmod 600 private_key.pem
           ssh -i private_key.pem user@yusuengdo.ddns.net << 'EOF'
           cd /home/user/
-#          export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
-#          export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
-#          export MYSQL_USER="${{ secrets.MYSQL_USER }}"
-#          export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
-#          export SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}"
-#          export SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
           docker-compose down
           docker-compose pull
           docker-compose up
