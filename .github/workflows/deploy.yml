@@ -21,7 +21,7 @@ jobs:
 
       # 테스트 없이 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build --exclude-task test
+        run: ./gradlew clean build --exclude-task test --parallel --build-cache
 
       - name: Log in to Docker Hub
         run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
@@ -58,6 +58,12 @@ jobs:
           chmod 600 private_key.pem
           ssh -i private_key.pem user@yusuengdo.ddns.net << 'EOF'
           cd /home/user/
+          MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}" \
+          MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}" \
+          MYSQL_USER="${{ secrets.MYSQL_USER }}" \
+          MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
+          SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
+          SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
           docker-compose pull
           docker-compose up -d
           EOF
