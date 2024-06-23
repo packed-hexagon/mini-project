@@ -20,11 +20,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/test")
-    public ResponseEntity<?> test() {
-        return ResponseEntity.status(HttpStatus.CREATED).body("Resource created successfully");
-    }
-
     @PostMapping("/open-api/user/register")
     public ResponseEntity<ResponseApi<UserRegisterResponseDto>> register(
             @Valid
