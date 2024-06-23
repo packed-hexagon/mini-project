@@ -21,7 +21,6 @@ jobs:
 
       - name: set application-prod.yml
         run: |
-          mkdir src/main/resources
           echo "${{ secrets.APPLICATION_PROD }}" > src/main/resources/application-prod.yml
           
 
