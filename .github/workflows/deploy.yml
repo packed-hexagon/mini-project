@@ -19,9 +19,10 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: set application.yml
+      - name: set application-prod.yml
         run: |
-          ls -al
+          mkdir src/main/resources
+          echo "${{ secrets.APPLICATION_PROD }}" > src/main/resources/application-prod.yml
           
 
       - name: Build with Gradle
