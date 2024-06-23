@@ -19,6 +19,11 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
+      - name: set application.yml
+        run: |
+          ls -al
+          
+
       - name: Build with Gradle
         run: ./gradlew clean build --exclude-task test --parallel --build-cache
 
