@@ -10,5 +10,8 @@ COPY build/libs/*.jar app.jar
 # Expose the port the application runs on
 EXPOSE 8080
 
+# Set the default environment variables
+ENV SPRING_PROFILES_ACTIVE=prod
+
 # Command to run the application
-CMD ["java", "-jar", "app.jar --spring.profiles.active=prod"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
