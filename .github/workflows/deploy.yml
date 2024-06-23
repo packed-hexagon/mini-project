@@ -17,11 +17,9 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: '17'
-          distribution: 'temurin' # 또는 'adopt' 등 다른 배포판
 
-      # 테스트 없이 빌드
       - name: Build with Gradle
-        run: ./gradlew clean build --exclude-task test --parallel --build-cache
+        run: ./gradlew clean build --exclude-task test
 
       - name: Log in to Docker Hub
         run: echo ${{ secrets.DOCKER_HUB_PASSWORD }} | docker login -u ${{ secrets.DOCKER_HUB_USERNAME }} --password-stdin
@@ -40,37 +38,25 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Add known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.KNOWN_HOSTS }}" > ~/.ssh/known_hosts
-
       - name: Copy Docker Compose file to remote server
         run: |
-          echo "${{ secrets.VB_PRIVATE_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
-          scp -i private_key.pem docker-compose.yml user@yusuengdo.ddns.net:/home/user/
-          rm private_key.pem
+          scp -i ${{ secrets.VB_PRIVATE_KEY }} docker-compose.yml user@yusuengdo.ddns.net:/home/user/
 
-      - name: set environment
+      - name: Set environment variables on remote server
         run: |
-          export MYSQL_ROOT_PASSWORD="${{ secrets.MYSQL_ROOT_PASSWORD }}"
-          export MYSQL_DATABASE="${{ secrets.MYSQL_DATABASE }}"
-          export MYSQL_USER="${{ secrets.MYSQL_USER }}"
-          export MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}"
-          export SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}"
-          export SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}"
-
+          ssh -i ${{ secrets.VB_PRIVATE_KEY }} user@yusuengdo.ddns.net << 'EOF'
+          echo "MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}" >> /home/user/.env
+          echo "MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}" >> /home/user/.env
+          echo "MYSQL_USER=${{ secrets.MYSQL_USER }}" >> /home/user/.env
+          echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/user/.env
+          echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> /home/user/.env
+          echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> /home/user/.env
+          EOF
 
       - name: Deploy to VirtualBox
         run: |
-          java --version
-          echo "${{ secrets.VB_PRIVATE_KEY }}" > private_key.pem
-          chmod 600 private_key.pem
-          ssh -i private_key.pem user@yusuengdo.ddns.net << 'EOF'
+          ssh -i ${{ secrets.VB_PRIVATE_KEY }} user@yusuengdo.ddns.net << 'EOF'
           cd /home/user/
-          docker-compose down
-          docker-compose pull
-          docker-compose up
+          docker-compose --env-file .env pull
+          docker-compose --env-file .env up -d
           EOF
-          rm private_key.pem
