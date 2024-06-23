@@ -3,7 +3,7 @@ name: Deploy to Local VirtualBox
 on:
   push:
     branches:
-      - feature/ci-cd
+      - develop
 
 jobs:
   build:
