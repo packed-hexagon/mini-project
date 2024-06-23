@@ -64,6 +64,7 @@ jobs:
           MYSQL_PASSWORD="${{ secrets.MYSQL_PASSWORD }}" \
           SPRING_DATASOURCE_USERNAME="${{ secrets.SPRING_DATASOURCE_USERNAME }}" \
           SPRING_DATASOURCE_PASSWORD="${{ secrets.SPRING_DATASOURCE_PASSWORD }}" \
+          docker-compose down
           docker-compose pull
           docker-compose up
           EOF
