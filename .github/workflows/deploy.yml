@@ -13,12 +13,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - uses: actions/checkout@v3
-          - name: Set up jdk 17
-            uses: actions/setup-java@v3
-            with:
-              java-version: '17'
-              distribution: 'temurin'
+      - name: Set up JDK 17
+        uses: actions/setup-java@v2
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
 
       - name: Build with Gradle
         run: ./gradlew clean build --exclude-task test
@@ -42,18 +42,18 @@ jobs:
 
       - name: Copy Docker Compose file to remote server
         run: |
-          scp -i ${{ secrets.VB_PRIVATE_KEY }} docker-compose.yml user@yusuengdo.ddns.net:/home/user/
+          echo "${{ secrets.VB_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          scp -i private_key.pem docker-compose.yml newuser@yusuengdo.ddns.net:/home/newuser/
+          rm private_key.pem
 
       - name: Deploy to VirtualBox
         run: |
-          ssh -i ${{ secrets.VB_PRIVATE_KEY }} user@yusuengdo.ddns.net << 'EOF'
-          export MYSQL_ROOT_PASSWORD=${{ secrets.MYSQL_ROOT_PASSWORD }}
-          export MYSQL_DATABASE=${{ secrets.MYSQL_DATABASE }}
-          export MYSQL_USER=${{ secrets.MYSQL_USER }}
-          export MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}
-          export SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}
-          export SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}
-          cd /home/user/
+          echo "${{ secrets.VB_PRIVATE_KEY }}" > private_key.pem
+          chmod 600 private_key.pem
+          ssh -i private_key.pem newuser@yusuengdo.ddns.net << 'EOF'
+          cd /home/newuser/
           docker-compose pull
           docker-compose up -d
           EOF
+          rm private_key.pem
