@@ -6,7 +6,7 @@ import lombok.Getter;
 
 @Getter
 public enum Category {
-    HOTEL("B02020200", "관광호텔"),
+    HOTEL("B02010100", "호텔"),
     CONDO("B02010500", "콘도미니엄"),
     HOSTEL("B02010600", "유스호스텔"),
     PENSION("B02010700", "펜션"),
@@ -15,7 +15,8 @@ public enum Category {
     GUESTHOUSE("B02011000", "게스트하우스"),
     HOMESTAY("B02011100", "홈스테이"),
     RESIDENCE("B02011200", "서비스드레지던스"),
-    HANOK("B02011300", "한옥");
+    HANOK("B02011300", "한옥"),
+    RESORT("A02020200", "리조트");
 
     private final String code;
     private final String name;
