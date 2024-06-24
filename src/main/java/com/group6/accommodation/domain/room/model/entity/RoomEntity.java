@@ -3,23 +3,17 @@ package com.group6.accommodation.domain.room.model.entity;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import java.time.Instant;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
 @Setter
@@ -125,5 +119,13 @@ public class RoomEntity {
 
 	@Column(name = "check_out", nullable = false)
 	private Instant checkOut;
+
+	public int reserveRoom() {
+		return --this.roomCount;
+	}
+
+	public void cancelRoom() {
+		++this.roomCount;
+	}
 
 }

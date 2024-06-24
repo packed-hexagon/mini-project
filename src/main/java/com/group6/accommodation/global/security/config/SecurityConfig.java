@@ -24,6 +24,7 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final ObjectMapper objectMapper;
+    private final CorsConfig corsConfig;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -42,6 +43,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfig.configurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest()
                         .permitAll()

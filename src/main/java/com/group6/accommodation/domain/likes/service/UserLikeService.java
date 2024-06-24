@@ -2,7 +2,6 @@ package com.group6.accommodation.domain.likes.service;
 
 import com.group6.accommodation.domain.accommodation.converter.AccommodationConverter;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDto;
-import com.group6.accommodation.domain.accommodation.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
@@ -12,6 +11,7 @@ import com.group6.accommodation.domain.likes.model.entity.UserLikeId;
 import com.group6.accommodation.domain.likes.repository.UserLikeRepository;
 import com.group6.accommodation.global.exception.error.UserLikeErrorCode;
 import com.group6.accommodation.global.exception.type.UserLikeException;
+import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.global.util.ResponseApi;
 import java.util.List;
 import java.util.Optional;
