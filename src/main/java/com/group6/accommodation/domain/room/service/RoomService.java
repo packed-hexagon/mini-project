@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.room.service;
 
 import com.group6.accommodation.domain.room.converter.RoomConverter;
+import com.group6.accommodation.domain.room.model.dto.AvailableRoomsReq;
 import com.group6.accommodation.domain.room.model.dto.RoomDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
@@ -27,12 +28,19 @@ public class RoomService {
 
 	public RoomDto findByAccommodationIdAndRoomId(Long accommodationId, Long roomId) {
 
-		RoomEntity roomEntity = roomRepository.findByAccommodationIdAndRoomId(accommodationId,
-			roomId);
+		RoomEntity roomEntity = roomRepository.findByAccommodation_IdAndRoomId(accommodationId, roomId);
 
 		if (roomEntity == null) {
 			throw new NoSuchElementException("No ID");
 		}
 		return roomConverter.toDto(roomEntity);
+	}
+
+	public void remainingRoom(AvailableRoomsReq req) {
+		List<RoomEntity> roomEntitityList = roomRepository.findAvailableRooms(
+			req.getCheckIn(), req.getCheckOut()
+		);
+
+
 	}
 }

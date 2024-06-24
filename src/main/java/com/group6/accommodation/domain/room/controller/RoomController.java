@@ -1,5 +1,6 @@
 package com.group6.accommodation.domain.room.controller;
 
+import com.group6.accommodation.domain.room.model.dto.AvailableRoomsReq;
 import com.group6.accommodation.domain.room.model.dto.RoomDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.service.RoomService;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -44,5 +46,14 @@ public class RoomController {
 			.resultCode(HttpStatus.OK.name())
 			.data(roomDto)
 			.build();
+	}
+
+	@GetMapping("/accommodation/{id}/room/{roomId}/is-reservable")
+	public void availableRooms(
+		@PathVariable Long id,
+		@PathVariable Long roomId,
+		@RequestBody AvailableRoomsReq req
+	) {
+
 	}
 }
