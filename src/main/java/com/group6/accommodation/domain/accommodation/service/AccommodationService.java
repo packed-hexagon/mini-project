@@ -3,7 +3,7 @@ package com.group6.accommodation.domain.accommodation.service;
 import com.group6.accommodation.domain.accommodation.converter.AccommodationConverter;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDto;
-import com.group6.accommodation.domain.accommodation.model.dto.PagedDto;
+import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.likes.repository.UserLikeRepository;

@@ -34,6 +34,14 @@ public class ResponseApi<T> {
             .data(new Error(ex.getInfo()))
             .build();
     }
+    
+    public static <T> ResponseApi<T> failed(CustomException ex, T data) {
+        return ResponseApi.<T>builder()
+                .resultCode(ex.getStatusCode().value())
+                .resultMessage(ex.getStatusCode().getReasonPhrase())
+                .data(data)
+                .build();
+    }
 
     private record Error(String message) { }
 

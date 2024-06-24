@@ -1,10 +1,13 @@
 package com.group6.accommodation.domain.reservation.service;
 
+import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
+import com.group6.accommodation.domain.reservation.converter.ReservationConverter;
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
@@ -15,6 +18,10 @@ import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.util.ResponseApi;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +34,8 @@ public class ReserveService {
     private final AccommodationRepository accommodationRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
+
+    private final ReservationConverter reservationConverter;
 
     @Transactional
     public ResponseApi<ReserveResponseDto> postReserve(Long accommodationId, Long roomId,
@@ -52,6 +61,20 @@ public class ReserveService {
             throw new ReservationException(ReservationErrorCode.ALREADY_RESERVED);
         }
 
+
+        // 남는 객실이 있는지 검증
+        if(room.reserveRoom() < 0) {
+            throw new ReservationException(ReservationErrorCode.FULL_ROOM);
+        }
+
+        
+        // 금액 검증
+        int price = room.getRoomOffseasonMinfee1() * postReserveRequestDto.getHeadcount();
+
+        if(price != postReserveRequestDto.getPrice()) {
+            throw new ReservationException(ReservationErrorCode.NOT_MATCH_PRICE);
+        }
+
         ReservationEntity reservation = reservationRepository.save(ReservationEntity.builder()
             .accommodation(accommodation)
             .room(room)
@@ -62,11 +85,15 @@ public class ReserveService {
             .price(postReserveRequestDto.getPrice())
             .build());
 
+
+
+
         ReserveResponseDto result = ReserveResponseDto.builder()
             .userId(userId)
             .id(reservation.getReservationId())
             .price(reservation.getPrice())
             .accommodationId(reservation.getReservationId())
+            .roomId(roomId)
             .headcount(reservation.getHeadcount())
             .startDate(reservation.getStartDate())
             .endDate(reservation.getEndDate())
@@ -81,12 +108,14 @@ public class ReserveService {
     public ResponseApi<ReserveResponseDto> cancelReserve(Long reservationId) {
         ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
             () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
-        
+
         // 이미 예약이 취소되어 있는 경우
-        if(reservation.getDeletedAt() == null) {
+        if(reservation.getDeletedAt() != null) {
             throw new ReservationException(ReservationErrorCode.ALREADY_CANCEL);
         }
-        
+
+        // 예약 취소
+        reservation.getRoom().cancelRoom();
         reservation.setDeletedAt(Instant.now());
 
         ReserveResponseDto result = ReserveResponseDto.builder()
@@ -94,6 +123,7 @@ public class ReserveService {
             .userId(reservation.getUser().getId())
             .accommodationId(reservation.getAccommodation().getId())
             .price(reservation.getPrice())
+            .roomId(reservation.getRoom().getRoomId())
             .headcount(reservation.getHeadcount())
             .startDate(reservation.getStartDate())
             .endDate(reservation.getEndDate())
@@ -103,5 +133,30 @@ public class ReserveService {
 
 
         return ResponseApi.success(HttpStatus.OK, result);
+    }
+
+
+    @Transactional(readOnly = true)
+    public ResponseApi<PagedDto<ReserveListItemDto>> getList(int page, int size, String directionStr) {
+        // 임시 유저 아이디
+        Long userId = 1L;
+
+        Sort.Direction direction = directionStr.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+
+        Page<ReserveListItemDto> result = reservationRepository.findAllByUserId(userId,
+            pageable).map(reservationConverter::toDto);
+
+
+        PagedDto<ReserveListItemDto> pagedDto = new PagedDto<>(
+            (int) result.getTotalElements(),
+            result.getTotalPages(),
+            result.getSize(),
+            result.getNumber(),
+            result.getContent()
+        );
+
+        return ResponseApi.success(HttpStatus.OK, pagedDto);
     }
 }

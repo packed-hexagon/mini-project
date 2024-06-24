@@ -2,7 +2,7 @@ package com.group6.accommodation.domain.accommodation.controller;
 
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDto;
-import com.group6.accommodation.domain.accommodation.model.dto.PagedDto;
+import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.service.AccommodationService;
 import com.group6.accommodation.global.util.ResponseApi;
 import lombok.RequiredArgsConstructor;
