@@ -25,6 +25,8 @@ public class AccommodationConverter {
                 .category(Category.getNameByCode(accommodation.getCategory()))
                 .image(accommodation.getImage())
                 .thumbnail(accommodation.getThumbnail())
+                .latitude(accommodation.getLatitude())
+                .longitude(accommodation.getLongitude())
                 .likeCount(accommodation.getLikeCount()).build();
     }
 

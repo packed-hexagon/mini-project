@@ -49,7 +49,7 @@ public class AccommodationEntity {
 	@Column(name = "mlevel")
 	private Integer mlevel;
 
-	@Column(name = "tel", length = 32)
+	@Column(name = "tel", length = 64)
 	private String tel;
 
 	@Column(name = "like_count")

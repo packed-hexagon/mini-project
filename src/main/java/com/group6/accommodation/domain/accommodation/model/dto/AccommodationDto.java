@@ -18,6 +18,8 @@ public class AccommodationDto {
     private String category;
     private String image;
     private String thumbnail;
+    private double latitude;
+    private double longitude;
     private int likeCount;
 
 }

@@ -32,7 +32,7 @@ public class AccommodationController {
         ResponseApi<PagedDto<AccommodationDto>> accommodationPage;
 
         // 임시 기본 사이즈 설정
-        int customSize = (area == null && category == null) ? 5 : 2;
+        int customSize = (area == null && category == null) ? 12 : 9;
 
         if (area != null && category == null) {
             accommodationPage = accommodationService.findByAreaPaged(area, page, customSize);
@@ -56,5 +56,17 @@ public class AccommodationController {
         ResponseApi<AccommodationDetailDto> accommodationDetail = accommodationService.findById(id);
 
         return ResponseEntity.status(HttpStatus.OK).body(accommodationDetail);
+    }
+
+    // 키워드로 숙소 조회
+    @GetMapping(path = "/accommodation/search")
+    public ResponseEntity<ResponseApi<PagedDto<AccommodationDto>>> searchByKeyword(
+            @RequestParam String keyword,
+            @RequestParam(defaultValue = "0") int page
+    ) {
+        int customSize = 9; // 기본 페이지 사이즈 설정
+
+        ResponseApi<PagedDto<AccommodationDto>> accommodationPage = accommodationService.findByKeywordPaged(keyword, page, customSize);
+        return ResponseEntity.status(HttpStatus.OK).body(accommodationPage);
     }
 }
