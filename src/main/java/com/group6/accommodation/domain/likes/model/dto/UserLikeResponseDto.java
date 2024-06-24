@@ -21,13 +21,13 @@ import lombok.ToString;
 @Builder
 public class UserLikeResponseDto {
 
-    public UserEntity user;
-    public AccommodationEntity accommodation;
+    public Long userId;
+    public Long accommodationId;
 
     public static UserLikeResponseDto toDto (UserLikeEntity userLikeEntity) {
         return UserLikeResponseDto.builder()
-            .user(userLikeEntity.getUser())
-            .accommodation(userLikeEntity.getAccommodation())
+            .userId(userLikeEntity.getUser().getId())
+            .accommodationId(userLikeEntity.getAccommodation().getId())
             .build()
             ;
     }
