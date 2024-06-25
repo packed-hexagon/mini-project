@@ -6,7 +6,6 @@ import com.group6.accommodation.global.security.token.model.dto.LoginTokenRespon
 import com.group6.accommodation.global.security.token.provider.TokenProvider;
 import com.group6.accommodation.global.util.ResponseApi;
 import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -22,13 +21,13 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Slf4j
-public class JwtAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
+public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final TokenProvider tokenProvider;
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
 
-    public JwtAuthenticationFilter(AuthenticationManager authenticationManager, TokenProvider tokenProvider,
-                                   ObjectMapper objectMapper) {
+    public LoginAuthenticationFilter(AuthenticationManager authenticationManager, TokenProvider tokenProvider,
+                                     ObjectMapper objectMapper) {
         this.tokenProvider = tokenProvider;
         this.authenticationManager = authenticationManager;
         this.objectMapper = objectMapper;

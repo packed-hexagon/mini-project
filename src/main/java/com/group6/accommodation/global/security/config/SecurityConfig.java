@@ -38,7 +38,6 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        JwtAuthenticationFilter jwtAuthenticationFilter = new JwtAuthenticationFilter(authenticationManagerBean(), tokenProvider, objectMapper);
         return http
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
@@ -48,7 +47,8 @@ public class SecurityConfig {
                         .anyRequest()
                         .permitAll()
                 )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilter(
+                        new LoginAuthenticationFilter(authenticationManagerBean(), tokenProvider, objectMapper))
                 .build();
 
     }
