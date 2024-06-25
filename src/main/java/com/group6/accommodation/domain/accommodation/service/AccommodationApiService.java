@@ -3,6 +3,7 @@ package com.group6.accommodation.domain.accommodation.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group6.accommodation.domain.accommodation.config.OpenapiConfig;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.likes.repository.UserLikeRepository;
 import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
@@ -25,18 +26,20 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Profile("openapi")
 public class AccommodationApiService {
     private final UserLikeRepository userLikeRepository;
     private final ObjectMapper objectMapper;
     private final RestTemplate restTemplate;
+    private final OpenapiConfig openapiConfig;
 
-    private static final String API_KEY = "FM1h3L9mhDwGLAFDhOL%2Fva85%2BdKHukkOO%2BB%2B3xEdBAUx4XeNOvX0YbgWiLG0bdpPJeyL3tI%2F84TA6OVCIxjHgA%3D%3D";
-    private static final String BASE_URL = "https://apis.data.go.kr/B551011/KorService1/searchStay1";
+
     private static final int NUM_OF_ROWS = 10;
 
     @Cacheable("accommodations")
@@ -44,9 +47,10 @@ public class AccommodationApiService {
         try {
             int totalCount = getTotalCount();
             int totalPages = (int) Math.ceil((double) totalCount / NUM_OF_ROWS);
+            int testPages = 10;
 
             List<CompletableFuture<List<AccommodationEntity>>> futures = new ArrayList<>();
-            for (int pageNo = 1; pageNo <= totalPages; pageNo++) {
+            for (int pageNo = 1; pageNo <= testPages; pageNo++) {
                 futures.add(fetchAccommodationsAsync(pageNo));
             }
 
@@ -61,11 +65,10 @@ public class AccommodationApiService {
 
     private int getTotalCount() throws URISyntaxException, JsonProcessingException {
         try {
-            URI uri = new URI(BASE_URL + "?serviceKey=" + API_KEY + "&numOfRows=1&pageNo=1&MobileOS=AND&MobileApp=TestApp&_type=json");
+            URI uri = new URI(openapiConfig.getBaseUrl() + "?serviceKey=" + openapiConfig.getApiKey() + "&numOfRows=1&pageNo=1&MobileOS=AND&MobileApp=TestApp&_type=json");
             ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
 
             HttpStatusCode statusCode = responseEntity.getStatusCode();
-            // System.out.println("HTTP Status Code: " + statusCode);
 
             if (statusCode == HttpStatus.OK) {
                 JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
@@ -73,9 +76,9 @@ public class AccommodationApiService {
                 return rootNode.path("response").path("body").path("totalCount").asInt();
             }
         } catch (URISyntaxException e) {
-            e.printStackTrace(); // URI가 잘못된 경우
+            throw new AccommodationException(AccommodationErrorCode.ERROR_URI); // URI가 잘못된 경우
         } catch (RestClientException e) {
-            e.printStackTrace(); // RestTemplate 호출에 문제가 있는 경우
+            throw new AccommodationException(AccommodationErrorCode.ERROR_RESTEMPLATE); // RestTemplate 호출에 문제가 있는 경우
         }
         return 0;
     }
@@ -84,7 +87,7 @@ public class AccommodationApiService {
     @Retryable(value = RestClientException.class, maxAttempts = 3)
     public CompletableFuture<List<AccommodationEntity>> fetchAccommodationsAsync(int pageNo) {
         try {
-            URI uri = new URI(BASE_URL + "?serviceKey=" + API_KEY + "&numOfRows=" + NUM_OF_ROWS + "&pageNo=" + pageNo + "&MobileOS=AND&MobileApp=TestApp&_type=json");
+            URI uri = new URI(openapiConfig.getBaseUrl() + "?serviceKey=" + openapiConfig.getApiKey() + "&numOfRows=" + NUM_OF_ROWS + "&pageNo=" + pageNo + "&MobileOS=AND&MobileApp=TestApp&_type=json");
             ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
 
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
@@ -119,23 +122,22 @@ public class AccommodationApiService {
         String firstImage = itemNode.path("firstimage").asText();
         accommodation.setImage(firstImage.isEmpty() ? "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg" : firstImage);
 
-        // accommodation.setImage(itemNode.path("firstimage").asText(""));
+        String thumbnail = itemNode.path("firstimage2").asText();
+        accommodation.setThumbnail(thumbnail.isEmpty() ? "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg" : thumbnail);
 
-        String firstImage2 = itemNode.path("firstimage2").asText();
-        accommodation.setImage(firstImage2.isEmpty() ? "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg" : firstImage2);
-
-        // accommodation.setThumbnail(itemNode.path("firstimage2").asText(""));
         accommodation.setLatitude(itemNode.path("mapy").asDouble());
         accommodation.setLongitude(itemNode.path("mapx").asDouble());
         accommodation.setMlevel(itemNode.path("mlevel").asInt(0));
 
         String tel = itemNode.path("tel").asText();
-        accommodation.setTel(tel.isEmpty() ? "010-0000-0000" : truncate(replaceTextWithinAngleBrackets(tel), 255));
-
-        // accommodation.setTel(truncate(replaceTextWithinAngleBrackets(itemNode.path("tel").asText()), 255));
+        accommodation.setTel(tel.isEmpty() ? "010-1234-5678" : truncate(replaceTextWithinAngleBrackets(tel), 255));
 
         int likeCount = userLikeRepository.countByAccommodationId(itemNode.path("contentid").asLong());
         accommodation.setLikeCount(likeCount);
+
+        double[] ratings = {2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
+        Random random = new Random();
+        accommodation.setRating(ratings[random.nextInt(ratings.length)]);
 
         return accommodation;
     }

@@ -1,4 +1,4 @@
-package com.group6.accommodation.domain.accommodation;
+package com.group6.accommodation.domain.accommodation.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

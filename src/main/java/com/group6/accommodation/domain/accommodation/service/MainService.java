@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Profile("openapi")
 public class MainService {
 
     private final AccommodationApiService accommodationApiService;
