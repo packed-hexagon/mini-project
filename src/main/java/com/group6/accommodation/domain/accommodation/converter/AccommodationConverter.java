@@ -76,11 +76,10 @@ public class AccommodationConverter {
     }
 
     private int getMinRoomPrice(Long accommodationId) {
+        int tempPrice = 150000;
         try {
             URI uri = new URI(openapiConfig.getBaseUrlRoom() + "?serviceKey=" + openapiConfig.getApiKey() + "&contentTypeId=32&contentId=" + accommodationId + "&MobileOS=ETC&MobileApp=TestApp&_type=json");
             ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
-
-            int tempPrice = 150000;
 
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
                 // JSON 응답을 로그에 출력
@@ -120,7 +119,8 @@ public class AccommodationConverter {
         } catch (JsonProcessingException e) {
             throw new RuntimeException(e);
         }
-        return 0;
+
+        return tempPrice;
     }
 
 

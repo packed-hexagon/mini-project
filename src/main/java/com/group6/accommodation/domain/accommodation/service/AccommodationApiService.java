@@ -32,7 +32,6 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@Profile("openapi")
 public class AccommodationApiService {
     private final UserLikeRepository userLikeRepository;
     private final ObjectMapper objectMapper;
