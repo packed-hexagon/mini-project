@@ -25,5 +25,5 @@ public class PagedDto<T> {
     private int currentPage;
 
     // 숙소 정보 List
-    private List<T> data;
+    private List<T> content;
 }

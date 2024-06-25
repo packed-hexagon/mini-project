@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
 
-    Boolean existsByAccommodationAndRoomAndDeletedAtNotNull(AccommodationEntity accommodation, RoomEntity room);
+    Boolean existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(AccommodationEntity accommodation, RoomEntity room, Long userId);
 
     Page<ReservationEntity> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 

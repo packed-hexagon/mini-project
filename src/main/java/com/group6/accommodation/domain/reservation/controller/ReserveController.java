@@ -5,10 +5,12 @@ import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
 import com.group6.accommodation.domain.reservation.service.ReserveService;
+import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.util.ResponseApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,17 +29,20 @@ public class ReserveController {
 
     @PostMapping("/{accommodationId}/room/{roomId}/reserve")
     public ResponseEntity<ResponseApi<ReserveResponseDto>> postReserve(
+        @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable Long accommodationId,
         @PathVariable Long roomId,
         @RequestBody PostReserveRequestDto requestDto
     ) {
-        ResponseApi<ReserveResponseDto> responseData = reserveService.postReserve(accommodationId, roomId, requestDto);
+        ResponseApi<ReserveResponseDto> responseData = reserveService.postReserve(user.getUserId(), accommodationId, roomId, requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(responseData);
     }
 
 
     @PutMapping("/{reservationId}")
-    public ResponseEntity<ResponseApi<ReserveResponseDto>> cancelReserve(@PathVariable Long reservationId) {
+    public ResponseEntity<ResponseApi<ReserveResponseDto>> cancelReserve(
+        @PathVariable Long reservationId
+    ) {
         ResponseApi<ReserveResponseDto> responseData = reserveService.cancelReserve(reservationId);
         return ResponseEntity.ok(responseData);
     }
@@ -45,12 +50,13 @@ public class ReserveController {
 
     @GetMapping
     public ResponseEntity<ResponseApi<PagedDto<ReserveListItemDto>>> getList(
+        @AuthenticationPrincipal CustomUserDetails user,
         @RequestParam(name = "page") int page,
         @RequestParam(name = "size") int size,
         @RequestParam(name = "direction") String direction
 
     ) {
-        ResponseApi<PagedDto<ReserveListItemDto>> responseData = reserveService.getList(page, size, direction);
+        ResponseApi<PagedDto<ReserveListItemDto>> responseData = reserveService.getList(user.getUserId(), page, size, direction);
         return ResponseEntity.ok(responseData);
     }
 }
