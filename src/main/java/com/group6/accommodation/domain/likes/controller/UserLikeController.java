@@ -1,6 +1,6 @@
 package com.group6.accommodation.domain.likes.controller;
 
-import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDto;
+import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
 import com.group6.accommodation.domain.likes.model.dto.UserLikeResponseDto;
 import com.group6.accommodation.domain.likes.service.UserLikeService;
 import com.group6.accommodation.global.model.dto.PagedDto;
@@ -47,13 +47,13 @@ public class UserLikeController {
 
     // 찜한 숙박 목록
     @GetMapping
-    public ResponseEntity<ResponseApi<PagedDto<AccommodationDto>>> getLikedAccommodation(
+    public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> getLikedAccommodation(
 //        @AuthenticationPrincipal User user
         @RequestParam(name ="page", defaultValue = "0") int page,
         @RequestParam(name = "size", defaultValue = "5") int size
     ) {
 //        var loginUserId = Long.parseLong(user.getUserId());
-        ResponseApi<PagedDto<AccommodationDto>> response = userLikeService.getLikedAccommodation(1L, page, size);
+        ResponseApi<PagedDto<AccommodationResponseDto>> response = userLikeService.getLikedAccommodation(1L, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
