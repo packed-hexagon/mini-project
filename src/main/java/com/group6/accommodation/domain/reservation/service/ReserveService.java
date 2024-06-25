@@ -125,7 +125,7 @@ public class ReserveService {
             .totalPages(result.getTotalPages())
             .size(result.getSize())
             .currentPage(result.getNumber())
-            .data(result.getContent())
+            .content(result.getContent())
             .build();
 
 
