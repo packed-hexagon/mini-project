@@ -10,13 +10,14 @@ public enum Category {
     CONDO("B02010500", "콘도미니엄"),
     HOSTEL("B02010600", "유스호스텔"),
     PENSION("B02010700", "펜션"),
-    MOTEL("B02010800", "모텔"),
-    MINBAK("B02010900", "민박"),
-    GUESTHOUSE("B02011000", "게스트하우스"),
-    HOMESTAY("B02011100", "홈스테이"),
-    RESIDENCE("B02011200", "서비스드레지던스"),
-    HANOK("B02011300", "한옥"),
-    RESORT("A02020200", "리조트");
+    MOTEL("B02010900", "모텔"),
+    MINBAK("B02011000", "민박"),
+    GUESTHOUSE("B02011100", "게스트하우스"),
+    HOMESTAY("B02011200", "홈스테이"),
+    RESIDENCE("B02011300", "서비스드레지던스"),
+    HANOK("B02011600", "한옥"),
+    RESORT("A02020200", "리조트"),
+    TRAIN("A03020200", "수련원");
 
     private final String code;
     private final String name;
