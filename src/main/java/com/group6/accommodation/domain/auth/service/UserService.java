@@ -21,6 +21,14 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public ResponseApi<UserRegisterResponseDto> getUserInfo(Long userId) {
+        UserEntity result = userRepository.findById(userId)
+                .orElseThrow(() -> new AuthException(AuthErrorCode.NOT_FOUNT_USER_BY_USER_ID));
+
+        UserRegisterResponseDto response = UserRegisterResponseDto.toResponse(result);
+        return ResponseApi.success(HttpStatus.OK, response);
+    }
+
     public ResponseApi<UserRegisterResponseDto> register(UserRegisterRequestDto request) {
         // 이메일 중복 확인
         if (userRepository.existsByEmail(request.getEmail())) {

@@ -1,6 +1,5 @@
 package com.group6.accommodation.global.security.service;
 
-import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import java.util.Collection;
 import java.util.Collections;
 import lombok.RequiredArgsConstructor;
@@ -11,25 +10,27 @@ import org.springframework.security.core.userdetails.UserDetails;
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 
-    private final UserEntity user;
+    private final Long userId;
+    private final String email;
+    private final String encryptedPassword;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return Collections.singleton(new SimpleGrantedAuthority("LOGIN_USER"));
     }
 
+    public long getUserId() {
+        return userId;
+    }
+
     @Override
     public String getUsername() {
-        return user.getEmail();
+        return email;
     }
 
     @Override
     public String getPassword() {
-        return user.getEncryptedPassword();
-    }
-
-    public Long getUserId() {
-        return user.getId();
+        return encryptedPassword;
     }
 
     @Override
