@@ -56,7 +56,7 @@ public class ReserveService {
 
 
         // 이미 예약되어 있는 객실인지 검증
-        if(reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNull(accommodation, room)) {
+        if(reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(accommodation, room, userId)) {
             throw new ReservationException(ReservationErrorCode.ALREADY_RESERVED);
         }
 
