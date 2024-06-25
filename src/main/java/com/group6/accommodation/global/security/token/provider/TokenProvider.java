@@ -1,5 +1,7 @@
 package com.group6.accommodation.global.security.token.provider;
 
+import com.group6.accommodation.global.exception.error.AuthErrorCode;
+import com.group6.accommodation.global.exception.type.AuthException;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.security.token.model.dto.LoginTokenResponseDto;
 import io.jsonwebtoken.Jwts;
@@ -50,8 +52,8 @@ public class TokenProvider {
         long now = (new Date()).getTime();
         Date expiredAt = new Date(now + this.tokenExpireTime);
 
-        Map<String, String> claims = new HashMap<>();
-        claims.put("userId", customUserDetails.getUserId().toString());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", customUserDetails.getUserId());
         claims.put("role", authorities);
         return Jwts.builder()
                 .signWith(key)
@@ -64,8 +66,8 @@ public class TokenProvider {
         long now = (new Date()).getTime();
         Date expiredAt = new Date(now + this.tokenExpireTime * 7L);
 
-        Map<String, String> claims = new HashMap<>();
-        claims.put("userId", customUserDetails.getUserId().toString());
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userId", customUserDetails.getUserId());
         claims.put("role", authorities);
         return Jwts.builder()
                 .signWith(key)
