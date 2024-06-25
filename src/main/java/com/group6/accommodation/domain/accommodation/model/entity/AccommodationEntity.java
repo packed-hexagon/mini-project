@@ -55,4 +55,7 @@ public class AccommodationEntity {
 	@Column(name = "like_count")
 	private Integer likeCount;
 
+	@Column(name = "rating")
+	private Double rating;
+
 }
