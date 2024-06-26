@@ -55,7 +55,7 @@ public class UserLikeController {
         @RequestParam(name = "size", defaultValue = "5") int size
     ) {
         var loginUserId = user.getUserId();
-        ResponseApi<PagedDto<AccommodationResponseDto>> response = userLikeService.getLikedAccommodation(1L, page, size);
+        ResponseApi<PagedDto<AccommodationResponseDto>> response = userLikeService.getLikedAccommodation(loginUserId, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }
