@@ -3,6 +3,7 @@ package com.group6.accommodation.global.exception;
 import com.group6.accommodation.global.exception.type.AccommodationException;
 import com.group6.accommodation.global.exception.type.AuthException;
 import com.group6.accommodation.global.exception.type.ReservationException;
+import com.group6.accommodation.global.exception.type.RoomException;
 import com.group6.accommodation.global.exception.type.UserLikeException;
 import com.group6.accommodation.global.exception.type.ValidException;
 import com.group6.accommodation.global.util.ResponseApi;
@@ -56,6 +57,12 @@ public class ExceptionAdvice {
 
 	@ExceptionHandler(UserLikeException.class)
 	public ResponseEntity<ResponseApi<?>> userLikeException(UserLikeException ex) {
+		log.warn(ex.getMessage());
+		return ResponseEntity.status(ex.getStatusCode()).body(ResponseApi.failed(ex));
+	}
+
+	@ExceptionHandler(RoomException.class)
+	public ResponseEntity<ResponseApi<?>> roomException(RoomException ex) {
 		log.warn(ex.getMessage());
 		return ResponseEntity.status(ex.getStatusCode()).body(ResponseApi.failed(ex));
 	}

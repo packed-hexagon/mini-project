@@ -5,8 +5,11 @@ import com.group6.accommodation.domain.room.model.dto.AvailableRoomsReq;
 import com.group6.accommodation.domain.room.model.dto.RoomDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
+import com.group6.accommodation.global.exception.error.RoomErrorCode;
+import com.group6.accommodation.global.exception.type.RoomException;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,18 +24,16 @@ public class RoomService {
 
 		List<RoomEntity> roomEntityList = roomRepository.findByAccommodation_Id(accommodationId);
 		if (roomEntityList.isEmpty()) {
-			throw new NoSuchElementException("No Room");
+			throw new RoomException(RoomErrorCode.NOT_FOUND_ROOM);
 		}
 		return roomConverter.toDtoList(roomEntityList);
 	}
 
 	public RoomDto findByAccommodationIdAndRoomId(Long accommodationId, Long roomId) {
 
-		RoomEntity roomEntity = roomRepository.findByAccommodation_IdAndRoomId(accommodationId, roomId);
+		RoomEntity roomEntity = roomRepository.findByAccommodation_IdAndRoomId(accommodationId, roomId)
+			.orElseThrow(() -> new RoomException(RoomErrorCode.NOT_FOUND_ROOM));
 
-		if (roomEntity == null) {
-			throw new NoSuchElementException("No ID");
-		}
 		return roomConverter.toDto(roomEntity);
 	}
 
@@ -40,7 +41,5 @@ public class RoomService {
 		List<RoomEntity> roomEntitityList = roomRepository.findAvailableRooms(
 			req.getCheckIn(), req.getCheckOut()
 		);
-
-
 	}
 }
