@@ -28,6 +28,12 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final CorsConfig corsConfig;
 
+    String[] allowedUrls = {
+            "/open-api/**",
+            "/resources/**",
+            "/error"
+    };
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return PasswordEncoderFactories.createDelegatingPasswordEncoder();
@@ -51,7 +57,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfig.configurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/open-api/**")
+                        .requestMatchers(allowedUrls)
                         .permitAll()
                         .anyRequest().authenticated()
                 )
