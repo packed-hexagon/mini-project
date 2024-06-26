@@ -31,8 +31,9 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                    .allowedOriginPatterns("*")  // 와일드카드를 사용하여 여러 출처를 허용
+                    .allowedOrigins("http://localhost:3000")
                     .allowedMethods("GET", "POST", "PUT", "DELETE")
+                    .allowedHeaders("*")
                     .allowCredentials(true);
             }
         };
