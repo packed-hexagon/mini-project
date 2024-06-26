@@ -1,6 +1,7 @@
 package com.group6.accommodation.global.security.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group6.accommodation.global.security.exception.CustomAuthenticationEntryPoint;
 import com.group6.accommodation.global.security.filter.JwtFilter;
 import com.group6.accommodation.global.security.filter.LoginAuthenticationFilter;
 import com.group6.accommodation.global.security.token.provider.TokenProvider;
@@ -38,6 +39,11 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CustomAuthenticationEntryPoint authenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
+    }
+
+    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .formLogin(AbstractHttpConfigurer::disable)
@@ -51,7 +57,9 @@ public class SecurityConfig {
                 )
                 .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(
-                        new LoginAuthenticationFilter(authenticationManagerBean(), tokenProvider, objectMapper))
+                        new LoginAuthenticationFilter(authenticationManagerBean(), tokenProvider, objectMapper)
+                )
+                .exceptionHandling((configure) -> configure.authenticationEntryPoint(authenticationEntryPoint()))
                 .build();
 
     }
