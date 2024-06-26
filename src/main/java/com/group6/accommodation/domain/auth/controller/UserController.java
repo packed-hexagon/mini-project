@@ -1,7 +1,7 @@
 package com.group6.accommodation.domain.auth.controller;
 
 import com.group6.accommodation.domain.auth.model.dto.UserRequestDto;
-import com.group6.accommodation.domain.auth.model.dto.UserRegisterResponseDto;
+import com.group6.accommodation.domain.auth.model.dto.UserResponseDto;
 import com.group6.accommodation.domain.auth.service.UserService;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.util.ResponseApi;
@@ -24,19 +24,19 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/api/user")
-    public ResponseEntity<ResponseApi<UserRegisterResponseDto>> getUserInfo(
+    public ResponseEntity<ResponseApi<UserResponseDto>> getUserInfo(
             @AuthenticationPrincipal CustomUserDetails user
             ) {
-        ResponseApi<UserRegisterResponseDto> response = userService.getUserInfo(user.getUserId());
+        ResponseApi<UserResponseDto> response = userService.getUserInfo(user.getUserId());
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/open-api/user/register")
-    public ResponseEntity<ResponseApi<UserRegisterResponseDto>> register(
+    public ResponseEntity<ResponseApi<UserResponseDto>> register(
             @Valid
             @RequestBody UserRequestDto request
     ) {
-        ResponseApi<UserRegisterResponseDto> response = userService.register(request);
+        ResponseApi<UserResponseDto> response = userService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 }

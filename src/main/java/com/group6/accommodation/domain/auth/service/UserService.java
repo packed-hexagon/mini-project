@@ -1,7 +1,7 @@
 package com.group6.accommodation.domain.auth.service;
 
 import com.group6.accommodation.domain.auth.model.dto.UserRequestDto;
-import com.group6.accommodation.domain.auth.model.dto.UserRegisterResponseDto;
+import com.group6.accommodation.domain.auth.model.dto.UserResponseDto;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.global.exception.error.AuthErrorCode;
@@ -21,15 +21,15 @@ public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public ResponseApi<UserRegisterResponseDto> getUserInfo(Long userId) {
+    public ResponseApi<UserResponseDto> getUserInfo(Long userId) {
         UserEntity result = userRepository.findById(userId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.NOT_FOUNT_USER_BY_USER_ID));
 
-        UserRegisterResponseDto response = UserRegisterResponseDto.toResponse(result);
+        UserResponseDto response = UserResponseDto.toResponse(result);
         return ResponseApi.success(HttpStatus.OK, response);
     }
 
-    public ResponseApi<UserRegisterResponseDto> register(UserRequestDto request) {
+    public ResponseApi<UserResponseDto> register(UserRequestDto request) {
         // 이메일 중복 확인
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AuthException(AuthErrorCode.ALREADY_EXIST_EMAIL);
@@ -42,7 +42,7 @@ public class UserService {
         String encryptedPassword = encodePassword(request.getPassword());
         UserEntity result = userRepository.save(request.toEntity(encryptedPassword));
 
-        UserRegisterResponseDto response = UserRegisterResponseDto.toResponse(result);
+        UserResponseDto response = UserResponseDto.toResponse(result);
         log.info("User Registered : {}", result);
 
         return ResponseApi.success(HttpStatus.CREATED, response);
