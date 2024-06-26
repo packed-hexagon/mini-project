@@ -1,6 +1,6 @@
 package com.group6.accommodation.domain.auth.service;
 
-import com.group6.accommodation.domain.auth.model.dto.UserRegisterRequestDto;
+import com.group6.accommodation.domain.auth.model.dto.UserRequestDto;
 import com.group6.accommodation.domain.auth.model.dto.UserRegisterResponseDto;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
@@ -29,7 +29,7 @@ public class UserService {
         return ResponseApi.success(HttpStatus.OK, response);
     }
 
-    public ResponseApi<UserRegisterResponseDto> register(UserRegisterRequestDto request) {
+    public ResponseApi<UserRegisterResponseDto> register(UserRequestDto request) {
         // 이메일 중복 확인
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AuthException(AuthErrorCode.ALREADY_EXIST_EMAIL);

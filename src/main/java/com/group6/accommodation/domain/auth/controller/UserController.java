@@ -1,6 +1,6 @@
 package com.group6.accommodation.domain.auth.controller;
 
-import com.group6.accommodation.domain.auth.model.dto.UserRegisterRequestDto;
+import com.group6.accommodation.domain.auth.model.dto.UserRequestDto;
 import com.group6.accommodation.domain.auth.model.dto.UserRegisterResponseDto;
 import com.group6.accommodation.domain.auth.service.UserService;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
@@ -34,7 +34,7 @@ public class UserController {
     @PostMapping("/open-api/user/register")
     public ResponseEntity<ResponseApi<UserRegisterResponseDto>> register(
             @Valid
-            @RequestBody UserRegisterRequestDto request
+            @RequestBody UserRequestDto request
     ) {
         ResponseApi<UserRegisterResponseDto> response = userService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
