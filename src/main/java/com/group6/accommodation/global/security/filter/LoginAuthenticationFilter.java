@@ -1,6 +1,7 @@
 package com.group6.accommodation.global.security.filter;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group6.accommodation.global.security.exception.dto.SecurityExceptionDto;
 import com.group6.accommodation.global.security.token.model.dto.LoginTokenRequestDto;
 import com.group6.accommodation.global.security.token.model.dto.LoginTokenResponseDto;
 import com.group6.accommodation.global.security.token.provider.TokenProvider;
@@ -9,6 +10,7 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -73,6 +75,19 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write("login failed");
+        response.setStatus(400);
+        response.setCharacterEncoding("utf-8");
+
+        Map<String, Object> message = new HashMap<>();
+
+        message.put("message",failed.getMessage());
+
+        SecurityExceptionDto<?> responseData = SecurityExceptionDto.builder()
+                .resultCode(HttpStatus.BAD_REQUEST.value())
+                .resultMessage(HttpStatus.BAD_REQUEST.getReasonPhrase())
+                .data(message)
+                .build();
+
+        response.getWriter().write(objectMapper.writeValueAsString(responseData));
     }
 }
