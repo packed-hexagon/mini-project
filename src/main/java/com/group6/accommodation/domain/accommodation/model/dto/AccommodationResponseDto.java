@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class AccommodationDto {
+public class AccommodationResponseDto {
 
     private Long id;
     private String title;
@@ -18,6 +18,10 @@ public class AccommodationDto {
     private String category;
     private String image;
     private String thumbnail;
+    private int price;
+    private double latitude;
+    private double longitude;
     private int likeCount;
+    private double rating;
 
 }

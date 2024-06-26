@@ -1,7 +1,7 @@
 package com.group6.accommodation.domain.likes.service;
 
 import com.group6.accommodation.domain.accommodation.converter.AccommodationConverter;
-import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDto;
+import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
@@ -94,7 +94,7 @@ public class UserLikeService {
         }
     }
 
-    public ResponseApi<PagedDto<AccommodationDto>> getLikedAccommodation(
+    public ResponseApi<PagedDto<AccommodationResponseDto>> getLikedAccommodation(
         Long userId, int page, int size
     ) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
@@ -113,7 +113,7 @@ public class UserLikeService {
 
         Page<AccommodationEntity> accommodationPage = accommodationRepository.findByIdIn(accommodationIds, pageRequest);
 
-        List<AccommodationDto> accommodationDtoList = accommodationConverter.toDtoList(accommodationPage.getContent());
+        List<AccommodationResponseDto> accommodationDtoList = accommodationConverter.toDtoList(accommodationPage.getContent());
 
         PagedDto pagedDto = new PagedDto<>(
             (int) accommodationPage.getTotalElements(),
