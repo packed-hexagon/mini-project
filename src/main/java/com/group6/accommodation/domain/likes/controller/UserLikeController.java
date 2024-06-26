@@ -56,4 +56,5 @@ public class UserLikeController {
         ResponseApi<PagedDto<AccommodationResponseDto>> response = userLikeService.getLikedAccommodation(1L, page, size);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
+
 }
