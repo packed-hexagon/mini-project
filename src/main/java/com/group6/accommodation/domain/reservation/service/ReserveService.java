@@ -84,9 +84,7 @@ public class ReserveService {
 
         ReservationEntity reservation = reservationRepository.save(reservationEntity);
 
-        ReserveResponseDto result = reservationConverter.toDto(reservation);
-
-        return result;
+        return reservationConverter.toDto(reservation);
     }
 
     @Transactional
@@ -105,20 +103,21 @@ public class ReserveService {
         reservation.getRoom().cancelRoom();
         reservation.setDeletedAt(Instant.now());
 
-        ReserveResponseDto result = reservationConverter.toDto(reservation);
-        return result;
+        return reservationConverter.toDto(reservation);
     }
 
 
     @Transactional(readOnly = true)
     public PagedDto<ReserveListItemDto> getList(Long userId, int page, int size, String directionStr) {
-        Sort.Direction direction = directionStr.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+        Sort.Direction direction =
+            directionStr.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
         Page<ReserveListItemDto> result = reservationRepository.findAllByUserId(userId,
             pageable).map(reservationConverter::reserveListItemToDto);
 
-        PagedDto<ReserveListItemDto> pagedDto = PagedDto.<ReserveListItemDto>builder()
+
+        return PagedDto.<ReserveListItemDto>builder()
             .totalElements((int) result.getTotalElements())
             .totalPages(result.getTotalPages())
             .size(result.getSize())
@@ -126,7 +125,5 @@ public class ReserveService {
             .content(result.getContent())
             .build();
 
-
-        return pagedDto;
     }
 }
