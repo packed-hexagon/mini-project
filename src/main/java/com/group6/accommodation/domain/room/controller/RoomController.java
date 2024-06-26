@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.room.controller;
 
 import com.group6.accommodation.domain.room.model.dto.AvailableRoomsReq;
+import com.group6.accommodation.domain.room.model.dto.AvailableRoomsRes;
 import com.group6.accommodation.domain.room.model.dto.RoomDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.service.RoomService;
@@ -49,11 +50,16 @@ public class RoomController {
 	}
 
 	@GetMapping("/accommodation/{id}/room/{roomId}/is-reservable")
-	public void availableRooms(
+	public Response<AvailableRoomsRes> availableRooms(
 		@PathVariable Long id,
 		@PathVariable Long roomId,
 		@RequestBody AvailableRoomsReq req
 	) {
-
+		AvailableRoomsRes availableRoomsRes = roomService.remainingRoom(req);
+		return Response.<AvailableRoomsRes>builder()
+			.resultCode(String.valueOf(HttpStatus.OK.value()))
+			.resultCode(HttpStatus.OK.name())
+			.data(availableRoomsRes)
+			.build();
 	}
 }

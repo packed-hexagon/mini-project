@@ -2,6 +2,7 @@ package com.group6.accommodation.domain.room.service;
 
 import com.group6.accommodation.domain.room.converter.RoomConverter;
 import com.group6.accommodation.domain.room.model.dto.AvailableRoomsReq;
+import com.group6.accommodation.domain.room.model.dto.AvailableRoomsRes;
 import com.group6.accommodation.domain.room.model.dto.RoomDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
@@ -37,9 +38,11 @@ public class RoomService {
 		return roomConverter.toDto(roomEntity);
 	}
 
-	public void remainingRoom(AvailableRoomsReq req) {
+	public AvailableRoomsRes remainingRoom(AvailableRoomsReq req) {
 		List<RoomEntity> roomEntitityList = roomRepository.findAvailableRooms(
 			req.getCheckIn(), req.getCheckOut()
 		);
+		if (roomEntitityList.isEmpty()) return AvailableRoomsRes.builder().isReservable(false).build();
+		return AvailableRoomsRes.builder().isReservable(true).build();
 	}
 }
