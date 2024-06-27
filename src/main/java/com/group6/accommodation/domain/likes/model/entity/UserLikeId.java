@@ -4,13 +4,16 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import java.io.Serializable;
 import java.util.Objects;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.Hibernate;
 
 @Getter
 @Setter
 @Embeddable
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserLikeId implements Serializable {
 	private static final long serialVersionUID = -3434089162790855360L;
 	@Column(name = "user_id", nullable = false)
@@ -33,6 +36,11 @@ public class UserLikeId implements Serializable {
 	@Override
 	public int hashCode() {
 		return Objects.hash(accommodationId, userId);
+	}
+
+	public UserLikeId(Long userId, Long accommodationId) {
+		this.userId = userId;
+		this.accommodationId = accommodationId;
 	}
 
 }
