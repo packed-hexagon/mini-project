@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Delete;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -34,7 +35,7 @@ public class UserLikeService {
     private final UserRepository userRepository;
 
     @Transactional
-    public ResponseApi<UserLikeResponseDto> addLike(
+    public UserLikeResponseDto addLike(
         Long accommodationId, Long userId
     ) {
         // 해당 숙박 정보가 있는지 확인
@@ -65,13 +66,12 @@ public class UserLikeService {
             userLikeRepository.save(addUserLike);
             accommodationRepository.incrementLikeCount(accommodationId);
 
-            var result =  UserLikeResponseDto.toDto(addUserLike);
-            return ResponseApi.success(HttpStatus.CREATED, result);
+            return UserLikeResponseDto.toDto(addUserLike);
         }
     }
 
     @Transactional
-    public ResponseApi<String> cancelLike(
+    public String cancelLike(
         Long accommodationId, long userId
     ) {
         // 해당 숙박 정보가 있는지 확인
@@ -88,13 +88,13 @@ public class UserLikeService {
         if (isExistUserLike.isPresent()) {
             userLikeRepository.delete(isExistUserLike.get());
             accommodationRepository.decrementLikeCount(accommodationId);
-            return ResponseApi.success(HttpStatus.NO_CONTENT, "Delete Success");
+            return "Delete Success";
         } else {
             throw new UserLikeException(UserLikeErrorCode.ACCOMMODATION_NOT_LIKED);
         }
     }
 
-    public ResponseApi<PagedDto<AccommodationResponseDto>> getLikedAccommodation(
+    public PagedDto<AccommodationResponseDto> getLikedAccommodation(
         Long userId, int page, int size
     ) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
@@ -123,6 +123,6 @@ public class UserLikeService {
             accommodationDtoList
         );
 
-        return ResponseApi.success(HttpStatus.OK, pagedDto);
+        return pagedDto;
     }
 }
