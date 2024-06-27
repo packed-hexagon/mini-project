@@ -110,36 +110,35 @@ public class AccommodationApiService {
     }
 
     private AccommodationEntity parseAccommodation(JsonNode itemNode) {
-        AccommodationEntity accommodation = new AccommodationEntity();
-        accommodation.setId(itemNode.path("contentid").asLong());
-        accommodation.setTitle(truncate(removeTextWithinBrackets(itemNode.path("title").asText()), 20));
-        accommodation.setAddress(itemNode.path("addr1").asText());
-        accommodation.setAddress2(itemNode.path("addr2").asText(""));
-        accommodation.setAreacode(itemNode.path("areacode").asText());
-        accommodation.setSigungucode(itemNode.path("sigungucode").asInt());
-        accommodation.setCategory(itemNode.path("cat3").asText());
+        Long id = itemNode.path("contentid").asLong();
+        String title = truncate(removeTextWithinBrackets(itemNode.path("title").asText()), 20);
+        String address = itemNode.path("addr1").asText();
+        String address2 = itemNode.path("addr2").asText("");
+        String areacode = itemNode.path("areacode").asText();
+        Integer sigungucode = itemNode.path("sigungucode").asInt();
+        String category = itemNode.path("cat3").asText();
 
         String firstImage = itemNode.path("firstimage").asText();
-        accommodation.setImage(firstImage.isEmpty() ? "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg" : firstImage);
+        String image = firstImage.isEmpty() ? "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg" : firstImage;
 
         String thumbnail = itemNode.path("firstimage2").asText();
-        accommodation.setThumbnail(thumbnail.isEmpty() ? "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg" : thumbnail);
+        String thumbnailImage = thumbnail.isEmpty() ? "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg" : thumbnail;
 
-        accommodation.setLatitude(itemNode.path("mapy").asDouble());
-        accommodation.setLongitude(itemNode.path("mapx").asDouble());
-        accommodation.setMlevel(itemNode.path("mlevel").asInt(0));
+        Double latitude = itemNode.path("mapy").asDouble();
+        Double longitude = itemNode.path("mapx").asDouble();
+        Integer mlevel = itemNode.path("mlevel").asInt(0);
 
         String tel = itemNode.path("tel").asText();
-        accommodation.setTel(tel.isEmpty() ? "010-1234-5678" : truncate(replaceTextWithinAngleBrackets(tel), 255));
+        String telNumber = tel.isEmpty() ? "010-1234-5678" : truncate(replaceTextWithinAngleBrackets(tel), 255);
 
-        int likeCount = userLikeRepository.countByAccommodationId(itemNode.path("contentid").asLong());
-        accommodation.setLikeCount(likeCount);
+        int likeCount = userLikeRepository.countByAccommodationId(id);
 
         double[] ratings = {2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
         Random random = new Random();
-        accommodation.setRating(ratings[random.nextInt(ratings.length)]);
+        double rating = ratings[random.nextInt(ratings.length)];
 
-        return accommodation;
+        return new AccommodationEntity(id, title, address, address2, areacode, sigungucode, category, image, thumbnailImage,
+                latitude, longitude, mlevel, telNumber, likeCount, rating);
     }
 
     private String removeTextWithinBrackets(String text) {
