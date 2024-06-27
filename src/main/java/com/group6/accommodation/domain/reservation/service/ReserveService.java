@@ -35,6 +35,8 @@ public class ReserveService {
 
     private final ReservationConverter reservationConverter;
 
+    private final int OVER_PRICE = 5000;
+
     @Transactional
     public ReserveResponseDto postReserve(Long userId, Long accommodationId, Long roomId,
         PostReserveRequestDto postReserveRequestDto) {
@@ -63,14 +65,21 @@ public class ReserveService {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
 
+        // 인원 수가 초과 되는지 확인
+        if(room.getRoomMaxCount() < postReserveRequestDto.getHeadcount()) {
+            throw new ReservationException(ReservationErrorCode.FULL_PEOPLE);
+        }
         
         // 금액 검증
-        int price = room.getRoomOffseasonMinfee1() * postReserveRequestDto.getHeadcount();
+        int price = room.getRoomOffseasonMinfee1();
+        int overCount = postReserveRequestDto.getHeadcount() - room.getRoomBaseCount();
+        for(int i = 0; i < overCount; i++) {
+            price += OVER_PRICE;
+        }
 
         if(price != postReserveRequestDto.getPrice()) {
             throw new ReservationException(ReservationErrorCode.NOT_MATCH_PRICE);
         }
-
 
         ReservationEntity reservationEntity = ReservationEntity.builder()
             .accommodation(accommodation)
