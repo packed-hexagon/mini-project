@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Getter
 @Builder
-public class UserRegisterResponseDto {
+public class UserResponseDto {
     private Long userId;
     private String email;
     private String name;
     private String phoneNumber;
 
-    public static UserRegisterResponseDto toResponse(UserEntity userEntity) {
-        return UserRegisterResponseDto.builder()
+    public static UserResponseDto toResponse(UserEntity userEntity) {
+        return UserResponseDto.builder()
                 .userId(userEntity.getId())
                 .name(userEntity.getName())
                 .email(userEntity.getEmail())

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group6.accommodation.domain.accommodation.config.OpenapiConfig;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
+import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.likes.repository.UserLikeRepository;
 import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
 import com.group6.accommodation.global.exception.type.AccommodationException;
@@ -38,18 +39,16 @@ public class AccommodationApiService {
     private final RestTemplate restTemplate;
     private final OpenapiConfig openapiConfig;
 
-
     private static final int NUM_OF_ROWS = 10;
 
-    @Cacheable("accommodations")
     public List<AccommodationEntity> fetchAllAccommodations() {
         try {
             int totalCount = getTotalCount();
             int totalPages = (int) Math.ceil((double) totalCount / NUM_OF_ROWS);
-            int testPages = 10;
+            // int testPages = 10;
 
             List<CompletableFuture<List<AccommodationEntity>>> futures = new ArrayList<>();
-            for (int pageNo = 1; pageNo <= testPages; pageNo++) {
+            for (int pageNo = 1; pageNo <= totalPages; pageNo++) {
                 futures.add(fetchAccommodationsAsync(pageNo));
             }
 
@@ -62,7 +61,8 @@ public class AccommodationApiService {
         }
     }
 
-    private int getTotalCount() throws URISyntaxException, JsonProcessingException {
+    // 현재 데이터의 총 개수를 받아오는 메서드
+    private int getTotalCount() {
         try {
             URI uri = new URI(openapiConfig.getBaseUrl() + "?serviceKey=" + openapiConfig.getApiKey() + "&numOfRows=1&pageNo=1&MobileOS=AND&MobileApp=TestApp&_type=json");
             ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
@@ -71,13 +71,14 @@ public class AccommodationApiService {
 
             if (statusCode == HttpStatus.OK) {
                 JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
-                // System.out.println("rootNode : " + rootNode);
                 return rootNode.path("response").path("body").path("totalCount").asInt();
             }
         } catch (URISyntaxException e) {
             throw new AccommodationException(AccommodationErrorCode.ERROR_URI); // URI가 잘못된 경우
         } catch (RestClientException e) {
             throw new AccommodationException(AccommodationErrorCode.ERROR_RESTEMPLATE); // RestTemplate 호출에 문제가 있는 경우
+        } catch (JsonProcessingException e) {
+            throw new AccommodationException(AccommodationErrorCode.ERROR_JSON_PARSING); // Json에 문제가 생겼을 경우
         }
         return 0;
     }

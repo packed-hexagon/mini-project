@@ -43,7 +43,7 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
             if (!request.getMethod().equals("POST")) {
                 throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
             }
-            LoginTokenRequestDto loginRequest = new ObjectMapper().readValue(request.getInputStream(),
+            LoginTokenRequestDto loginRequest = objectMapper.readValue(request.getInputStream(),
                     LoginTokenRequestDto.class);
 
             UsernamePasswordAuthenticationToken authRequest = new UsernamePasswordAuthenticationToken(

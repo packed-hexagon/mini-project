@@ -15,14 +15,12 @@ import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
-import com.group6.accommodation.global.util.ResponseApi;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,7 +36,7 @@ public class ReserveService {
     private final ReservationConverter reservationConverter;
 
     @Transactional
-    public ResponseApi<ReserveResponseDto> postReserve(Long userId, Long accommodationId, Long roomId,
+    public ReserveResponseDto postReserve(Long userId, Long accommodationId, Long roomId,
         PostReserveRequestDto postReserveRequestDto) {
 
         // 숙소가 있는지 검증
@@ -86,13 +84,11 @@ public class ReserveService {
 
         ReservationEntity reservation = reservationRepository.save(reservationEntity);
 
-        ReserveResponseDto result = reservationConverter.toDto(reservation);
-
-        return ResponseApi.success(HttpStatus.CREATED, result);
+        return reservationConverter.toDto(reservation);
     }
 
     @Transactional
-    public ResponseApi<ReserveResponseDto> cancelReserve(Long reservationId) {
+    public ReserveResponseDto cancelReserve(Long reservationId) {
 
         
         ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
@@ -107,20 +103,21 @@ public class ReserveService {
         reservation.getRoom().cancelRoom();
         reservation.setDeletedAt(Instant.now());
 
-        ReserveResponseDto result = reservationConverter.toDto(reservation);
-        return ResponseApi.success(HttpStatus.OK, result);
+        return reservationConverter.toDto(reservation);
     }
 
 
     @Transactional(readOnly = true)
-    public ResponseApi<PagedDto<ReserveListItemDto>> getList(Long userId, int page, int size, String directionStr) {
-        Sort.Direction direction = directionStr.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+    public PagedDto<ReserveListItemDto> getList(Long userId, int page, int size, String directionStr) {
+        Sort.Direction direction =
+            directionStr.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
         Page<ReserveListItemDto> result = reservationRepository.findAllByUserId(userId,
             pageable).map(reservationConverter::reserveListItemToDto);
 
-        PagedDto<ReserveListItemDto> pagedDto = PagedDto.<ReserveListItemDto>builder()
+
+        return PagedDto.<ReserveListItemDto>builder()
             .totalElements((int) result.getTotalElements())
             .totalPages(result.getTotalPages())
             .size(result.getSize())
@@ -128,7 +125,5 @@ public class ReserveService {
             .content(result.getContent())
             .build();
 
-
-        return ResponseApi.success(HttpStatus.OK, pagedDto);
     }
 }

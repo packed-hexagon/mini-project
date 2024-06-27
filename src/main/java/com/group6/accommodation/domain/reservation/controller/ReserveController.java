@@ -34,8 +34,8 @@ public class ReserveController {
         @PathVariable Long roomId,
         @RequestBody PostReserveRequestDto requestDto
     ) {
-        ResponseApi<ReserveResponseDto> responseData = reserveService.postReserve(user.getUserId(), accommodationId, roomId, requestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(responseData);
+        ReserveResponseDto responseData = reserveService.postReserve(user.getUserId(), accommodationId, roomId, requestDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ResponseApi.success(HttpStatus.CREATED, responseData));
     }
 
 
@@ -43,8 +43,8 @@ public class ReserveController {
     public ResponseEntity<ResponseApi<ReserveResponseDto>> cancelReserve(
         @PathVariable Long reservationId
     ) {
-        ResponseApi<ReserveResponseDto> responseData = reserveService.cancelReserve(reservationId);
-        return ResponseEntity.ok(responseData);
+        ReserveResponseDto responseData = reserveService.cancelReserve(reservationId);
+        return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, responseData));
     }
 
 
@@ -56,7 +56,7 @@ public class ReserveController {
         @RequestParam(name = "direction") String direction
 
     ) {
-        ResponseApi<PagedDto<ReserveListItemDto>> responseData = reserveService.getList(user.getUserId(), page, size, direction);
-        return ResponseEntity.ok(responseData);
+        PagedDto<ReserveListItemDto> responseData = reserveService.getList(user.getUserId(), page, size, direction);
+        return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, responseData));
     }
 }
