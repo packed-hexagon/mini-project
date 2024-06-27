@@ -3,11 +3,10 @@ package com.group6.accommodation.domain.reservation.converter;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
-import org.springframework.stereotype.Component;
 
-@Component
+
 public class ReservationConverter {
-    public ReserveListItemDto reserveListItemToDto(ReservationEntity reservation) {
+    public static ReserveListItemDto reserveListItemToDto(ReservationEntity reservation) {
         return ReserveListItemDto.builder()
             .id(reservation.getReservationId())
             .accommodationTitle(reservation.getAccommodation().getTitle())
@@ -22,7 +21,7 @@ public class ReservationConverter {
 
     }
 
-    public ReserveResponseDto toDto(ReservationEntity reservation) {
+    public static ReserveResponseDto toDto(ReservationEntity reservation) {
         return ReserveResponseDto.builder()
             .id(reservation.getReservationId())
             .userId(reservation.getUser().getId())
