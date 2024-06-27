@@ -33,25 +33,30 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-            String token = resolveBearerToken(request);
-            if (StringUtils.hasText(token) && tokenProvider.validateTokenClaim(token)) {
-                Authentication authentication = tokenProvider.getAuthentication(token);
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+        String token = resolveBearerToken(request);
 
-            filterChain.doFilter(request, response);
+        if (StringUtils.hasText(token) && tokenProvider.validateTokenClaim(token)) {
+            Authentication authentication = tokenProvider.getAuthentication(token);
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+
+        filterChain.doFilter(request, response);
     }
 
     private String resolveBearerToken(HttpServletRequest request) {
         String bearerToken = request.getHeader(AUTHORIZATION_HEADER);
-
-        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith(TOKEN_PREFIX)) {
+        try {
+            if (!StringUtils.hasText(bearerToken)) {
+                throw new AuthException(AuthErrorCode.EMPTY_TOKEN);
+            }
+            if (!bearerToken.startsWith(TOKEN_PREFIX)) {
+                throw new AuthException(AuthErrorCode.UNSUPPORTED_TOKEN_TYPE);
+            }
             return bearerToken.substring(TOKEN_PREFIX.length());
-        } else if (!StringUtils.hasText(bearerToken)) {
-            throw new AuthException(AuthErrorCode.EMPTY_TOKEN);
-        } else if (!bearerToken.startsWith(TOKEN_PREFIX)) {
-            throw new AuthException(AuthErrorCode.UNSUPPORTED_TOKEN_TYPE);
+        } catch (AuthException e) {
+            log.error("토큰 검증 실패 : {}", e.getMessage());
         }
-        throw new AuthException(AuthErrorCode.UNKNOWN_AUTH_ERROR);
+//        throw new AuthException(AuthErrorCode.UNKNOWN_AUTH_ERROR);
+        return null;
     }
 }

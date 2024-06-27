@@ -84,7 +84,7 @@ public class TokenProvider {
     }
 
 
-        public Authentication getAuthentication(String token) {
+    public Authentication getAuthentication(String token) {
         try {
             System.out.println(token);
             Claims claims = tokenParser(token);
@@ -96,6 +96,7 @@ public class TokenProvider {
 
             return new UsernamePasswordAuthenticationToken(customUserDetails, "", authorities);
         } catch (Exception e) {
+            log.error(AuthErrorCode.INVALID_TOKEN.getInfo());
             throw new AuthException(AuthErrorCode.INVALID_TOKEN);
         }
     }
@@ -114,12 +115,13 @@ public class TokenProvider {
             return true;
         } catch (Exception e) {
             if (e instanceof SignatureException) {
-                throw new AuthException(AuthErrorCode.INVALID_TOKEN);
+                log.error(AuthErrorCode.INVALID_TOKEN.getInfo());
             } else if (e instanceof ExpiredJwtException) {
-                throw new AuthException(AuthErrorCode.EXPIRED_TOKEN);
+                log.error(AuthErrorCode.EXPIRED_TOKEN.getInfo());
             } else {
-                throw new AuthException(AuthErrorCode.UNKNOWN_AUTH_ERROR);
+                log.error(AuthErrorCode.UNKNOWN_AUTH_ERROR.getInfo());
             }
         }
+        return false;
     }
 }

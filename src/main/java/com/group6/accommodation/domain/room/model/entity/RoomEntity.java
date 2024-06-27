@@ -120,11 +120,11 @@ public class RoomEntity {
 	@Column(name = "check_out", nullable = false)
 	private Instant checkOut;
 
-	public int reserveRoom() {
+	public int decrease() {
 		return --this.roomCount;
 	}
 
-	public void cancelRoom() {
+	public void increment() {
 		++this.roomCount;
 	}
 
