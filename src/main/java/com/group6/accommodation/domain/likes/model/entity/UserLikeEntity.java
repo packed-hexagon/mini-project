@@ -9,7 +9,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,26 +18,31 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 @Getter
-@Setter
 @Entity
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
 @Table(name = "user_like")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class UserLikeEntity {
 	@EmbeddedId
 	private UserLikeId id;
 
+	@Setter
 	@MapsId("userId")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "user_id", nullable = false)
 	private UserEntity user;
 
+	@Setter
 	@MapsId("accommodationId")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "accommodation_id", nullable = false)
 	private AccommodationEntity accommodation;
 
+	@Builder
+	public UserLikeEntity(UserLikeId id, UserEntity user, AccommodationEntity accommodation) {
+		this.id = id;
+		this.user = user;
+		this.accommodation = accommodation;
+	}
 }
