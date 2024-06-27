@@ -7,6 +7,7 @@ import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
 import com.group6.accommodation.domain.reservation.service.ReserveService;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.util.ResponseApi;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,7 @@ public class ReserveController {
         @AuthenticationPrincipal CustomUserDetails user,
         @PathVariable Long accommodationId,
         @PathVariable Long roomId,
+        @Valid
         @RequestBody PostReserveRequestDto requestDto
     ) {
         ReserveResponseDto responseData = reserveService.postReserve(user.getUserId(), accommodationId, roomId, requestDto);
