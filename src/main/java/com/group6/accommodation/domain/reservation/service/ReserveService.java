@@ -15,14 +15,12 @@ import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
-import com.group6.accommodation.global.util.ResponseApi;
 import java.time.Instant;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,10 +33,10 @@ public class ReserveService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
-    private final ReservationConverter reservationConverter;
+    private final int OVER_PRICE = 5000;
 
     @Transactional
-    public ResponseApi<ReserveResponseDto> postReserve(Long userId, Long accommodationId, Long roomId,
+    public ReserveResponseDto postReserve(Long userId, Long accommodationId, Long roomId,
         PostReserveRequestDto postReserveRequestDto) {
 
         // 숙소가 있는지 검증
@@ -61,18 +59,25 @@ public class ReserveService {
         }
 
         // 남는 객실이 있는지 검증
-        if(room.reserveRoom() < 0) {
+        if(room.decrease() < 0) {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
 
+        // 인원 수가 초과 되는지 확인
+        if(room.getRoomMaxCount() < postReserveRequestDto.getHeadcount()) {
+            throw new ReservationException(ReservationErrorCode.FULL_PEOPLE);
+        }
         
         // 금액 검증
-        int price = room.getRoomOffseasonMinfee1() * postReserveRequestDto.getHeadcount();
+        int price = room.getRoomOffseasonMinfee1();
+        int overCount = postReserveRequestDto.getHeadcount() - room.getRoomBaseCount();
+        for(int i = 0; i < overCount; i++) {
+            price += OVER_PRICE;
+        }
 
         if(price != postReserveRequestDto.getPrice()) {
             throw new ReservationException(ReservationErrorCode.NOT_MATCH_PRICE);
         }
-
 
         ReservationEntity reservationEntity = ReservationEntity.builder()
             .accommodation(accommodation)
@@ -86,15 +91,11 @@ public class ReserveService {
 
         ReservationEntity reservation = reservationRepository.save(reservationEntity);
 
-        ReserveResponseDto result = reservationConverter.toDto(reservation);
-
-        return ResponseApi.success(HttpStatus.CREATED, result);
+        return ReservationConverter.toDto(reservation);
     }
 
     @Transactional
-    public ResponseApi<ReserveResponseDto> cancelReserve(Long reservationId) {
-
-        
+    public ReserveResponseDto cancelReserve(Long reservationId) {
         ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
             () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
 
@@ -104,23 +105,24 @@ public class ReserveService {
         }
 
         // 예약 취소
-        reservation.getRoom().cancelRoom();
+        reservation.getRoom().increment();
         reservation.setDeletedAt(Instant.now());
 
-        ReserveResponseDto result = reservationConverter.toDto(reservation);
-        return ResponseApi.success(HttpStatus.OK, result);
+        return ReservationConverter.toDto(reservation);
     }
 
 
     @Transactional(readOnly = true)
-    public ResponseApi<PagedDto<ReserveListItemDto>> getList(Long userId, int page, int size, String directionStr) {
-        Sort.Direction direction = directionStr.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+    public PagedDto<ReserveListItemDto> getList(Long userId, int page, int size, String directionStr) {
+        Sort.Direction direction =
+            directionStr.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
         Page<ReserveListItemDto> result = reservationRepository.findAllByUserId(userId,
-            pageable).map(reservationConverter::reserveListItemToDto);
+            pageable).map(ReservationConverter::reserveListItemToDto);
 
-        PagedDto<ReserveListItemDto> pagedDto = PagedDto.<ReserveListItemDto>builder()
+
+        return PagedDto.<ReserveListItemDto>builder()
             .totalElements((int) result.getTotalElements())
             .totalPages(result.getTotalPages())
             .size(result.getSize())
@@ -128,7 +130,5 @@ public class ReserveService {
             .content(result.getContent())
             .build();
 
-
-        return ResponseApi.success(HttpStatus.OK, pagedDto);
     }
 }

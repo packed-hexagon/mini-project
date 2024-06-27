@@ -19,7 +19,7 @@ public class AccommodationController {
 
     private final AccommodationService accommodationService;
 
-    // 숙소 전체 조회
+    // 숙소 리스트 조회
     @GetMapping(path = "/accommodation")
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> readAllPaged(
             @RequestParam(defaultValue = "0") int page,
@@ -32,11 +32,16 @@ public class AccommodationController {
         // 임시 기본 사이즈 설정(전체일 경우 12, 종류/지역 선택별 조회일 경우 9)
         int customSize = (area == null && category == null) ? 12 : 9;
 
+        // 숙소 전체 조회
         if (area != null && category == null) {
             accommodationPage = accommodationService.findByAreaPaged(area, page, customSize);
-        } else if (category != null && area == null) {
+        }
+        // 숙소 종류별 조회
+        else if (category != null && area == null) {
             accommodationPage = accommodationService.findByCategoryPaged(category, page, customSize);
-        } else if (area == null && category == null){
+        }
+        // 숙소 지역별 조회
+        else if (area == null && category == null){
             accommodationPage = accommodationService.findAllPage(page, customSize);
         } else {
             throw new AccommodationException(

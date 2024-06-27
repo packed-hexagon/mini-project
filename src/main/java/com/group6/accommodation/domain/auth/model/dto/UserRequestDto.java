@@ -5,7 +5,8 @@ import jakarta.validation.constraints.*;
 import lombok.Getter;
 
 @Getter
-public class UserRegisterRequestDto {
+public class UserRequestDto {
+    
     @NotEmpty(message = "이메일은 필수 입력 항목입니다.")
     @Email(message = "이메일 형식에 맞게 입력해주세요.")
     private String email;

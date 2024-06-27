@@ -17,7 +17,8 @@ public enum Category {
     RESIDENCE("B02011300", "서비스드레지던스"),
     HANOK("B02011600", "한옥"),
     RESORT("A02020200", "리조트"),
-    TRAIN("A03020200", "수련원");
+    TRAIN("A03020200", "수련원"),
+    CAMP("A03021700", "캠핑장");
 
     private final String code;
     private final String name;
