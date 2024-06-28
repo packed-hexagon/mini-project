@@ -39,6 +39,7 @@ public class AccommodationConverter {
                 .title(accommodation.getTitle())
                 .address(accommodation.getAddress())
                 .address2(accommodation.getAddress2())
+                .area(Area.getNameByCode(accommodation.getAreacode()))
                 .category(Category.getNameByCode(accommodation.getCategory()))
                 .image(accommodation.getImage())
                 .thumbnail(accommodation.getThumbnail())

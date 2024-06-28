@@ -1,5 +1,6 @@
-package com.group6.accommodation.domain.accommodation.validation;
+package com.group6.accommodation.domain.accommodation.annotation.validator;
 
+import com.group6.accommodation.domain.accommodation.annotation.ValidArea;
 import com.group6.accommodation.domain.accommodation.model.enums.Area;
 import com.group6.accommodation.global.exception.type.AccommodationException;
 import jakarta.validation.ConstraintValidator;

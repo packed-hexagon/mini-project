@@ -1,5 +1,6 @@
-package com.group6.accommodation.domain.accommodation.validation;
+package com.group6.accommodation.domain.accommodation.annotation;
 
+import com.group6.accommodation.domain.accommodation.annotation.validator.CategoryValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
