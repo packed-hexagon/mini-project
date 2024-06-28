@@ -99,7 +99,7 @@ public class ReserveService {
         ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
             () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
 
-        // 이미 예약이 취소되어 있는 경우
+        // 이미 취소된 예약
         if(reservation.getDeletedAt() != null) {
             throw new ReservationException(ReservationErrorCode.ALREADY_CANCEL);
         }

@@ -3,10 +3,15 @@ package com.group6.accommodation.domain.reservation.service;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
+import com.group6.accommodation.global.exception.error.ReservationErrorCode;
+import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.model.dto.PagedDto;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +42,24 @@ class ReserveServiceTest {
 
     @Mock
     private ReservationRepository reservationRepository;
+
+    private ReservationEntity reservation;
+    private RoomEntity room;
+
+    @BeforeEach
+    void setUp() {
+        room = mock(RoomEntity.class);
+        reservation = ReservationEntity.builder()
+            .user(mock(UserEntity.class))
+            .room(room)
+            .accommodation(mock(AccommodationEntity.class))
+            .headcount(2)
+            .startDate(LocalDate.now().plusDays(1))
+            .endDate(LocalDate.now().plusDays(2))
+            .price(1000)
+            .build();
+    }
+
 
     @Test
     @DisplayName("모든 예약 정보 가져오기 - 성공")
@@ -80,7 +103,8 @@ class ReserveServiceTest {
             Page<ReservationEntity> page = new PageImpl<>(reservationEntities,
                 PageRequest.of(i, size, Sort.by(Sort.Direction.ASC, "createdAt")), count);
 
-            when(reservationRepository.findAllByUserId(userId, PageRequest.of(i, size, Sort.by(Sort.Direction.ASC, "createdAt"))))
+            when(reservationRepository.findAllByUserId(userId,
+                PageRequest.of(i, size, Sort.by(Sort.Direction.ASC, "createdAt"))))
                 .thenReturn(page);
 
             // when
@@ -95,9 +119,64 @@ class ReserveServiceTest {
             assertEquals(size, list.getSize());
         }
 
-
-        verify(reservationRepository, times(totalPage)).findAllByUserId(eq(userId), any(Pageable.class));
+        verify(reservationRepository, times(totalPage)).findAllByUserId(eq(userId),
+            any(Pageable.class));
     }
 
 
+    @Test
+    @DisplayName("예약 취소 - 성공")
+    public void cancelSuccessReservation() {
+
+        // given
+        Long reservationId = 1L;
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
+
+        // when
+        ReserveResponseDto result = reserveService.cancelReserve(reservationId);
+
+        // then
+        assertNotNull(result);
+        assertNotNull(reservation.getDeletedAt());
+
+        verify(room, times(1)).increment();
+        verify(reservationRepository, times(1)).findById(reservationId);
+    }
+
+
+    @Test
+    @DisplayName("에약 취소 - 이미 취소한 예약")
+    public void cancelAlreadyReserve() {
+
+        // given
+        Long reservationId = 1L;
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.of(reservation));
+        reservation.setDeletedAt(Instant.now());
+
+        // when
+
+        ReservationException exception = assertThrows(ReservationException.class,
+            () -> reserveService.cancelReserve(reservationId));
+
+        // then
+        assertEquals(ReservationErrorCode.ALREADY_CANCEL.getInfo(), exception.getInfo());
+        verify(room, never()).increment();
+        verify(reservationRepository, times(1)).findById(reservationId);
+    }
+
+    @Test
+    @DisplayName("예약 취소 - 예약 없음")
+    void cancelReserveNotFound() {
+        Long reservationId = 1L;
+
+        when(reservationRepository.findById(reservationId)).thenReturn(Optional.empty());
+
+        ReservationException exception = assertThrows(ReservationException.class,
+            () -> reserveService.cancelReserve(reservationId));
+
+        assertEquals(ReservationErrorCode.NOT_FOUND_RESERVATION.getInfo(), exception.getInfo());
+
+        verify(reservationRepository, times(1)).findById(reservationId);
+        verify(room, never()).increment();
+    }
 }
