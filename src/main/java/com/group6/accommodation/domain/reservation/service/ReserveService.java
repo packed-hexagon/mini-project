@@ -119,7 +119,17 @@ public class ReserveService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
         Page<ReserveListItemDto> result = reservationRepository.findAllByUserId(userId,
-            pageable).map(ReservationConverter::reserveListItemToDto);
+            pageable).map(item -> ReserveListItemDto.builder()
+            .id(item.getReservationId())
+            .accommodationTitle(item.getAccommodation().getTitle())
+            .roomTitle(item.getRoom().getRoomTitle())
+            .thumbnail(item.getAccommodation().getThumbnail())
+            .startDate(item.getStartDate())
+            .endDate(item.getEndDate())
+            .price(item.getPrice())
+            .createdAt(item.getCreatedAt())
+            .deletedAt(item.getDeletedAt())
+            .build());
 
 
         return PagedDto.<ReserveListItemDto>builder()
