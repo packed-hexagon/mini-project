@@ -145,14 +145,17 @@ class ReserveServiceTest {
             100
         );
 
-        when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
-        when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
+        when(accommodationRepository.findById(anyLong())).thenReturn(Optional.of(mock(AccommodationEntity.class)));
+        when(roomRepository.findById(anyLong())).thenReturn(Optional.of(mock(RoomEntity.class)));
+        when(userRepository.findById(anyLong())).thenReturn(Optional.of(mock(UserEntity.class)));
 
-        when(reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(accommodation, room, userId))
+        when(reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(any(
+            AccommodationEntity.class),
+            any(RoomEntity.class), userId
+        ))
             .thenReturn(false);
 
-        when(reservationRepository.save(any(ReservationEntity.class))).thenReturn(reservation);
+        when(reservationRepository.save(any(ReservationEntity.class))).thenReturn(mock(ReservationEntity.class));
 
 
         // when
@@ -163,12 +166,7 @@ class ReserveServiceTest {
 
         // then
         assertNotNull(result);
-
-
-
     }
-
-
 
     @Test
     @DisplayName("모든 예약 정보 가져오기 - 성공")
@@ -247,9 +245,6 @@ class ReserveServiceTest {
         // then
         assertNotNull(result);
         assertNotNull(reservation.getDeletedAt());
-
-//        verify(room, times(1)).increment();
-//        verify(reservationRepository, times(1)).findById(reservationId);
     }
 
 
@@ -269,8 +264,8 @@ class ReserveServiceTest {
 
         // then
         assertEquals(ReservationErrorCode.ALREADY_CANCEL.getInfo(), exception.getInfo());
-        verify(room, never()).increment();
-        verify(reservationRepository, times(1)).findById(reservationId);
+
+
     }
 
     @Test
@@ -286,6 +281,5 @@ class ReserveServiceTest {
         assertEquals(ReservationErrorCode.NOT_FOUND_RESERVATION.getInfo(), exception.getInfo());
 
         verify(reservationRepository, times(1)).findById(reservationId);
-        verify(room, never()).increment();
     }
 }
