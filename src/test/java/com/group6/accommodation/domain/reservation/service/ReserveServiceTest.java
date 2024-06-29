@@ -65,108 +65,103 @@ class ReserveServiceTest {
     @BeforeEach
     void setUp() {
         accommodation = AccommodationEntity.builder()
-            .title("Sample Accommodation")
-            .address("123 Main St")
-            .address2("Apt 101")
-            .areacode("12345")
-            .sigungucode(123)
-            .category("Hotel")
-            .image("sample_image.jpg")
-            .thumbnail("sample_thumbnail.jpg")
-            .latitude(37.123456)
-            .longitude(-122.654321)
-            .mlevel(5)
-            .tel("123-456-7890")
-            .likeCount(100)
-            .rating(4.5)
-            .build();
+                .title("Sample Accommodation")
+                .address("123 Main St")
+                .address2("Apt 101")
+                .areacode("12345")
+                .sigungucode(123)
+                .category("Hotel")
+                .image("sample_image.jpg")
+                .thumbnail("sample_thumbnail.jpg")
+                .latitude(37.123456)
+                .longitude(-122.654321)
+                .mlevel(5)
+                .tel("123-456-7890")
+                .likeCount(100)
+                .rating(4.5)
+                .build();
 
         room = RoomEntity.builder()
-            .accommodation(accommodation)
-            .roomTitle("Deluxe Room")
-            .roomSize(30)
-            .roomCount(2)
-            .roomBaseCount(2)
-            .roomMaxCount(4)
-            .roomOffseasonMinfee1(100)
-            .roomOffseasonMinfee2(120)
-            .roomPeakseasonMinfee1(200)
-            .roomPeakseasonMinfee2(220)
-            .roomIntro("A beautiful deluxe room")
-            .roomBath("Y")
-            .roomHometheater("Y")
-            .roomAircondition("Y")
-            .roomTv("Y")
-            .roomPc("Y")
-            .roomCable("Y")
-            .roomInternet("Y")
-            .roomRefrigerator("Y")
-            .roomToiletries("Y")
-            .roomSofa("Y")
-            .roomCook("Y")
-            .roomTable("Y")
-            .roomHairdryer("Y")
-            .roomImg1("img1.jpg")
-            .roomImg2("img2.jpg")
-            .roomImg3("img3.jpg")
-            .roomImg4("img4.jpg")
-            .roomImg5("img5.jpg")
-            .checkIn(Instant.now())
-            .checkOut(Instant.now().plus(1, ChronoUnit.DAYS))
-            .build();
-
-
-
-
+                .accommodation(accommodation)
+                .roomTitle("Deluxe Room")
+                .roomSize(30)
+                .roomCount(2)
+                .roomBaseCount(2)
+                .roomMaxCount(4)
+                .roomOffseasonMinfee1(100)
+                .roomOffseasonMinfee2(120)
+                .roomPeakseasonMinfee1(200)
+                .roomPeakseasonMinfee2(220)
+                .roomIntro("A beautiful deluxe room")
+                .roomBath("Y")
+                .roomHometheater("Y")
+                .roomAircondition("Y")
+                .roomTv("Y")
+                .roomPc("Y")
+                .roomCable("Y")
+                .roomInternet("Y")
+                .roomRefrigerator("Y")
+                .roomToiletries("Y")
+                .roomSofa("Y")
+                .roomCook("Y")
+                .roomTable("Y")
+                .roomHairdryer("Y")
+                .roomImg1("img1.jpg")
+                .roomImg2("img2.jpg")
+                .roomImg3("img3.jpg")
+                .roomImg4("img4.jpg")
+                .roomImg5("img5.jpg")
+                .checkIn(Instant.now())
+                .checkOut(Instant.now().plus(1, ChronoUnit.DAYS))
+                .build();
 
         reservation = ReservationEntity.builder()
-            .user(mock(UserEntity.class))
-            .room(room)
-            .accommodation(accommodation)
-            .headcount(2)
-            .startDate(LocalDate.now().plusDays(1))
-            .endDate(LocalDate.now().plusDays(2))
-            .price(100)
-            .build();
+                .user(mock(UserEntity.class))
+                .room(room)
+                .accommodation(accommodation)
+                .headcount(2)
+                .startDate(LocalDate.now().plusDays(1))
+                .endDate(LocalDate.now().plusDays(2))
+                .price(100)
+                .build();
     }
-
 
     @Test
     @DisplayName("예약 하기 - 성공")
     public void reserveSuccess() {
         // given
         Long userId = 1L;
-        Long accommodationId = 2L;
-        Long roomId = 3L;
+        Long accommodationId = accommodation.getId();
+        Long roomId = room.getRoomId();
         PostReserveRequestDto requestDto = new PostReserveRequestDto(
-            2,
-            LocalDate.now().plusDays(1),
-            LocalDate.now().plusDays(2),
-            100
+                2,
+                LocalDate.now().plusDays(1),
+                LocalDate.now().plusDays(2),
+                100
         );
 
-        when(accommodationRepository.findById(anyLong())).thenReturn(Optional.of(mock(AccommodationEntity.class)));
-        when(roomRepository.findById(anyLong())).thenReturn(Optional.of(mock(RoomEntity.class)));
-        when(userRepository.findById(anyLong())).thenReturn(Optional.of(mock(UserEntity.class)));
+        when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
+        when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
 
-        when(reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(any(
-            AccommodationEntity.class),
-            any(RoomEntity.class), userId
-        ))
-            .thenReturn(false);
+        when(reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(
+                accommodation,
+                room,
+                userId
+        )).thenReturn(false);
 
-        when(reservationRepository.save(any(ReservationEntity.class))).thenReturn(mock(ReservationEntity.class));
 
+        when(reservationRepository.save(any(ReservationEntity.class))).thenReturn(reservation);
 
         // when
-        ReserveResponseDto result = reserveService.postReserve(userId, accommodationId,
-            roomId, requestDto);
-
-
+        ReserveResponseDto result = reserveService.postReserve(userId, accommodationId, roomId, requestDto);
 
         // then
         assertNotNull(result);
+        assertEquals(accommodationId, result.getAccommodationId());
+        assertEquals(roomId, result.getRoomId());
     }
+
 
     @Test
     @DisplayName("모든 예약 정보 가져오기 - 성공")
