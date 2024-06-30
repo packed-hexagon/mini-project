@@ -1,5 +1,6 @@
 package com.group6.accommodation.domain.accommodation.service;
 
+import com.group6.accommodation.domain.room.service.ApiProcessRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -10,11 +11,19 @@ import java.util.List;
 public class DatabaseInitializationService {
 
     private final ApiProcessService apiProcessService;
+    private final ApiProcessRoomService apiProcessRoomService;
 
     public void initializeDatabase() {
         if (apiProcessService.isDatabaseEmpty()) {
             try {
                 apiProcessService.processAccommodations();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        if (apiProcessRoomService.isDatabaseEmpty()) {
+            try {
+                apiProcessRoomService.processRooms();
             } catch (Exception e) {
                 e.printStackTrace();
             }

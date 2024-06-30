@@ -3,20 +3,24 @@ package com.group6.accommodation.domain.room.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group6.accommodation.domain.accommodation.config.OpenapiConfig;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
-import com.group6.accommodation.domain.room.config.OpenapiConfig;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.global.exception.error.RoomErrorCode;
 import com.group6.accommodation.global.exception.type.RoomException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.DateTimeException;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -29,6 +33,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class RoomApiService {
 
 	private final AccommodationRepository accommodationRepository;
@@ -36,19 +41,17 @@ public class RoomApiService {
 	private final RestTemplate restTemplate;
 	private final OpenapiConfig openapiConfig;
 
-	private static final int NUM_OF_ROWS = 10;
+	private static final int CONTENT_TYPE_ID = 32;
 
-	// 토탈 카운트 = 객실 갯수
 	@Cacheable("rooms")
 	public List<RoomEntity> fetchAllRooms() {
 		try {
-			int totalCount = getTotalCount();
-			int totalPages = (int) Math.ceil((double) totalCount / NUM_OF_ROWS);
-			int testPages = 10;
+			List<AccommodationEntity> accommodationEntities = accommodationRepository.findAll();
 
 			List<CompletableFuture<List<RoomEntity>>> futures = new ArrayList<>();
-			for (int pageNo = 1; pageNo <= testPages; pageNo++) {
-				futures.add(fetchRoomsAsync(pageNo));
+			for (AccommodationEntity accommodation : accommodationEntities) {
+				int contentId = Math.toIntExact(accommodation.getId());
+				futures.add(fetchRoomsAsync(contentId));
 			}
 
 			return futures.stream()
@@ -60,33 +63,12 @@ public class RoomApiService {
 		}
 	}
 
-	private int getTotalCount() throws URISyntaxException, JsonProcessingException {
-		try {
-			URI uri = new URI(
-				openapiConfig.getBaseUrlRoom() + "?serviceKey=" + openapiConfig.getApiKey()
-					+ "&numOfRows=1&pageNo=1&MobileOS=ETC&MobileApp=AppTest&_type=json");
-			ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
-
-			HttpStatusCode statusCode = responseEntity.getStatusCode();
-
-			if (statusCode == HttpStatus.OK) {
-				JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
-
-				return rootNode.path("response").path("body").path("totalCount").asInt();
-			}
-		} catch (URISyntaxException e) {
-			throw new RoomException(RoomErrorCode.ERROR_URI);
-		} catch (RestClientException e) {
-			throw new RoomException(RoomErrorCode.ERROR_RESTTEMPLATE);
-		}
-		return 0;
-	}
-
 	@Async
 	@Retryable(value = RestClientException.class, maxAttempts = 3)
-	public CompletableFuture<List<RoomEntity>> fetchRoomsAsync(int pageNo) {
+	public CompletableFuture<List<RoomEntity>> fetchRoomsAsync(int contentId) {
 		try {
-			URI uri = new URI(openapiConfig.getBaseUrlRoom() + "?serviceKey=" + openapiConfig.getApiKey() + "&numOfRows=" + NUM_OF_ROWS + "&pageNo=" + pageNo + "&MobileOS=AND&MobileApp=TestApp&_type=json");
+			URI uri = new URI(openapiConfig.getBaseUrlRoom() + "?ServiceKey=" + openapiConfig.getApiKey()
+				+ "&contentTypeId=" + CONTENT_TYPE_ID + "&contentId=" + contentId + "&MobileOS=AND&MobileApp=TestApp&_type=json");
 			ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
 
 			if (responseEntity.getStatusCode() == HttpStatus.OK) {
@@ -150,6 +132,10 @@ public class RoomApiService {
 		room.setRoomImg4(roomImg4.isEmpty() ? "https://cdn.visitkorea.or.kr/img/call?cmd=VIEW&id=d1fb95bd-40c2-41fc-b2a6-a8c71fb8b08b" : roomImg4);
 		String roomImg5 = itemNode.path("roomimg5").asText();
 		room.setRoomImg5(roomImg5.isEmpty() ? "https://cdn.visitkorea.or.kr/img/call?cmd=VIEW&id=3167c790-0aec-4541-b44b-eebb12fba2c4" : roomImg5);
+
+		Instant now = Instant.now();
+		room.setCheckIn(now);
+		room.setCheckOut(now.plusSeconds(3600));
 
 		return room;
 	}

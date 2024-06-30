@@ -2,6 +2,8 @@ package com.group6.accommodation.domain.room.service;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
+import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
+import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
 import com.group6.accommodation.domain.room.converter.RoomConverter;
 import com.group6.accommodation.domain.room.model.dto.AvailableRoomsReq;
 import com.group6.accommodation.domain.room.model.dto.AvailableRoomsRes;
@@ -24,6 +26,7 @@ public class RoomService {
 	private final RoomRepository roomRepository;
 	private final RoomConverter roomConverter;
 	private final AccommodationRepository accommodationRepository;
+	private final ReservationRepository reservationRepository;
 
 	public void saveRooms(List<RoomEntity> rooms) {
 		for (RoomEntity room : rooms) {
@@ -61,6 +64,8 @@ public class RoomService {
 				existing.setRoomImg3(room.getRoomImg3());
 				existing.setRoomImg4(room.getRoomImg4());
 				existing.setRoomImg5(room.getRoomImg5());
+				existing.setCheckIn(room.getCheckIn());
+				existing.setCheckOut(room.getCheckOut());
 
 				roomRepository.save(existing);
 			} else {
@@ -71,33 +76,45 @@ public class RoomService {
 
 	public ResponseApi<List<RoomDto>> findByAccommodationId(Long accommodationId) {
 
+		// 숙소 검증
 		List<RoomEntity> roomEntityList = roomRepository.findByAccommodation_Id(accommodationId);
 		if (roomEntityList.isEmpty()) {
 			throw new RoomException(RoomErrorCode.NOT_FOUND_ACCOMMODATION);
 		}
+
 		List<RoomDto> roomDtoList = roomConverter.toDtoList(roomEntityList);
 		return ResponseApi.success(HttpStatus.OK, roomDtoList);
 	}
 
 	public ResponseApi<RoomDto> findByAccommodationIdAndRoomId(Long accommodationId, Long roomId) {
 
+		// 숙소 검증
+		List<RoomEntity> roomEntityList = roomRepository.findByAccommodation_Id(accommodationId);
+		if (roomEntityList.isEmpty()) {
+			throw new RoomException(RoomErrorCode.NOT_FOUND_ACCOMMODATION);
+		}
+
+		// 객실 검증
 		RoomEntity roomEntity = roomRepository.findByAccommodation_IdAndRoomId(accommodationId, roomId)
 			.orElseThrow(() -> new RoomException(RoomErrorCode.NOT_FOUND_ROOM));
+
 		RoomDto roomDto = roomConverter.toDto(roomEntity);
 		return ResponseApi.success(HttpStatus.OK, roomDto);
 	}
 
 	public AvailableRoomsRes availableRooms(AvailableRoomsReq req, Long accommodationId, Long roomId) {
 
+		// 숙소 검증
 		List<RoomEntity> roomEntityList = roomRepository.findByAccommodation_Id(accommodationId);
 		if (roomEntityList.isEmpty()) {
 			throw new RoomException(RoomErrorCode.NOT_FOUND_ACCOMMODATION);
 		}
 
-		List<RoomEntity> roomEntitityList = roomRepository.findAvailableRooms(
-			req.getCheckIn(), req.getCheckOut()
+		Optional<ReservationEntity> reservationEntity = reservationRepository.findByStartDateBeforeOrEndDateAfter(
+			req.getCheckOut(), req.getCheckIn()
 		);
-		if (roomEntitityList.isEmpty()) return AvailableRoomsRes.builder().isReservable(false).build();
-		return AvailableRoomsRes.builder().isReservable(true).build();
+
+		if (reservationEntity.isEmpty()) return AvailableRoomsRes.builder().isReservable(true).build();
+		return AvailableRoomsRes.builder().isReservable(false).build();
 	}
 }
