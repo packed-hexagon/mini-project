@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 public class UserLikeEntityTest {
 
     @Test
-    public void testBuiler() {
+    public void testBuilder() {
         UserEntity user = new UserEntity();
         user.setId(1L);
 
