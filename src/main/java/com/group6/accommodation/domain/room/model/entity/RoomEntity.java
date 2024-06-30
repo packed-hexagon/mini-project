@@ -58,7 +58,7 @@ public class RoomEntity {
 	private Integer roomPeakseasonMinfee2;
 
 	@Lob
-	@Column(name = "room_intro")
+	@Column(name = "room_intro", columnDefinition = "TEXT")
 	private String roomIntro;
 
 	@Column(name = "room_bath", length = 32)
