@@ -14,7 +14,7 @@ public class ScheduledTasks {
     private final ApiProcessRoomService apiProcessRoomService;
 
     // 매일 오전 6시 실행
-    // @Scheduled(cron = "0 0 6 * * ?")
+    @Scheduled(cron = "0 0 6 * * ?")
     public void updateAccommodations() {
         try {
             apiProcessService.processAccommodations();
@@ -23,7 +23,7 @@ public class ScheduledTasks {
         }
     }
 
-    //@Scheduled(cron = "0 0 6 * * ?")
+    @Scheduled(cron = "0 0 6 * * ?")
     public void updateRooms() {
         try {
             apiProcessRoomService.processRooms();

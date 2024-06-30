@@ -1,5 +1,6 @@
 package com.group6.accommodation.domain.room.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group6.accommodation.domain.accommodation.config.OpenapiConfig;
@@ -9,6 +10,7 @@ import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.global.exception.error.RoomErrorCode;
 import com.group6.accommodation.global.exception.type.RoomException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -40,14 +42,12 @@ public class RoomApiService {
 	@Cacheable("rooms")
 	public List<RoomEntity> fetchAllRooms() {
 		try {
-			List<AccommodationEntity> accommodationEntities = accommodationRepository.findAll();
-
+			List<AccommodationEntity> accommodationEntities = accommodationRepository.findAll().subList(0, 50);
 			List<CompletableFuture<List<RoomEntity>>> futures = new ArrayList<>();
 			for (AccommodationEntity accommodation : accommodationEntities) {
 				int contentId = Math.toIntExact(accommodation.getId());
 				futures.add(fetchRoomsAsync(contentId));
 			}
-
 			return futures.stream()
 				.map(CompletableFuture::join)
 				.flatMap(List::stream)
@@ -61,7 +61,7 @@ public class RoomApiService {
 	@Retryable(value = RestClientException.class, maxAttempts = 3)
 	public CompletableFuture<List<RoomEntity>> fetchRoomsAsync(int contentId) {
 		try {
-			URI uri = new URI(openapiConfig.getBaseUrlRoom() + "?ServiceKey=" + openapiConfig.getApiKey()
+			URI uri = new URI(openapiConfig.getBaseUrlRoom() + "?serviceKey=" + openapiConfig.getApiKey()
 				+ "&contentTypeId=" + CONTENT_TYPE_ID + "&contentId=" + contentId + "&MobileOS=AND&MobileApp=TestApp&_type=json");
 			ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
 
@@ -79,10 +79,12 @@ public class RoomApiService {
 				return CompletableFuture.completedFuture(rooms);
 			}
 
-			return CompletableFuture.completedFuture(Collections.emptyList());
-		} catch (Exception e) {
-			throw new RoomException(RoomErrorCode.NOT_FOUND_DATA_PAGE);
+		} catch (URISyntaxException exception) {
+			throw new RoomException(RoomErrorCode.ERROR_URI);
+		} catch (JsonProcessingException exception) {
+			throw new RoomException(RoomErrorCode.JSON_PARSE_ERROR);
 		}
+		return CompletableFuture.completedFuture(Collections.emptyList());
 	}
 
 	private RoomEntity parseRoom(JsonNode itemNode) {

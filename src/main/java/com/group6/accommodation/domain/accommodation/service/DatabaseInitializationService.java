@@ -14,13 +14,7 @@ public class DatabaseInitializationService {
     private final ApiProcessRoomService apiProcessRoomService;
 
     public void initializeDatabase() {
-        if (apiProcessService.isDatabaseEmpty()) {
-            try {
-                apiProcessService.processAccommodations();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+
         if (apiProcessRoomService.isDatabaseEmpty()) {
             try {
                 apiProcessRoomService.processRooms();
@@ -28,6 +22,15 @@ public class DatabaseInitializationService {
                 e.printStackTrace();
             }
         }
+
+        if (apiProcessService.isDatabaseEmpty()) {
+            try {
+                apiProcessService.processAccommodations();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
 
     }
 }
