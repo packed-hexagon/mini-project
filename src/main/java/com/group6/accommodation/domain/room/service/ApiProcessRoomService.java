@@ -6,8 +6,10 @@ import com.group6.accommodation.domain.room.repository.RoomRepository;
 import java.net.URISyntaxException;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ApiProcessRoomService {
@@ -18,6 +20,7 @@ public class ApiProcessRoomService {
 
 	public void processRooms() throws URISyntaxException, JsonProcessingException {
 		List<RoomEntity> rooms = roomApiService.fetchAllRooms();
+		log.info("Fetched : {}", rooms.size());
 		roomService.saveRooms(rooms);
 	}
 
