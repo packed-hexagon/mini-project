@@ -42,7 +42,7 @@ public class RoomApiService {
 	@Cacheable("rooms")
 	public List<RoomEntity> fetchAllRooms() {
 		try {
-			List<AccommodationEntity> accommodationEntities = accommodationRepository.findAll().subList(0, 1000);
+			List<AccommodationEntity> accommodationEntities = accommodationRepository.findAll().subList(0, 100);
 			List<CompletableFuture<List<RoomEntity>>> futures = new ArrayList<>();
 			for (AccommodationEntity accommodation : accommodationEntities) {
 				int contentId = Math.toIntExact(accommodation.getId());
