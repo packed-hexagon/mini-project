@@ -9,6 +9,8 @@ import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResp
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.model.enums.Area;
 import com.group6.accommodation.domain.accommodation.model.enums.Category;
+import com.group6.accommodation.domain.room.model.entity.RoomEntity;
+import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
 import com.group6.accommodation.global.exception.type.AccommodationException;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +29,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccommodationConverter {
 
-    private final ObjectMapper objectMapper;
-    private final RestTemplate restTemplate;
-    private final OpenapiConfig openapiConfig;
+    private final RoomRepository roomRepository;
 
     public AccommodationResponseDto toDto(AccommodationEntity accommodation) {
         int minPrice = getMinRoomPrice(accommodation.getId());
@@ -39,6 +39,7 @@ public class AccommodationConverter {
                 .title(accommodation.getTitle())
                 .address(accommodation.getAddress())
                 .address2(accommodation.getAddress2())
+                .area(Area.getNameByCode(accommodation.getAreacode()))
                 .category(Category.getNameByCode(accommodation.getCategory()))
                 .image(accommodation.getImage())
                 .thumbnail(accommodation.getThumbnail())
@@ -78,48 +79,17 @@ public class AccommodationConverter {
     }
 
     private int getMinRoomPrice(Long accommodationId) {
-        int tempPrice = 150000;
-        try {
-            URI uri = new URI(openapiConfig.getBaseUrlRoom() + "?serviceKey=" + openapiConfig.getApiKey() + "&contentTypeId=32&contentId=" + accommodationId + "&MobileOS=ETC&MobileApp=TestApp&_type=json");
-            ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
+        List<RoomEntity> byAccommodationId = roomRepository.findByAccommodation_Id(accommodationId);
+        int minPrice = Integer.MAX_VALUE;
 
-            if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                String responseBody = responseEntity.getBody();
-                JsonNode rootNode = objectMapper.readTree(responseBody);
-                JsonNode itemsNode = rootNode.path("response").path("body").path("items").path("item");
-
-                // 객실 정보 자체가 존재하는지
-                if (itemsNode.isArray()) {
-                    int minPrice = Integer.MAX_VALUE;
-
-                    for (JsonNode itemNode : itemsNode) {
-                        int roomPrice = itemNode.path("roomoffseasonminfee1").asInt();
-
-                        if (roomPrice < minPrice) {
-                            minPrice = roomPrice;
-                        }
-                    }
-
-                    // 가격 정보가 0 으로만 존재한다면
-                    if (minPrice == 0) {
-                        return tempPrice;
-                    } else {
-                        return minPrice;
-                    }
-                }
-                // 객실 정보가 존재하지 않으면 임시 가격
-                else {
-                    return tempPrice;
-                }
-            }
-        } catch (URISyntaxException e) {
-            throw new AccommodationException(AccommodationErrorCode.ERROR_URI); // URI가 잘못된 경우
-        } catch (RestClientException e) {
-            throw new AccommodationException(AccommodationErrorCode.ERROR_RESTEMPLATE); // RestTemplate 호출에 문제가 있는 경우
-        } catch (JsonProcessingException e) {
-            throw new AccommodationException(AccommodationErrorCode.ERROR_JSON_PARSING); // Json에 문제가 생겼을 경우
+        if(byAccommodationId.isEmpty()) {
+            return 999;
         }
-
-        return tempPrice;
+        for(RoomEntity room : byAccommodationId) {
+            if(minPrice > room.getRoomOffseasonMinfee1()) {
+                minPrice = room.getRoomOffseasonMinfee1();
+            }
+        }
+        return minPrice;
     }
 }

@@ -3,13 +3,15 @@ package com.group6.accommodation.domain.accommodation.model.entity;
 import com.group6.accommodation.domain.accommodation.model.enums.Area;
 import com.group6.accommodation.domain.accommodation.model.enums.Category;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Getter
-@Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "accommodation")
 public class AccommodationEntity {
 	@Id
@@ -57,5 +59,26 @@ public class AccommodationEntity {
 
 	@Column(name = "rating")
 	private Double rating;
+
+	@Builder
+	public AccommodationEntity(Long id, String title, String address, String address2, String areacode, Integer sigungucode,
+							   String category, String image, String thumbnail, Double latitude, Double longitude,
+							   Integer mlevel, String tel, Integer likeCount, Double rating) {
+		this.id = id;
+		this.title = title;
+		this.address = address;
+		this.address2 = address2;
+		this.areacode = areacode;
+		this.sigungucode = sigungucode;
+		this.category = category;
+		this.image = image;
+		this.thumbnail = thumbnail;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.mlevel = mlevel;
+		this.tel = tel;
+		this.likeCount = likeCount;
+		this.rating = rating;
+	}
 
 }
