@@ -15,9 +15,20 @@ services:
     volumes:
       - db-data:/var/lib/mysql
 
+
+  redis:
+    image: redis
+    restart: always
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+
+
   app:
     image: fastcampusgroup6/accommodation
     container_name: spring-boot-app
+    restart: always
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/accommodation?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true

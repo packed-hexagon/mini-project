@@ -5,6 +5,7 @@ import com.group6.accommodation.domain.likes.model.dto.UserLikeResponseDto;
 import com.group6.accommodation.domain.likes.service.UserLikeService;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
+import com.group6.accommodation.global.util.Response;
 import com.group6.accommodation.global.util.ResponseApi;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -32,8 +33,9 @@ public class UserLikeController {
         @AuthenticationPrincipal CustomUserDetails user
     ) {
         var loginUserId = user.getUserId();
-        ResponseApi<UserLikeResponseDto> response = userLikeService.addLike(accommodationID, loginUserId);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        UserLikeResponseDto response = userLikeService.addLike(accommodationID, loginUserId);
+        ResponseApi<UserLikeResponseDto> result = ResponseApi.success(HttpStatus.CREATED, response);
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     // 숙박시설 찜 삭제하기
@@ -43,8 +45,10 @@ public class UserLikeController {
         @AuthenticationPrincipal CustomUserDetails user
     ) {
         var loginUserId = user.getUserId();
-        ResponseApi<String> response = userLikeService.cancelLike(accommodationID, loginUserId);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        String response = userLikeService.cancelLike(accommodationID, loginUserId);
+        ResponseApi<String> result = ResponseApi.success(HttpStatus.NO_CONTENT, response);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     // 찜한 숙박 목록
@@ -55,7 +59,10 @@ public class UserLikeController {
         @RequestParam(name = "size", defaultValue = "5") int size
     ) {
         var loginUserId = user.getUserId();
-        ResponseApi<PagedDto<AccommodationResponseDto>> response = userLikeService.getLikedAccommodation(loginUserId, page, size);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        PagedDto<AccommodationResponseDto> response = userLikeService.getLikedAccommodation(loginUserId, page, size);
+        ResponseApi<PagedDto<AccommodationResponseDto>> result = ResponseApi.success(HttpStatus.OK, response);
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
 }

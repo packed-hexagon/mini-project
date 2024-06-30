@@ -12,12 +12,13 @@ import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 @Getter
-@Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "room")
 public class RoomEntity {
 	@Id
@@ -120,12 +121,48 @@ public class RoomEntity {
 	@Column(name = "check_out", nullable = false)
 	private Instant checkOut;
 
-	public int reserveRoom() {
+	public int decrease() {
 		return --this.roomCount;
 	}
 
-	public void cancelRoom() {
+	public void increment() {
 		++this.roomCount;
+	}
+
+	@Builder
+	public RoomEntity(Long id, AccommodationEntity accommodation, String roomTitle, Integer roomSize, Integer roomCount, Integer roomBaseCount, Integer roomMaxCount, Integer roomOffseasonMinfee1, Integer roomOffseasonMinfee2, Integer roomPeakseasonMinfee1, Integer roomPeakseasonMinfee2, String roomIntro, String roomBath, String roomHometheater, String roomAircondition, String roomTv, String roomPc, String roomCable, String roomInternet, String roomRefrigerator, String roomToiletries, String roomSofa, String roomCook, String roomTable, String roomHairdryer, String roomImg1, String roomImg2, String roomImg3, String roomImg4, String roomImg5, Instant checkIn, Instant checkOut) {
+		this.roomId = id;
+		this.accommodation = accommodation;
+		this.roomTitle = roomTitle;
+		this.roomSize = roomSize;
+		this.roomCount = roomCount;
+		this.roomBaseCount = roomBaseCount;
+		this.roomMaxCount = roomMaxCount;
+		this.roomOffseasonMinfee1 = roomOffseasonMinfee1;
+		this.roomOffseasonMinfee2 = roomOffseasonMinfee2;
+		this.roomPeakseasonMinfee1 = roomPeakseasonMinfee1;
+		this.roomPeakseasonMinfee2 = roomPeakseasonMinfee2;
+		this.roomIntro = roomIntro;
+		this.roomBath = roomBath;
+		this.roomHometheater = roomHometheater;
+		this.roomAircondition = roomAircondition;
+		this.roomTv = roomTv;
+		this.roomPc = roomPc;
+		this.roomCable = roomCable;
+		this.roomInternet = roomInternet;
+		this.roomRefrigerator = roomRefrigerator;
+		this.roomToiletries = roomToiletries;
+		this.roomSofa = roomSofa;
+		this.roomCook = roomCook;
+		this.roomTable = roomTable;
+		this.roomHairdryer = roomHairdryer;
+		this.roomImg1 = roomImg1;
+		this.roomImg2 = roomImg2;
+		this.roomImg3 = roomImg3;
+		this.roomImg4 = roomImg4;
+		this.roomImg5 = roomImg5;
+		this.checkIn = checkIn;
+		this.checkOut = checkOut;
 	}
 
 }
