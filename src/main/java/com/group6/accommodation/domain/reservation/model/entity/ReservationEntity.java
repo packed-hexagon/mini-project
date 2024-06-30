@@ -15,7 +15,7 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.Instant;
 import java.time.LocalDate;
-import lombok.AllArgsConstructor;
+import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,10 +24,8 @@ import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Entity
-@Builder
 @Table(name = "reservation")
-@NoArgsConstructor
-@AllArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReservationEntity {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -65,4 +63,16 @@ public class ReservationEntity {
 	@Setter
 	@Column(name = "deleted_at")
 	private Instant deletedAt;
+
+	@Builder
+	public ReservationEntity(UserEntity user, AccommodationEntity accommodation, RoomEntity room, int headcount, LocalDate startDate, LocalDate endDate, Integer price) {
+		this.user = user;
+		this.accommodation = accommodation;
+		this.room = room;
+		this.headcount = headcount;
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.price = price;
+	}
+
 }

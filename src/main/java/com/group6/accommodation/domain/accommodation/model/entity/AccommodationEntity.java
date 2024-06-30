@@ -1,30 +1,34 @@
 package com.group6.accommodation.domain.accommodation.model.entity;
 
+import com.group6.accommodation.domain.accommodation.model.enums.Area;
+import com.group6.accommodation.domain.accommodation.model.enums.Category;
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 
 @Getter
-@Setter
 @Entity
+@NoArgsConstructor
 @Table(name = "accommodation")
 public class AccommodationEntity {
 	@Id
 	@Column(name = "accommodation_id", nullable = false)
 	private Long id;
 
-	@Column(name = "title", nullable = false, length = 32)
+	@Column(name = "title", nullable = false, length = 255)
 	private String title;
 
-	@Column(name = "address", nullable = false, length = 32)
+	@Column(name = "address", nullable = false, length = 255)
 	private String address;
 
 	@Column(name = "address2", length = 32)
 	private String address2;
 
-	@Column(name = "areacode")
-	private Integer areacode;
+	@Column(name = "areacode", length = 32)
+	private String areacode;
 
 	@Column(name = "sigungucode")
 	private Integer sigungucode;
@@ -47,10 +51,34 @@ public class AccommodationEntity {
 	@Column(name = "mlevel")
 	private Integer mlevel;
 
-	@Column(name = "tel", length = 32)
+	@Column(name = "tel", length = 64)
 	private String tel;
 
 	@Column(name = "like_count")
 	private Integer likeCount;
+
+	@Column(name = "rating")
+	private Double rating;
+
+	@Builder
+	public AccommodationEntity(Long id, String title, String address, String address2, String areacode, Integer sigungucode,
+							   String category, String image, String thumbnail, Double latitude, Double longitude,
+							   Integer mlevel, String tel, Integer likeCount, Double rating) {
+		this.id = id;
+		this.title = title;
+		this.address = address;
+		this.address2 = address2;
+		this.areacode = areacode;
+		this.sigungucode = sigungucode;
+		this.category = category;
+		this.image = image;
+		this.thumbnail = thumbnail;
+		this.latitude = latitude;
+		this.longitude = longitude;
+		this.mlevel = mlevel;
+		this.tel = tel;
+		this.likeCount = likeCount;
+		this.rating = rating;
+	}
 
 }

@@ -1,6 +1,7 @@
 ### resource ###
 src/main/resources/application-prod.yaml
 src/main/resources/application-dev.yaml
+src/main/resources/application-openapi.yaml
 
 HELP.md
 .gradle
@@ -41,3 +42,5 @@ out/
 .vscode/
 
 /src/main/resources/application.*
+
+.env

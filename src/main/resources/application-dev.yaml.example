@@ -12,5 +12,6 @@ spring:
       hibernate:
         format_sql: true
 
-  jwt:
-    secret: {secretKey}
+jwt:
+  secret: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
+  expiration-time: 864000
