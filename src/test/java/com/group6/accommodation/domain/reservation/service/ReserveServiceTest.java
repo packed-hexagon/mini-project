@@ -162,6 +162,103 @@ class ReserveServiceTest {
         assertEquals(roomId, result.getRoomId());
     }
 
+    @Test
+    @DisplayName("예약하기 - 이미 예약이 되어 있는 경우")
+    public void alreadyReserve() {
+        // given
+        Long userId = 1L;
+        Long accommodationId = accommodation.getId();
+        Long roomId = room.getRoomId();
+        PostReserveRequestDto requestDto = new PostReserveRequestDto(
+            2,
+            LocalDate.now().plusDays(1),
+            LocalDate.now().plusDays(2),
+            100
+        );
+
+        when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
+        when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
+        when(reservationRepository
+            .existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(
+                any(AccommodationEntity.class), any(RoomEntity.class), any(Long.class))
+        ).thenReturn(true);
+
+        // when
+        ReservationException exception = assertThrows(ReservationException.class,
+            () -> reserveService.postReserve(userId, accommodationId, roomId, requestDto));
+
+        // then
+        assertNotNull(exception);
+        assertEquals(exception.getInfo(), ReservationErrorCode.ALREADY_RESERVED.getInfo());
+        assertEquals(exception.getStatusCode(), ReservationErrorCode.ALREADY_RESERVED.getCode());
+    }
+
+    @Test
+    @DisplayName("예약하기 - 인원 수가 초과 되는 경우")
+    public void overPeopleReserve() {
+        // given
+        Long userId = 1L;
+        Long accommodationId = accommodation.getId();
+        Long roomId = room.getRoomId();
+        int overPeople = 100;
+
+        PostReserveRequestDto requestDto = new PostReserveRequestDto(
+            overPeople,
+            LocalDate.now().plusDays(1),
+            LocalDate.now().plusDays(2),
+            100
+        );
+
+        when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
+        when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
+        when(reservationRepository
+            .existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(
+                any(AccommodationEntity.class), any(RoomEntity.class), any(Long.class))
+        ).thenReturn(false);
+
+        // when
+        ReservationException exception = assertThrows(ReservationException.class,
+            () -> reserveService.postReserve(userId, accommodationId, roomId, requestDto));
+
+        // then
+        assertNotNull(exception);
+        assertEquals(exception.getInfo(), ReservationErrorCode.FULL_PEOPLE.getInfo());
+    }
+
+    @Test
+    @DisplayName("예약하기 - 금액이 맞지 않는 경우")
+    public void notMatchPriceReserve() {
+        Long userId = 1L;
+        Long accommodationId = accommodation.getId();
+        Long roomId = room.getRoomId();
+        int overPrice = 1000;
+
+        PostReserveRequestDto requestDto = new PostReserveRequestDto(
+            2,
+            LocalDate.now().plusDays(1),
+            LocalDate.now().plusDays(2),
+            overPrice
+        );
+
+        when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
+        when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
+        when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
+        when(reservationRepository
+            .existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(
+                any(AccommodationEntity.class), any(RoomEntity.class), any(Long.class))
+        ).thenReturn(false);
+
+        // when
+        ReservationException exception = assertThrows(ReservationException.class,
+            () -> reserveService.postReserve(userId, accommodationId, roomId, requestDto));
+
+        // then
+        assertEquals(exception.getInfo(), ReservationErrorCode.NOT_MATCH_PRICE.getInfo());
+    }
+
+
 
     @Test
     @DisplayName("모든 예약 정보 가져오기 - 성공")
@@ -241,6 +338,9 @@ class ReserveServiceTest {
         assertNotNull(result);
         assertNotNull(reservation.getDeletedAt());
     }
+
+
+
 
 
     @Test
