@@ -23,12 +23,10 @@ public class DatabaseInitializationService {
             }
         }
 
-        if (apiProcessService.isDatabaseEmpty()) {
-            try {
-                apiProcessService.processAccommodations();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        try {
+            apiProcessService.processAccommodations();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
 
