@@ -5,14 +5,10 @@ import com.group6.accommodation.domain.room.model.dto.RoomDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import java.util.List;
 import java.util.stream.Collectors;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-@Service
-@RequiredArgsConstructor
 public class RoomConverter {
 
-	public RoomDto toDto(RoomEntity room) {
+	public static RoomDto toDto(RoomEntity room) {
 
 		return RoomDto.builder()
 			.roomId(room.getRoomId())
@@ -49,7 +45,7 @@ public class RoomConverter {
 			.build();
 	}
 
-	public List<RoomDto> toDtoList(List<RoomEntity> roomEntityList) {
-		return roomEntityList.stream().map(this::toDto).collect(Collectors.toList());
+	public static List<RoomDto> toDtoList(List<RoomEntity> roomEntityList) {
+		return roomEntityList.stream().map(RoomConverter::toDto).collect(Collectors.toList());
 	}
 }

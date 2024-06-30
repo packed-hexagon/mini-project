@@ -4,7 +4,6 @@ import com.group6.accommodation.domain.room.model.dto.AvailableRoomsReq;
 import com.group6.accommodation.domain.room.model.dto.AvailableRoomsRes;
 import com.group6.accommodation.domain.room.model.dto.RoomDto;
 import com.group6.accommodation.domain.room.service.RoomService;
-import com.group6.accommodation.global.util.Response;
 import com.group6.accommodation.global.util.ResponseApi;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -27,9 +26,9 @@ public class RoomController {
 	public ResponseEntity<ResponseApi<List<RoomDto>>> findByAccommodationId(
 		@PathVariable Long id
 	) {
-		ResponseApi<List<RoomDto>> roomDtoList = roomService.findByAccommodationId(id);
+		List<RoomDto> roomDtoList = roomService.findByAccommodationId(id);
 
-		return ResponseEntity.status(HttpStatus.OK).body(roomDtoList);
+		return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, roomDtoList));
 	}
 
 	@GetMapping("/accommodation/{id}/room/{roomId}")
@@ -37,22 +36,19 @@ public class RoomController {
 		@PathVariable Long id,
 		@PathVariable Long roomId
 	) {
-		ResponseApi<RoomDto> roomDto = roomService.findByAccommodationIdAndRoomId(id, roomId);
+		RoomDto roomDto = roomService.findByAccommodationIdAndRoomId(id, roomId);
 
-		return ResponseEntity.status(HttpStatus.OK).body(roomDto);
+		return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, roomDto));
 	}
 
 	@GetMapping("/accommodation/{id}/room/{roomId}/is-reservable")
-	public Response<AvailableRoomsRes> availableRooms(
+	public ResponseEntity<ResponseApi<AvailableRoomsRes>> availableRooms(
 		@PathVariable Long id,
 		@PathVariable Long roomId,
 		@RequestBody AvailableRoomsReq req
 	) {
 		AvailableRoomsRes availableRoomsRes = roomService.availableRooms(req, id, roomId);
-		return Response.<AvailableRoomsRes>builder()
-			.resultCode(String.valueOf(HttpStatus.OK.value()))
-			.resultCode(HttpStatus.OK.name())
-			.data(availableRoomsRes)
-			.build();
+
+		return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, availableRoomsRes));
 	}
 }

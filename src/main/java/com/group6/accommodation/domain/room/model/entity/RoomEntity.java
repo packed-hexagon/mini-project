@@ -115,10 +115,10 @@ public class RoomEntity {
 	@Column(name = "room_img5", length = 300)
 	private String roomImg5;
 
-	@Column(name = "check_in", nullable = false)
+	@Column(name = "check_in")
 	private Instant checkIn;
 
-	@Column(name = "check_out", nullable = false)
+	@Column(name = "check_out")
 	private Instant checkOut;
 
 	public int decrease() {
@@ -127,6 +127,39 @@ public class RoomEntity {
 
 	public void increment() {
 		++this.roomCount;
+	}
+
+
+	public void updateRoomEntity(AccommodationEntity accommodation, RoomEntity entity) {
+		this.accommodation = accommodation;
+		this.roomTitle = entity.getRoomTitle();
+		this.roomSize = entity.getRoomSize();
+		this.roomCount = entity.getRoomCount();
+		this.roomBaseCount = entity.getRoomBaseCount();
+		this.roomMaxCount = entity.getRoomMaxCount();
+		this.roomOffseasonMinfee1 = entity.getRoomOffseasonMinfee1();
+		this.roomOffseasonMinfee2 = entity.getRoomOffseasonMinfee2();
+		this.roomPeakseasonMinfee1 = entity.getRoomPeakseasonMinfee1();
+		this.roomPeakseasonMinfee2 = entity.getRoomPeakseasonMinfee2();
+		this.roomIntro = entity.getRoomIntro();
+		this.roomBath = entity.getRoomBath();
+		this.roomHometheater = entity.getRoomHometheater();
+		this.roomAircondition = entity.getRoomAircondition();
+		this.roomTv = entity.getRoomTv();
+		this.roomPc = entity.getRoomPc();
+		this.roomCable = entity.getRoomCable();
+		this.roomInternet = entity.getRoomInternet();
+		this.roomRefrigerator = entity.getRoomRefrigerator();
+		this.roomToiletries = entity.getRoomToiletries();
+		this.roomSofa = entity.getRoomSofa();
+		this.roomCook = entity.getRoomCook();
+		this.roomTable = entity.getRoomTable();
+		this.roomHairdryer = entity.getRoomHairdryer();
+		this.roomImg1 = entity.getRoomImg1();
+		this.roomImg2 = entity.getRoomImg2();
+		this.roomImg3 = entity.getRoomImg3();
+		this.roomImg4 = entity.getRoomImg4();
+		this.roomImg5 = entity.getRoomImg5();
 	}
 
 	@Builder
@@ -161,8 +194,8 @@ public class RoomEntity {
 		this.roomImg3 = roomImg3;
 		this.roomImg4 = roomImg4;
 		this.roomImg5 = roomImg5;
-		this.checkIn = checkIn;
-		this.checkOut = checkOut;
+//		this.checkIn = checkIn;
+//		this.checkOut = checkOut;
 	}
 
 }
