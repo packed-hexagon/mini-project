@@ -13,8 +13,8 @@ public class UserLikeEntityTest {
         UserEntity user = new UserEntity();
         user.setId(1L);
 
-        AccommodationEntity accommodation = new AccommodationEntity();
-        accommodation.setId(100L);
+        AccommodationEntity accommodation = AccommodationEntity.builder()
+                .id(100L).build();
 
         UserLikeId userLikeId = new UserLikeId(1L, 100L);
 

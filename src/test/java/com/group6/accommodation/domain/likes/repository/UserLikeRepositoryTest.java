@@ -28,8 +28,8 @@ public class UserLikeRepositoryTest {
         UserEntity user = new UserEntity();
         user.setId(userId);
 
-        AccommodationEntity accommodation = new AccommodationEntity();
-        accommodation.setId(accommodationId);
+        AccommodationEntity accommodation = AccommodationEntity.builder()
+                .id(accommodationId).build();
 
         UserLikeId userLikeId = new UserLikeId(userId, accommodationId);
 
