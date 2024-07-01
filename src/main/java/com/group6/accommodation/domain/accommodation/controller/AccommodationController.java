@@ -4,13 +4,19 @@ import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDeta
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
 import com.group6.accommodation.domain.accommodation.annotation.ValidArea;
 import com.group6.accommodation.domain.accommodation.annotation.ValidCategory;
+import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.service.AccommodationService;
+import com.group6.accommodation.global.util.Response;
 import com.group6.accommodation.global.util.ResponseApi;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -48,6 +54,19 @@ public class AccommodationController {
     ) {
 
         PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findByKeywordPaged(keyword, page);
+        return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, accommodationPage));
+    }
+
+    @GetMapping("/accommodation/search")
+    public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> searchAccommodations(
+            @RequestParam String area,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam int headcount,
+            @RequestParam(defaultValue = "0") int page) {
+
+        PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findAvaliableAccommodation(area, startDate, endDate, headcount, page);
+
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, accommodationPage));
     }
 }

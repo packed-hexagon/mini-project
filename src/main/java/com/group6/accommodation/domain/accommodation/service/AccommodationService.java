@@ -17,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -120,6 +121,13 @@ public class AccommodationService {
         } else {
             return getPagedDto(accommodationPage);
         }
+    }
+
+    public PagedDto<AccommodationResponseDto> findAvaliableAccommodation(String area, LocalDate startDate, LocalDate endDate, int headcount, int page) {
+        int customSize = 9;
+        Page<AccommodationEntity> accommodationPage = accommodationRepository.findAvailableAccommodations(area, startDate, endDate, headcount, PageRequest.of(page, customSize, Sort.by(Sort.Direction.DESC, "likeCount")));
+
+        return getPagedDto(accommodationPage);
     }
 
     // Page 정보값 포함한 PagedDto로 변환.(공통 로직)
