@@ -16,8 +16,9 @@ public class UserLikeResponseDtoTest {
         user.setId(1L);
 
         AccommodationEntity accommodation = AccommodationEntity.builder()
-                .id(100L)
-                .build();
+            .id(100L)
+            .build()
+            ;
 
         UserLikeEntity userLikeEntity = UserLikeEntity.builder()
             .id(new UserLikeId(1L, 100L))

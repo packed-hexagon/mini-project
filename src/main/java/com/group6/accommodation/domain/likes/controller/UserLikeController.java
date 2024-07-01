@@ -64,4 +64,5 @@ public class UserLikeController {
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
 }
