@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.Query;
 
 public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
 
-//	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Optional<RoomEntity> findById(Long id);
 
 	List<RoomEntity> findByAccommodation_Id(Long id);
