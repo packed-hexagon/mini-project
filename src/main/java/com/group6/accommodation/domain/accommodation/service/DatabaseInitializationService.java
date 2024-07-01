@@ -15,20 +15,20 @@ public class DatabaseInitializationService {
 
     public void initializeDatabase() {
 
-        if (apiProcessRoomService.isDatabaseEmpty()) {
+        if(apiProcessService.isDatabaseEmpty()) {
             try {
-                apiProcessRoomService.processRooms();
+                apiProcessService.processAccommodations();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
 
-        try {
-            apiProcessService.processAccommodations();
-        } catch (Exception e) {
-            e.printStackTrace();
+//        if (apiProcessRoomService.isDatabaseEmpty()) {
+            try {
+                apiProcessRoomService.processRooms();
+            } catch (Exception e) {
+                e.printStackTrace();
+//            }
         }
-
-
     }
 }
