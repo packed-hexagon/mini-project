@@ -2,11 +2,15 @@ package com.group6.accommodation.domain.accommodation.model.entity;
 
 import com.group6.accommodation.domain.accommodation.model.enums.Area;
 import com.group6.accommodation.domain.accommodation.model.enums.Category;
+import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Getter
@@ -59,6 +63,9 @@ public class AccommodationEntity {
 
 	@Column(name = "rating")
 	private Double rating;
+
+	@OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<RoomEntity> rooms = new ArrayList<>();
 
 	@Builder
 	public AccommodationEntity(Long id, String title, String address, String address2, String areacode, Integer sigungucode,
