@@ -61,7 +61,7 @@ public class SecurityConfig {
                         .permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(tokenProvider, objectMapper), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(
                         new LoginAuthenticationFilter(authenticationManagerBean(), tokenProvider, objectMapper)
                 )
