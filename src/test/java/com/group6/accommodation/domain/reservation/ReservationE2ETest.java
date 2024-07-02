@@ -58,9 +58,7 @@ public class ReservationE2ETest {
 
     private void initializeTestData() {
         // 회원 데이터 삽입
-//        jdbcTemplate.execute("INSERT INTO users (id, username, password) VALUES (1, 'user', 'password')");
-//        // 예약 데이터 삽입
-//        jdbcTemplate.execute("INSERT INTO reservations (room_id, user_id, start_date, end_date, amount) VALUES (1, 1, '2024-07-02', '2024-07-03', 100)");
+        jdbcTemplate.execute("INSERT INTO user (id, username, password) VALUES (1, 'user', '1234')");
     }
 
 
@@ -85,20 +83,27 @@ public class ReservationE2ETest {
 
 
 
-
     @Test
-    @DisplayName("에약 하기")
-    public void reserve() {
+    @DisplayName("테스트")
+    public void test() {
         String token = obtainAccessToken();
-
-        int headCount = 2;
-        LocalDate startDate = LocalDate.now().plusDays(1);
-        LocalDate endDate = LocalDate.now().plusDays(2);
-        int price = 5100;
-
-        PostReserveRequestDto postReserveRequestDto = new PostReserveRequestDto();
-
+        System.out.println(token);
     }
+
+
+//    @Test
+//    @DisplayName("에약 하기")
+//    public void reserve() {
+//        String token = obtainAccessToken();
+//
+//        int headCount = 2;
+//        LocalDate startDate = LocalDate.now().plusDays(1);
+//        LocalDate endDate = LocalDate.now().plusDays(2);
+//        int price = 5100;
+//
+//        PostReserveRequestDto postReserveRequestDto = new PostReserveRequestDto();
+//
+//    }
 
 
 
