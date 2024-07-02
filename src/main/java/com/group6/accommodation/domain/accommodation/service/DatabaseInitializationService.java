@@ -4,7 +4,6 @@ import com.group6.accommodation.domain.room.service.ApiProcessRoomService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -23,12 +22,12 @@ public class DatabaseInitializationService {
             }
         }
 
-//        if (apiProcessRoomService.isDatabaseEmpty()) {
+        if (apiProcessRoomService.isDatabaseEmpty()) {
             try {
                 apiProcessRoomService.processRooms();
             } catch (Exception e) {
                 e.printStackTrace();
-//            }
+            }
         }
     }
 }
