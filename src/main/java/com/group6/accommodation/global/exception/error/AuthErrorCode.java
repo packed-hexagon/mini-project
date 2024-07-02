@@ -18,6 +18,7 @@ public enum AuthErrorCode implements ErrorCode {
     EXPIRED_TOKEN(HttpStatus.NOT_FOUND, "토큰이 만료되었습니다."),
     UNSUPPORTED_TOKEN_TYPE(HttpStatus.NOT_FOUND, "올바르지 않은 토큰 인증 방식입니다."),
     UNKNOWN_AUTH_ERROR(HttpStatus.NOT_FOUND, "알 수 없는 토큰 오류입니다."),
+    ALREADY_LOGOUT(HttpStatus.BAD_REQUEST, "이미 로그아웃 된 유저입니다."),
     ;
 
     private final HttpStatus code;
