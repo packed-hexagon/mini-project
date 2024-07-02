@@ -7,6 +7,7 @@ import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.util.ResponseApi;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,5 +39,13 @@ public class UserController {
     ) {
         ResponseApi<UserResponseDto> response = userService.register(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PostMapping("/api/user/logout")
+    public ResponseEntity<?> logout(
+            @AuthenticationPrincipal CustomUserDetails user
+    ) {
+        HttpHeaders headers = userService.logout(user.getUserId());
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(headers).build();
     }
 }
