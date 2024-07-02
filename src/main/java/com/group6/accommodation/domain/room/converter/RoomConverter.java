@@ -40,8 +40,6 @@ public class RoomConverter {
 			.roomImg3(room.getRoomImg3())
 			.roomImg4(room.getRoomImg4())
 			.roomImg5(room.getRoomImg5())
-			.checkIn(room.getCheckIn())
-			.checkOut(room.getCheckOut())
 			.build();
 	}
 

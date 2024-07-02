@@ -121,15 +121,6 @@ public class RoomEntity {
 	@Column(name = "check_out")
 	private Instant checkOut;
 
-	public int decrease() {
-		return --this.roomCount;
-	}
-
-	public void increment() {
-		++this.roomCount;
-	}
-
-
 	public void updateRoomEntity(AccommodationEntity accommodation, RoomEntity entity) {
 		this.accommodation = accommodation;
 		this.roomTitle = entity.getRoomTitle();
@@ -163,7 +154,7 @@ public class RoomEntity {
 	}
 
 	@Builder
-	public RoomEntity(Long id, AccommodationEntity accommodation, String roomTitle, Integer roomSize, Integer roomCount, Integer roomBaseCount, Integer roomMaxCount, Integer roomOffseasonMinfee1, Integer roomOffseasonMinfee2, Integer roomPeakseasonMinfee1, Integer roomPeakseasonMinfee2, String roomIntro, String roomBath, String roomHometheater, String roomAircondition, String roomTv, String roomPc, String roomCable, String roomInternet, String roomRefrigerator, String roomToiletries, String roomSofa, String roomCook, String roomTable, String roomHairdryer, String roomImg1, String roomImg2, String roomImg3, String roomImg4, String roomImg5, Instant checkIn, Instant checkOut) {
+	public RoomEntity(Long id, AccommodationEntity accommodation, String roomTitle, Integer roomSize, Integer roomCount, Integer roomBaseCount, Integer roomMaxCount, Integer roomOffseasonMinfee1, Integer roomOffseasonMinfee2, Integer roomPeakseasonMinfee1, Integer roomPeakseasonMinfee2, String roomIntro, String roomBath, String roomHometheater, String roomAircondition, String roomTv, String roomPc, String roomCable, String roomInternet, String roomRefrigerator, String roomToiletries, String roomSofa, String roomCook, String roomTable, String roomHairdryer, String roomImg1, String roomImg2, String roomImg3, String roomImg4, String roomImg5) {
 		this.roomId = id;
 		this.accommodation = accommodation;
 		this.roomTitle = roomTitle;
@@ -194,8 +185,6 @@ public class RoomEntity {
 		this.roomImg3 = roomImg3;
 		this.roomImg4 = roomImg4;
 		this.roomImg5 = roomImg5;
-//		this.checkIn = checkIn;
-//		this.checkOut = checkOut;
 	}
 
 }
