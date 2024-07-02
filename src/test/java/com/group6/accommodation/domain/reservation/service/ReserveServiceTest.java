@@ -14,7 +14,6 @@ import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.model.dto.PagedDto;
-import java.time.temporal.ChronoUnit;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -111,8 +110,6 @@ class ReserveServiceTest {
                 .roomImg3("img3.jpg")
                 .roomImg4("img4.jpg")
                 .roomImg5("img5.jpg")
-                .checkIn(Instant.now())
-                .checkOut(Instant.now().plus(1, ChronoUnit.DAYS))
                 .build();
 
         reservation = ReservationEntity.builder()
