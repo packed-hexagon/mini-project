@@ -31,7 +31,11 @@ public class SecurityConfig {
     String[] allowedUrls = {
             "/open-api/**",
             "/resources/**",
-            "/error"
+            "/error",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs"
     };
 
     @Bean
