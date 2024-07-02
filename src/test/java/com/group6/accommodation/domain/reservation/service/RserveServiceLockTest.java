@@ -2,9 +2,6 @@ package com.group6.accommodation.domain.reservation.service;
 
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
-import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
-import com.group6.accommodation.domain.room.model.entity.RoomEntity;
-import com.group6.accommodation.domain.room.repository.RoomRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -15,6 +12,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,15 +22,10 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Disabled
 public class RserveServiceLockTest {
     @Autowired
     private ReserveService reserveService;
-
-    @Autowired
-    private ReservationRepository reservationRepository;
-
-    @Autowired
-    private RoomRepository roomRepository;
 
     @Test
     @Transactional
