@@ -57,12 +57,13 @@ public class AccommodationController {
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, accommodationPage));
     }
 
-    @GetMapping("/accommodation/search")
+    // 위치, 날짜 범위, 인원 수 조건을 유동적으로 받아와 숙소 조회
+    @GetMapping("/accommodation/condition")
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> searchAccommodations(
-            @RequestParam String area,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam int headcount,
+            @RequestParam(required = false) String area,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+            @RequestParam(required = false) Integer headcount,
             @RequestParam(defaultValue = "0") int page) {
 
         PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findAvaliableAccommodation(area, startDate, endDate, headcount, page);
