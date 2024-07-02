@@ -9,6 +9,8 @@ import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.service.AccommodationService;
 import com.group6.accommodation.global.util.Response;
 import com.group6.accommodation.global.util.ResponseApi;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -60,11 +62,16 @@ public class AccommodationController {
     // 위치, 날짜 범위, 인원 수 조건을 유동적으로 받아와 숙소 조회
     @GetMapping("/accommodation/condition")
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> searchAccommodations(
-            @RequestParam(required = false) String area,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
-            @RequestParam(required = false) Integer headcount,
-            @RequestParam(defaultValue = "0") int page) {
+            @RequestParam(required = false)
+            String area,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @FutureOrPresent(message = "시작날짜가 과거일 수 없다.")
+            LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @FutureOrPresent(message = "종료날짜가 과거일 수 없다.")
+            LocalDate endDate,
+            @RequestParam(required = false) @Min(value = 1, message = "인원 수는 1명 이상이어야 합니다.")
+            Integer headcount,
+            @RequestParam(defaultValue = "0")
+            int page) {
 
         PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findAvaliableAccommodation(area, startDate, endDate, headcount, page);
 

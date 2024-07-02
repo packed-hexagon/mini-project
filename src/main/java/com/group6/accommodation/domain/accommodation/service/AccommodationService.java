@@ -138,12 +138,23 @@ public class AccommodationService {
         }
 
         // 날짜 범위 조건 있을 경우
-        if (startDate != null && endDate != null) {
-            spec = spec.and(AccommodationSpecification.withDateRange(startDate, endDate));
-        }
-
-        // 인원수 조건 있을 경우
-        if (headcount != null && headcount > 0) {
+//        if (startDate != null && endDate != null) {
+//            validateDateRange(startDate, endDate);
+//            spec = spec.and(AccommodationSpecification.withDateRange(startDate, endDate));
+//        }
+//
+//        // 인원수 조건 있을 경우
+//        if (headcount != null && headcount > 0) {
+//            spec = spec.and(AccommodationSpecification.withHeadcount(headcount));
+//        }
+        if(startDate != null && endDate != null) {
+            validateDateRange(startDate, endDate);
+            if(headcount != null && headcount > 0) {
+                spec = spec.and(AccommodationSpecification.withDateRangeAndHeadcount(startDate, endDate, headcount));
+            } else {
+                spec = spec.and(AccommodationSpecification.withDateRange(startDate, endDate));
+            }
+        } else if(headcount != null && headcount > 0) {
             spec = spec.and(AccommodationSpecification.withHeadcount(headcount));
         }
 
@@ -155,6 +166,12 @@ public class AccommodationService {
         Page<AccommodationEntity> accommodationPage = accommodationRepository.findAllWithCountQuery(allAccommodation, pageRequest);
 
         return getPagedDto(accommodationPage);
+    }
+
+    private void validateDateRange(LocalDate start, LocalDate end) {
+        if(start.isAfter(end)) {
+            throw new AccommodationException(AccommodationErrorCode.INVALID_DATE_RANGE);
+        }
     }
 
     // Page 정보값 포함한 PagedDto로 변환.(공통 로직)
