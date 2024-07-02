@@ -26,7 +26,6 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final ObjectMapper objectMapper;
-    private final CorsConfig corsConfig;
 
     String[] allowedUrls = {
             "/open-api/**",
