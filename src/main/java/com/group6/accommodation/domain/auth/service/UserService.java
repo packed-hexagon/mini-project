@@ -10,20 +10,28 @@ import com.group6.accommodation.global.redis.repository.RefreshTokenRepository;
 import com.group6.accommodation.global.util.ResponseApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import com.group6.accommodation.global.security.filter.JwtFilter;
+import com.group6.accommodation.global.security.token.model.dto.LoginTokenResponseDto;
+import com.group6.accommodation.global.security.token.provider.TokenProvider;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-@Service
 @Slf4j
+@Service
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
+    @Value("${jwt.refresh-expiration-time}")
+    private Long refreshTokenExpireTime;
 
     public ResponseApi<UserResponseDto> getUserInfo(Long userId) {
         UserEntity result = userRepository.findById(userId)
@@ -71,6 +79,45 @@ public class UserService {
 
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
+    }
+
+    public ResponseApi<LoginTokenResponseDto> refreshTokens(String bearerAccessToken, String refreshToken) {
+        String accessToken = resolveBearerAccessToken(bearerAccessToken);
+        if (tokenProvider.isTokenExpired(accessToken)) {
+            LoginTokenResponseDto refreshTokens = tokenProvider.getRefreshTokens(refreshToken);
+            return ResponseApi.success(HttpStatus.OK, refreshTokens);
+        } else {
+            throw new AuthException(AuthErrorCode.INVALID_TOKEN);
+        }
+    }
+
+    private String resolveBearerAccessToken(String bearerAccessToken) {
+        try {
+            if (!StringUtils.hasText(bearerAccessToken)) {
+                throw new AuthException(AuthErrorCode.EMPTY_TOKEN);
+            }
+            if (!bearerAccessToken.startsWith(JwtFilter.TOKEN_PREFIX)) {
+                throw new AuthException(AuthErrorCode.UNSUPPORTED_TOKEN_TYPE);
+            }
+            return bearerAccessToken.substring(JwtFilter.TOKEN_PREFIX.length());
+        } catch (AuthException e) {
+            throw new AuthException(AuthErrorCode.UNKNOWN_AUTH_ERROR);
+        }
+    }
+
+    public HttpHeaders createRefreshTokenCookie(String refreshToken) {
+        ResponseCookie refreshTokenCookie = ResponseCookie
+                .from("refreshToken", refreshToken)
+                .maxAge(refreshTokenExpireTime)
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        return headers;
     }
 
     private ResponseCookie deleteRefreshTokenCookie() {
