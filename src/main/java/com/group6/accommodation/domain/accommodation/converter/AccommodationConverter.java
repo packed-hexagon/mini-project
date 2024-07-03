@@ -1,9 +1,5 @@
 package com.group6.accommodation.domain.accommodation.converter;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.group6.accommodation.domain.accommodation.config.OpenapiConfig;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailResponseDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
@@ -11,17 +7,9 @@ import com.group6.accommodation.domain.accommodation.model.enums.Area;
 import com.group6.accommodation.domain.accommodation.model.enums.Category;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
-import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
-import com.group6.accommodation.global.exception.type.AccommodationException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -82,9 +70,6 @@ public class AccommodationConverter {
         List<RoomEntity> byAccommodationId = roomRepository.findByAccommodation_Id(accommodationId);
         int minPrice = Integer.MAX_VALUE;
 
-        if(byAccommodationId.isEmpty()) {
-            return 999;
-        }
         for(RoomEntity room : byAccommodationId) {
             if(minPrice > room.getRoomOffseasonMinfee1()) {
                 minPrice = room.getRoomOffseasonMinfee1();
