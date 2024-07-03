@@ -7,11 +7,9 @@ import com.group6.accommodation.domain.accommodation.service.DatabaseInitializat
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.likes.model.entity.UserLikeEntity;
 import com.group6.accommodation.domain.likes.model.entity.UserLikeId;
-import java.util.Optional;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

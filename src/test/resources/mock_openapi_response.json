@@ -1,0 +1,40 @@
+{
+  "response": {
+    "body": {
+      "items": {
+        "item": [
+          {
+            "contentid": 1,
+            "title": "Test Title 1",
+            "addr1": "Test Address 1",
+            "addr2": "Test Address2",
+            "areacode": "001",
+            "sigungucode": 123,
+            "cat3": "HOTEL",
+            "firstimage": "image1.jpg",
+            "firstimage2": "thumbnail1.jpg",
+            "mapy": 37.5665,
+            "mapx": 126.9780,
+            "mlevel": 0,
+            "tel": "010-1234-5678"
+          },
+          {
+            "contentid": 2,
+            "title": "Test Title 2",
+            "addr1": "Test Address 2",
+            "addr2": "Test Address2",
+            "areacode": "002",
+            "sigungucode": 123,
+            "cat3": "HOTEL",
+            "firstimage": "image2.jpg",
+            "firstimage2": "thumbnail2.jpg",
+            "mapy": 37.5665,
+            "mapx": 126.9780,
+            "mlevel": 0,
+            "tel": "010-1234-5678"
+          }
+        ]
+      }
+    }
+  }
+}

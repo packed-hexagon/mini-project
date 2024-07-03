@@ -31,7 +31,11 @@ public class SecurityConfig {
     String[] allowedUrls = {
             "/open-api/**",
             "/resources/**",
-            "/error"
+            "/error",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs"
     };
 
     @Bean
@@ -55,7 +59,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfig.configurationSource()))
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfig.corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(allowedUrls)
                         .permitAll()

@@ -20,8 +20,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
 
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String TOKEN_PREFIX = "Bearer ";
+    public static final String AUTHORIZATION_HEADER = "Authorization";
+    public static final String TOKEN_PREFIX = "Bearer ";
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
@@ -33,10 +33,10 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        String token = resolveBearerToken(request);
+        String accessToken = resolveBearerToken(request);
 
-        if (StringUtils.hasText(token) && tokenProvider.validateTokenClaim(token)) {
-            Authentication authentication = tokenProvider.getAuthentication(token);
+        if (StringUtils.hasText(accessToken) && tokenProvider.validateTokenClaim(accessToken)) {
+            Authentication authentication = tokenProvider.getAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
@@ -55,8 +55,7 @@ public class JwtFilter extends OncePerRequestFilter {
             return bearerToken.substring(TOKEN_PREFIX.length());
         } catch (AuthException e) {
             log.error("토큰 검증 실패 : {}", e.getMessage());
+            throw new AuthException(AuthErrorCode.UNKNOWN_AUTH_ERROR);
         }
-//        throw new AuthException(AuthErrorCode.UNKNOWN_AUTH_ERROR);
-        return null;
     }
 }

@@ -16,7 +16,8 @@ public enum AccommodationErrorCode implements ErrorCode {
     NOT_FOUND_KEYWORD_ACCOMMODATION(HttpStatus.NOT_FOUND, "해당 키워드가 속한 숙박시설이 없습니다."),
     ERROR_URI(HttpStatus.BAD_REQUEST, "잘못된 URI입니다."),
     ERROR_RESTEMPLATE(HttpStatus.BAD_REQUEST, "RestTemplate에 문제가 생겼습니다."),
-    ERROR_JSON_PARSING(HttpStatus.BAD_REQUEST, "Json Parsing에 문제가 생겼습니다.")
+    ERROR_JSON_PARSING(HttpStatus.BAD_REQUEST, "Json Parsing에 문제가 생겼습니다."),
+    INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "시작 날짜가 종료 날짜보다 먼저여야 합니다.")
     ;
 
     private final HttpStatus code;

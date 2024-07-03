@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:mysql://{dbURL}?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://localhost:3306/accommodation?serverTimezone=UTC&characterEncoding=UTF-8
     username: {id}
     password: {pw}
     driver-class-name: com.mysql.cj.jdbc.Driver
@@ -12,6 +12,14 @@ spring:
       hibernate:
         format_sql: true
 
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      connect-timeout: 30s
+      timeout: 10s
+
 jwt:
   secret: testtesttesttesttesttesttesttesttesttesttesttesttesttesttesttest
-  expiration-time: 864000
+  access-expiration-time: 86400
+  refresh-expiration-time: 604800000

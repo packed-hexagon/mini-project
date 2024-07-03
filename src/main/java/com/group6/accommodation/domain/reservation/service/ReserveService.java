@@ -16,6 +16,7 @@ import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
 import java.time.Instant;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -58,16 +59,18 @@ public class ReserveService {
             throw new ReservationException(ReservationErrorCode.ALREADY_RESERVED);
         }
 
-        // 남는 객실이 있는지 검증
-        if(room.decrease() < 0) {
+
+        // 방이 모두 예약 된 경우
+        if(Objects.equals(reservationRepository.countByRoom(room.getRoomId()), room.getRoomCount())) {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
+
 
         // 인원 수가 초과 되는지 확인
         if(room.getRoomMaxCount() < postReserveRequestDto.getHeadcount()) {
             throw new ReservationException(ReservationErrorCode.FULL_PEOPLE);
         }
-        
+
         // 금액 검증
         int price = room.getRoomOffseasonMinfee1();
         int overCount = postReserveRequestDto.getHeadcount() - room.getRoomBaseCount();
@@ -105,7 +108,6 @@ public class ReserveService {
         }
 
         // 예약 취소
-        reservation.getRoom().increment();
         reservation.setDeletedAt(Instant.now());
 
         return ReservationConverter.toDto(reservation);

@@ -111,8 +111,8 @@ class ReserveServiceTest {
                 .roomImg3("img3.jpg")
                 .roomImg4("img4.jpg")
                 .roomImg5("img5.jpg")
-                .checkIn(Instant.now())
-                .checkOut(Instant.now().plus(1, ChronoUnit.DAYS))
+//                .checkIn(Instant.now())
+//                .checkOut(Instant.now().plus(1, ChronoUnit.DAYS))
                 .build();
 
         reservation = ReservationEntity.builder()
