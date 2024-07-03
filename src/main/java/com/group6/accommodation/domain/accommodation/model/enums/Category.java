@@ -34,7 +34,7 @@ public enum Category {
                 return category.name;
             }
         }
-        throw new AccommodationException(AccommodationErrorCode.NOT_FOUND_CATEGORY);
+        return null;
     }
 
     public static String getCodeByName(String name) {
@@ -43,6 +43,15 @@ public enum Category {
                 return category.code;
             }
         }
-        throw new AccommodationException(AccommodationErrorCode.NOT_FOUND_CATEGORY);
+        return null;
+    }
+
+    public static boolean isValidCategoryName(String name) {
+        for (Category category : values()) {
+            if (category.name.equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
