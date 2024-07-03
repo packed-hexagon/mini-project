@@ -28,7 +28,8 @@ public class UserController {
     public ResponseEntity<ResponseApi<UserResponseDto>> getUserInfo(
             @AuthenticationPrincipal CustomUserDetails user
             ) {
-        ResponseApi<UserResponseDto> response = userService.getUserInfo(user.getUserId());
+        UserResponseDto result = userService.getUserInfo(user.getUserId());
+        ResponseApi<UserResponseDto> response = ResponseApi.success(HttpStatus.OK, result);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -37,7 +38,8 @@ public class UserController {
             @Valid
             @RequestBody UserRequestDto request
     ) {
-        ResponseApi<UserResponseDto> response = userService.register(request);
+        UserResponseDto result = userService.register(request);
+        ResponseApi<UserResponseDto> response = ResponseApi.success(HttpStatus.CREATED, result);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

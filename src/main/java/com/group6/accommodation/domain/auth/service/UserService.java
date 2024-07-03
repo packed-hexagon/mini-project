@@ -25,15 +25,14 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public ResponseApi<UserResponseDto> getUserInfo(Long userId) {
+    public UserResponseDto getUserInfo(Long userId) {
         UserEntity result = userRepository.findById(userId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.NOT_FOUNT_USER_BY_USER_ID));
 
-        UserResponseDto response = UserResponseDto.toResponse(result);
-        return ResponseApi.success(HttpStatus.OK, response);
+        return UserResponseDto.toResponse(result);
     }
 
-    public ResponseApi<UserResponseDto> register(UserRequestDto request) {
+    public UserResponseDto register(UserRequestDto request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AuthException(AuthErrorCode.ALREADY_EXIST_EMAIL);
         }
@@ -45,9 +44,7 @@ public class UserService {
         String encryptedPassword = encodePassword(request.getPassword());
         UserEntity result = userRepository.save(request.toEntity(encryptedPassword));
 
-        UserResponseDto response = UserResponseDto.toResponse(result);
-
-        return ResponseApi.success(HttpStatus.CREATED, response);
+        return UserResponseDto.toResponse(result);
     }
 
     public HttpHeaders logout(Long userId) {
