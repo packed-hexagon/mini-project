@@ -15,7 +15,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
     Boolean existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(AccommodationEntity accommodation, RoomEntity room, Long userId);
 
-    @Query("SELECT COUNT(r) FROM ReservationEntity r WHERE r.room.roomId = :roomId AND r.deletedAt IS NULL")
+    @Query("SELECT COUNT(r) FROM ReservationEntity r WHERE r.room.roomId = :roomId AND r.deletedAt IS NULL AND r.endDate > CURRENT_DATE")
     Integer countByRoom(@Param("roomId") Long roomId);
 
     Page<ReservationEntity> findAllByUserId(@Param("userId") Long userId, Pageable pageable);

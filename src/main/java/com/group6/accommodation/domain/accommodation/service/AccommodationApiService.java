@@ -48,7 +48,7 @@ public class AccommodationApiService {
             // int testPages = 10;
 
             List<CompletableFuture<List<AccommodationEntity>>> futures = new ArrayList<>();
-            for (int pageNo = 1; pageNo <= totalPages; pageNo++) {
+            for (int pageNo = 1; pageNo <= 10; pageNo++) {
                 futures.add(fetchAccommodationsAsync(pageNo));
             }
 

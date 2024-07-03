@@ -3,6 +3,7 @@ package com.group6.accommodation.domain.accommodation.service;
 import com.group6.accommodation.domain.accommodation.converter.AccommodationConverter;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailResponseDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
+import com.group6.accommodation.domain.accommodation.specification.AccommodationSpecification;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.model.enums.Area;
@@ -15,11 +16,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.group6.accommodation.domain.accommodation.specification.AccommodationSpecification.*;
 
 @Service
 @RequiredArgsConstructor
@@ -63,13 +68,13 @@ public class AccommodationService {
     // 매개변수에 따라 숙소 조회
     public PagedDto<AccommodationResponseDto> findByParameter(String areaCode, String categoryCode, int page) {
         PagedDto<AccommodationResponseDto> responsePagedDto = new PagedDto<>();
-        int customSize = 9;
+        int customSize = 12;
         if(areaCode == null && categoryCode == null) {
-            responsePagedDto = findAllPage(page, 12);
+            responsePagedDto = findAllPage(page, customSize);
         } else if(areaCode == null && categoryCode != null) {
             responsePagedDto = findByCategoryPaged(categoryCode, page, customSize);
         } else if(areaCode != null && categoryCode == null) {
-            responsePagedDto = findByAreaPaged(areaCode, page, customSize);
+            responsePagedDto = findByAreaPaged(areaCode, page, 9);
         }
 
         return responsePagedDto;
@@ -119,6 +124,53 @@ public class AccommodationService {
             throw new AccommodationException(AccommodationErrorCode.NOT_FOUND_KEYWORD_ACCOMMODATION);
         } else {
             return getPagedDto(accommodationPage);
+        }
+    }
+
+    // 조건에 부합하는 숙소 조회
+    public PagedDto<AccommodationResponseDto> findAvaliableAccommodation(String area, LocalDate startDate, LocalDate endDate, Integer headcount, int page) {
+        Specification<AccommodationEntity> spec = Specification.where(AccommodationSpecification.withDistinctAndGroupBy());
+
+        // 위치 조건이 있을 경우
+        if (area != null && !area.isEmpty()) {
+            String areaCode = Area.getCodeByName(area);
+            spec = spec.and(AccommodationSpecification.withArea(areaCode));
+        }
+
+        // 날짜 범위 조건 있을 경우
+//        if (startDate != null && endDate != null) {
+//            validateDateRange(startDate, endDate);
+//            spec = spec.and(AccommodationSpecification.withDateRange(startDate, endDate));
+//        }
+//
+//        // 인원수 조건 있을 경우
+//        if (headcount != null && headcount > 0) {
+//            spec = spec.and(AccommodationSpecification.withHeadcount(headcount));
+//        }
+        if(startDate != null && endDate != null) {
+            validateDateRange(startDate, endDate);
+            if(headcount != null && headcount > 0) {
+                spec = spec.and(AccommodationSpecification.withDateRangeAndHeadcount(startDate, endDate, headcount));
+            } else {
+                spec = spec.and(AccommodationSpecification.withDateRange(startDate, endDate));
+            }
+        } else if(headcount != null && headcount > 0) {
+            spec = spec.and(AccommodationSpecification.withHeadcount(headcount));
+        }
+
+        spec = spec.and(AccommodationSpecification.withAvailableRooms());
+
+        List<AccommodationEntity> allAccommodation = accommodationRepository.findAll(spec);
+
+        PageRequest pageRequest = PageRequest.of(page, 9, Sort.by(Sort.Direction.DESC, "likeCount"));
+        Page<AccommodationEntity> accommodationPage = accommodationRepository.findAllWithCountQuery(allAccommodation, pageRequest);
+
+        return getPagedDto(accommodationPage);
+    }
+
+    private void validateDateRange(LocalDate start, LocalDate end) {
+        if(start.isAfter(end)) {
+            throw new AccommodationException(AccommodationErrorCode.INVALID_DATE_RANGE);
         }
     }
 
