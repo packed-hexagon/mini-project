@@ -70,7 +70,7 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
         Cookie refreshTokenCookie = new Cookie("refreshToken", generatedToken.getRefreshToken());
         refreshTokenCookie.setHttpOnly(true);
         refreshTokenCookie.setSecure(true);
-        refreshTokenCookie.setPath("/api");
+        refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
 
         response.addCookie(refreshTokenCookie);

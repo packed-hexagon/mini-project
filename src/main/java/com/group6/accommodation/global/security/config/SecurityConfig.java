@@ -17,7 +17,6 @@ import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 @Configuration
 @EnableWebSecurity
@@ -27,12 +26,15 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final ObjectMapper objectMapper;
-    private final CorsConfigurationSource corsConfigurationSource;
 
     String[] allowedUrls = {
             "/open-api/**",
             "/resources/**",
-            "/error"
+            "/error",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs"
     };
 
     @Bean
@@ -56,13 +58,12 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(allowedUrls)
                         .permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(tokenProvider, objectMapper), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(
                         new LoginAuthenticationFilter(authenticationManagerBean(), tokenProvider, objectMapper)
                 )
