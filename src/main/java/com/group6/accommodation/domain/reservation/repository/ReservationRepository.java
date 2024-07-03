@@ -18,7 +18,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
     Page<ReservationEntity> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("select r from ReservationEntity r where r.startDate < ?1 or r.endDate > ?2")
-    Optional<ReservationEntity> findByStartDateBeforeOrEndDateAfter(LocalDate startDate,
-        LocalDate endDate);
+    @Query("select r.room.roomId from ReservationEntity r where not r.endDate < ?1 or r.startDate > ?2")
+    List<Long> findByStartDateBeforeOrEndDateAfter(LocalDate startDate, LocalDate endDate);
+
 }

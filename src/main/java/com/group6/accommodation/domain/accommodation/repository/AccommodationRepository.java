@@ -38,4 +38,7 @@ public interface AccommodationRepository extends JpaRepository<AccommodationEnti
 
     @Override
     Optional<AccommodationEntity> findById(Long aLong);
+
+	@Override
+	void deleteById(Long aLong);
 }
