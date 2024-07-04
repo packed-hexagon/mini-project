@@ -126,32 +126,32 @@ public class TokenProvider {
     }
 
     public LoginTokenResponseDto getRefreshTokens(String refreshTokenFromCookie) {
-            // 쿠키 토큰 검증 
-            Claims claims = tokenParser(refreshTokenFromCookie);
-            Long userId = claims.get("userId", Long.class);
+        // 쿠키 토큰 검증
+        Claims claims = tokenParser(refreshTokenFromCookie);
+        Long userId = claims.get("userId", Long.class);
 
-            // 레디스에 존재하는지 확인
-            if (!refreshTokenRepository.existsById(userId)) {
-                    throw new RuntimeException("로그아웃 된 refresh Token");
-            }
+        // 레디스에 존재하는지 확인
+        if (!refreshTokenRepository.existsById(userId)) {
+            throw new RuntimeException("로그아웃 된 refresh Token");
+        }
 
-            // access, refresh 새로 생성
-            CustomUserDetails customUserDetails = new CustomUserDetails(userId, "", "");
-            String authorities = claims.get("role", String.class);
+        // access, refresh 새로 생성
+        CustomUserDetails customUserDetails = new CustomUserDetails(userId, "", "");
+        String authorities = claims.get("role", String.class);
 
-            long now = (new Date()).getTime();
-            String newAccessToken = createAccessToken(authorities, customUserDetails, now);
-            String newRefreshToken = createRefreshToken(authorities, customUserDetails, now);
+        long now = (new Date()).getTime();
+        String newAccessToken = createAccessToken(authorities, customUserDetails, now);
+        String newRefreshToken = createRefreshToken(authorities, customUserDetails, now);
 
-            // 레디스에 새로운 refresh token 저장
-            RefreshToken newRefreshTokenEntity = new RefreshToken(userId, newRefreshToken,
-                    now + refreshTokenExpireTime);
-            refreshTokenRepository.save(newRefreshTokenEntity);
+        // 레디스에 새로운 refresh token 저장
+        RefreshToken newRefreshTokenEntity = new RefreshToken(userId, newRefreshToken,
+                now + refreshTokenExpireTime);
+        refreshTokenRepository.save(newRefreshTokenEntity);
 
-            return LoginTokenResponseDto.builder()
-                    .accessToken(newAccessToken)
-                    .refreshToken(newRefreshToken)
-                    .build();
+        return LoginTokenResponseDto.builder()
+                .accessToken(newAccessToken)
+                .refreshToken(newRefreshToken)
+                .build();
     }
 
     public boolean validateTokenClaim(String token) {
@@ -161,13 +161,15 @@ public class TokenProvider {
         } catch (Exception e) {
             if (e instanceof SignatureException) {
                 log.error(AuthErrorCode.INVALID_TOKEN.getInfo());
+                throw new AuthException(AuthErrorCode.INVALID_TOKEN);
             } else if (e instanceof ExpiredJwtException) {
                 log.error(AuthErrorCode.EXPIRED_TOKEN.getInfo());
+                throw new AuthException(AuthErrorCode.EXPIRED_TOKEN);
             } else {
                 log.error(AuthErrorCode.UNKNOWN_AUTH_ERROR.getInfo());
+                throw new AuthException(AuthErrorCode.UNKNOWN_AUTH_ERROR);
             }
         }
-        return false;
     }
 
     public boolean isTokenExpired(String token) {
@@ -175,7 +177,7 @@ public class TokenProvider {
             tokenParser(token);
             return false;
         } catch (ExpiredJwtException e) {
-            log.info("토큰 만료");
+            log.info(e.getMessage());
             return true;
         }
     }
