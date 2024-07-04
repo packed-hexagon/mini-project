@@ -19,6 +19,8 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
 
 	Optional<RoomEntity> findByAccommodation_IdAndRoomId(Long id, Long roomId);
 
+	List<RoomEntity> findByRoomIdIn(List<Long> ids);
+
 	@Query("select r from RoomEntity r where r.checkIn >= ?1 and r.checkOut <= ?2")
 	List<RoomEntity> findAvailableRooms(
 		@NotNull LocalDate checkIn, @NotNull LocalDate checkOut);
