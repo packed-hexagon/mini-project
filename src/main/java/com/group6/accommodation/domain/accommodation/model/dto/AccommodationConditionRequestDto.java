@@ -1,5 +1,6 @@
 package com.group6.accommodation.domain.accommodation.model.dto;
 
+import com.group6.accommodation.domain.accommodation.annotation.StartBeforeEndAndNullable;
 import com.group6.accommodation.domain.accommodation.annotation.ValidArea;
 import com.group6.accommodation.domain.reservation.annotation.StartBeforeEnd;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -14,8 +15,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-@StartBeforeEnd(startTime = "startDate", endTime = "endDate")
-public class AccommodationConditionRequest {
+@StartBeforeEndAndNullable(startTime = "startDate", endTime = "endDate")
+public class AccommodationConditionRequestDto {
     @ValidArea
     String area;
 
