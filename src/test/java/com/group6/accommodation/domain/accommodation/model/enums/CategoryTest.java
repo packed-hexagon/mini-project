@@ -1,6 +1,6 @@
 package com.group6.accommodation.domain.accommodation.model.enums;
 
-import com.group6.accommodation.global.exception.type.AccommodationException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class CategoryTest {
 
     @ParameterizedTest
+    @DisplayName("유효한 숙소 테마 코드일 경우")
     @CsvSource({
             "B02010100, 호텔",
             "B02010500, 콘도미니엄",
@@ -30,11 +31,13 @@ class CategoryTest {
     }
 
     @Test
+    @DisplayName("유효하지 않은 숙소 테마 코드일 경우")
     void getNameByCode_ShouldThrowException_WhenCodeNotFound() {
-        assertThrows(AccommodationException.class, () -> Category.getNameByCode("INVALID_CODE"));
+        assertNull(Category.getNameByCode("INVALID_CODE"));
     }
 
     @ParameterizedTest
+    @DisplayName("유효한 숙소 테마명일 경우")
     @CsvSource({
             "호텔, B02010100",
             "콘도미니엄, B02010500",
@@ -55,7 +58,8 @@ class CategoryTest {
     }
 
     @Test
+    @DisplayName("유효하지 않은 숙소 테마명일 경우")
     void getCodeByName_ShouldThrowException_WhenNameNotFound() {
-        assertThrows(AccommodationException.class, () -> Category.getCodeByName("없는카테고리"));
+        assertNull(Category.getCodeByName("없는카테고리"));
     }
 }

@@ -1,6 +1,6 @@
 package com.group6.accommodation.domain.accommodation.model.enums;
 
-import com.group6.accommodation.global.exception.type.AccommodationException;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -10,6 +10,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class AreaTest {
 
     @ParameterizedTest
+    @DisplayName("유효한 지역 코드일 경우")
     @CsvSource({
             "1, 서울",
             "2, 인천",
@@ -34,11 +35,13 @@ class AreaTest {
     }
 
     @Test
+    @DisplayName("유효하지 않은 지역 코드일 경우")
     void getNameByCode_ShouldThrowException_WhenCodeNotFound() {
-        assertThrows(AccommodationException.class, () -> Area.getNameByCode("999"));
+        assertNull(Area.getNameByCode("999"));
     }
 
     @ParameterizedTest
+    @DisplayName("유효한 숙소 지역명일 경우")
     @CsvSource({
             "서울, 1",
             "인천, 2",
@@ -63,7 +66,8 @@ class AreaTest {
     }
 
     @Test
+    @DisplayName("유효하지 않은 숙소 지역명일 경우")
     void getCodeByName_ShouldThrowException_WhenNameNotFound() {
-        assertThrows(AccommodationException.class, () -> Area.getCodeByName("없는지역"));
+        assertNull(Area.getCodeByName("없는지역"));
     }
 }
