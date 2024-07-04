@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -57,6 +58,7 @@ public class UserControllerTest {
     private TokenProvider tokenProvider;
 
     UserEntity user;
+    LoginTokenResponseDto jwtToken;
 
     @BeforeEach
     public void setUp() {
@@ -81,10 +83,7 @@ public class UserControllerTest {
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        LoginTokenResponseDto jwt = tokenProvider.createToken(authentication);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", "Bearer " + jwt);
+        jwtToken = tokenProvider.createToken(authentication);
     }
 
     @AfterEach
@@ -101,11 +100,13 @@ public class UserControllerTest {
         Mockito.when(userService.getUserInfo(any(Long.class))).thenReturn(userResponseDto);
 
         mockMvc.perform(get("/api/user")
+            .header("Authorization", "Bearer " + jwtToken)
             .contentType(MediaType.APPLICATION_JSON))
+            .andDo(print())
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.email").value("abc@test.com"))
-            .andExpect(jsonPath("$.name").value("test"))
-            .andExpect(jsonPath("$.phoneNumber").value("123-456-7890"))
+            .andExpect(jsonPath("$.data.email").value("abc@test.com"))
+            .andExpect(jsonPath("$.data.name").value("test"))
+            .andExpect(jsonPath("$.data.phoneNumber").value("123-456-7890"))
             ;
     }
 }

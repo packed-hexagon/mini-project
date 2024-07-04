@@ -10,5 +10,5 @@ public @interface WithMockCustomUser {
 
     String email() default "abc@test.com";
 
-    String encryptedPassword() default "abc";
+    String encryptedPassword() default "test";
 }
