@@ -9,6 +9,7 @@ import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.service.AccommodationService;
 import com.group6.accommodation.global.util.ResponseApi;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +26,7 @@ public class AccommodationController {
 
     @GetMapping("/accommodation")
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> readAll(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "0") @Min (value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
             @RequestParam(required = false) @ValidArea String area,
             @RequestParam(required = false) @ValidCategory String category
     ) {
@@ -48,7 +49,7 @@ public class AccommodationController {
     @GetMapping( "/accommodation/search")
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> searchByKeyword(
             @RequestParam String keyword,
-            @RequestParam(defaultValue = "0") int page
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page
     ) {
 
         PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findByKeywordPaged(keyword, page);

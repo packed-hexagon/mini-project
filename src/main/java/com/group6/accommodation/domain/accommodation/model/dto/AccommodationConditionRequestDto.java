@@ -2,7 +2,6 @@ package com.group6.accommodation.domain.accommodation.model.dto;
 
 import com.group6.accommodation.domain.accommodation.annotation.StartBeforeEndAndNullable;
 import com.group6.accommodation.domain.accommodation.annotation.ValidArea;
-import com.group6.accommodation.domain.reservation.annotation.StartBeforeEnd;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -29,5 +28,6 @@ public class AccommodationConditionRequestDto {
     @Min(value = 1, message = "인원 수는 1명 이상이어야 합니다.")
     Integer headcount;
 
+    @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.")
     int page = 0;
 }
