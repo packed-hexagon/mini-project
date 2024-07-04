@@ -32,7 +32,7 @@ public class LoggerFilter implements Filter {
         StringBuilder headerValues = new StringBuilder();
 
         headerNames.asIterator().forEachRemaining(headerKey -> {
-            var headerValue = req.getHeader(headerKey);
+            String headerValue = req.getHeader(headerKey);
 
             headerValues
                     .append("[")
@@ -42,13 +42,13 @@ public class LoggerFilter implements Filter {
                     .append("] ");
         });
 
-        var requestBody = new String(req.getContentAsByteArray());
-        var uri = req.getRequestURI();
-        var method = req.getMethod();
+        String requestBody = new String(req.getContentAsByteArray());
+        String uri = req.getRequestURI();
+        String method = req.getMethod();
 
         log.info("Request : uri : {}, method : {}, header : {}, body : {}", uri, method, headerValues, requestBody);
 
-        var responseBody = new String(res.getContentAsByteArray());
+        String responseBody = new String(res.getContentAsByteArray());
         log.info("Response : uri : {}, method : {}, body : {}", uri, method, responseBody);
 
         res.copyBodyToResponse();
