@@ -42,13 +42,11 @@ public class RoomController {
 	}
 
 	@GetMapping("/accommodation/{id}/room/{roomId}/is-reservable")
-	public ResponseEntity<ResponseApi<AvailableRoomsRes>> availableRooms(
-		@PathVariable Long id,
-		@PathVariable Long roomId,
+	public ResponseEntity<ResponseApi<List<RoomDto>>> availableRooms(
 		@RequestBody AvailableRoomsReq req
 	) {
-		AvailableRoomsRes availableRoomsRes = roomService.availableRooms(req, id, roomId);
+		List<RoomDto> roomDtoList = roomService.availableRooms(req);
 
-		return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, availableRoomsRes));
+		return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, roomDtoList));
 	}
 }

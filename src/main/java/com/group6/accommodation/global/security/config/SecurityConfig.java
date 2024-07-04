@@ -26,6 +26,7 @@ public class SecurityConfig {
     private final TokenProvider tokenProvider;
     private final AuthenticationConfiguration authenticationConfiguration;
     private final ObjectMapper objectMapper;
+    private final CorsConfig corsConfig;
 
     String[] allowedUrls = {
             "/open-api/**",
@@ -58,6 +59,7 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfig.corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(allowedUrls)
                         .permitAll()
