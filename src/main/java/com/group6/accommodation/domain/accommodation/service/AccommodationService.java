@@ -14,17 +14,13 @@ import com.group6.accommodation.global.exception.type.AccommodationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static com.group6.accommodation.domain.accommodation.specification.AccommodationSpecification.*;
 
 @Service
 @RequiredArgsConstructor
@@ -111,8 +107,7 @@ public class AccommodationService {
                 .orElseThrow(() -> new AccommodationException(
                         AccommodationErrorCode.NOT_FOUND_ACCOMMODATION));
 
-        AccommodationDetailResponseDto accommodationDetailResponseDto = accommodationConverter.toDetailDto(accommodation);
-        return accommodationDetailResponseDto;
+        return accommodationConverter.toDetailDto(accommodation);
     }
 
     // 키워드로 숙소 조회

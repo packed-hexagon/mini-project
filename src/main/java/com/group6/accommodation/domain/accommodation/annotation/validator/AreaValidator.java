@@ -14,7 +14,7 @@ public class AreaValidator implements ConstraintValidator<ValidArea, String> {
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) {
-            return true; // null 값은 다른 어노테이션으로 처리
+            return true; // null 값 허용
         }
         if(Area.isValidAreaName(value)) {
             return true;

@@ -1,6 +1,6 @@
 package com.group6.accommodation.domain.accommodation.controller;
 
-import com.group6.accommodation.domain.accommodation.model.dto.AccommodationConditionRequest;
+import com.group6.accommodation.domain.accommodation.model.dto.AccommodationConditionRequestDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailResponseDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
 import com.group6.accommodation.domain.accommodation.annotation.ValidArea;
@@ -58,11 +58,11 @@ public class AccommodationController {
     // 위치, 날짜 범위, 인원 수 조건을 유동적으로 받아와 숙소 조회
     @GetMapping("/accommodation/condition")
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> searchAccommodations(
-            @Valid AccommodationConditionRequest request) {
+            @Valid AccommodationConditionRequestDto request
+    ) {
 
         PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findAvaliableAccommodation(
                 request.getArea(), request.getStartDate(), request.getEndDate(), request.getHeadcount(), request.getPage());
-
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, accommodationPage));
     }
 }
