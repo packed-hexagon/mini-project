@@ -58,7 +58,7 @@ public class ReserveService {
         }
 
         // 방이 모두 예약 된 경우
-        if (Objects.equals(reservationRepository.countByRoom(room), room.getRoomCount())) {
+        if (reservationRepository.countByRoom(room) >= room.getRoomCount()) {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
 
