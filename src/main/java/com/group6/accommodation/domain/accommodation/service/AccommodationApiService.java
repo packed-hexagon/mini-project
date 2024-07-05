@@ -110,9 +110,12 @@ public class AccommodationApiService {
         String address = item.getAddr1() != null ? item.getAddr1() : "";
         String address2 = item.getAddr2() != null ? item.getAddr2() : "";
         String areacode = item.getAreacode() != null ? item.getAreacode() : "";
-        Integer sigungucode = 0;
-        sigungucode = item.getSigungucode() != null ? Integer.parseInt(item.getSigungucode()) : 0;
+        int sigungucode = 0;
+        try {
+            sigungucode = item.getSigungucode() != null ? Integer.parseInt(item.getSigungucode()) : 0;
+        } catch (NumberFormatException e) {
 
+        }
         String category = item.getCat3() != null ? item.getCat3() : "";
 
         String defaultImage = "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg";
