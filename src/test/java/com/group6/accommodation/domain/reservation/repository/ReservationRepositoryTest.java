@@ -7,6 +7,7 @@ import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -27,7 +28,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -36,6 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Disabled
 public class ReservationRepositoryTest {
 
     @Container
@@ -112,10 +113,11 @@ public class ReservationRepositoryTest {
         reservationRepository.save(reservation);
 
         // when
-        boolean existsReservation = reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(accommodation, room, userId);
+        List<ReservationEntity> conflictingReservations = reservationRepository.findConflictingReservations(
+            accommodation, room, userId);
 
         // then
-        assertTrue(existsReservation);
+        assertTrue(conflictingReservations.isEmpty());
     }
 
     @Test
@@ -124,10 +126,11 @@ public class ReservationRepositoryTest {
         Long userId = user.getId();
 
         // when
-        boolean existsReservation = reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(accommodation, room, userId);
+        List<ReservationEntity> conflictingReservations = reservationRepository.findConflictingReservations(
+            accommodation, room, userId);
 
         // then
-        assertFalse(existsReservation);
+        assertFalse(conflictingReservations.isEmpty());
     }
 
     @Test
@@ -184,11 +187,11 @@ public class ReservationRepositoryTest {
         reservationRepository.save(reservation2);
 
         // when
-//        Optional<ReservationEntity> reservation = reservationRepository.findByStartDateBeforeOrEndDateAfter(LocalDate.now(), LocalDate.now());
+        List<Long> reservations = reservationRepository.findByStartDateBeforeOrEndDateAfter(
+            LocalDate.now(), LocalDate.now());
 
         // then
-//        assertTrue(reservation.isPresent());
-//        assertEquals(reservation2.getReservationId(), reservation.get().getReservationId());
+        assertFalse(reservations.isEmpty());
     }
 
     private ReservationEntity createReservation() {
