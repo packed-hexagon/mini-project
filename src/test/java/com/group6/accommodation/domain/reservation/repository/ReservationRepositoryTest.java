@@ -144,7 +144,7 @@ public class ReservationRepositoryTest {
         reservationRepository.save(reservation2);
 
         // when
-        Integer count = reservationRepository.countByRoom(room.getRoomId());
+        Integer count = reservationRepository.countByRoom(room);
 
         // then
         assertEquals(2, count);

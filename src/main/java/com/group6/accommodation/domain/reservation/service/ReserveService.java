@@ -53,13 +53,12 @@ public class ReserveService {
         RoomEntity room = roomRepository.findById(roomId)
             .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_ROOM));
 
-        // 비관적 락을 사용하여 이미 예약된 객실인지 검증
         if (!reservationRepository.findConflictingReservations(accommodation, room, userId).isEmpty()) {
             throw new ReservationException(ReservationErrorCode.ALREADY_RESERVED);
         }
 
         // 방이 모두 예약 된 경우
-        if (Objects.equals(reservationRepository.countByRoom(room.getRoomId()), room.getRoomCount())) {
+        if (Objects.equals(reservationRepository.countByRoom(room), room.getRoomCount())) {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
 
