@@ -33,15 +33,14 @@ public class UserService {
     @Value("${jwt.refresh-expiration-time}")
     private Long refreshTokenExpireTime;
 
-    public ResponseApi<UserResponseDto> getUserInfo(Long userId) {
+    public UserResponseDto getUserInfo(Long userId) {
         UserEntity result = userRepository.findById(userId)
                 .orElseThrow(() -> new AuthException(AuthErrorCode.NOT_FOUNT_USER_BY_USER_ID));
 
-        UserResponseDto response = UserResponseDto.toResponse(result);
-        return ResponseApi.success(HttpStatus.OK, response);
+        return UserResponseDto.toResponse(result);
     }
 
-    public ResponseApi<UserResponseDto> register(UserRequestDto request) {
+    public UserResponseDto register(UserRequestDto request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new AuthException(AuthErrorCode.ALREADY_EXIST_EMAIL);
         }
@@ -53,9 +52,7 @@ public class UserService {
         String encryptedPassword = encodePassword(request.getPassword());
         UserEntity result = userRepository.save(request.toEntity(encryptedPassword));
 
-        UserResponseDto response = UserResponseDto.toResponse(result);
-
-        return ResponseApi.success(HttpStatus.CREATED, response);
+        return UserResponseDto.toResponse(result);
     }
 
     public HttpHeaders logout(Long userId) {
@@ -81,11 +78,10 @@ public class UserService {
         return passwordEncoder.encode(password);
     }
 
-    public ResponseApi<LoginTokenResponseDto> refreshTokens(String bearerAccessToken, String refreshToken) {
+    public LoginTokenResponseDto refreshTokens(String bearerAccessToken, String refreshToken) {
         String accessToken = resolveBearerAccessToken(bearerAccessToken);
         if (tokenProvider.isTokenExpired(accessToken)) {
-            LoginTokenResponseDto refreshTokens = tokenProvider.getRefreshTokens(refreshToken);
-            return ResponseApi.success(HttpStatus.OK, refreshTokens);
+            return tokenProvider.getRefreshTokens(refreshToken);
         } else {
             throw new AuthException(AuthErrorCode.INVALID_TOKEN);
         }

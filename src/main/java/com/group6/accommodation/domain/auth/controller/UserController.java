@@ -33,7 +33,8 @@ public class UserController {
     public ResponseEntity<ResponseApi<UserResponseDto>> getUserInfo(
             @AuthenticationPrincipal CustomUserDetails user
             ) {
-        ResponseApi<UserResponseDto> response = userService.getUserInfo(user.getUserId());
+        UserResponseDto result = userService.getUserInfo(user.getUserId());
+        ResponseApi<UserResponseDto> response = ResponseApi.success(HttpStatus.OK, result);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
@@ -42,7 +43,9 @@ public class UserController {
             @RequestHeader(JwtFilter.AUTHORIZATION_HEADER) String accessToken,
             @CookieValue(value = "refreshToken", required = false) String refreshToken
     ) {
-        ResponseApi<LoginTokenResponseDto> refreshTokens = userService.refreshTokens(accessToken, refreshToken);
+        LoginTokenResponseDto result = userService.refreshTokens(accessToken, refreshToken);
+        ResponseApi<LoginTokenResponseDto> refreshTokens = ResponseApi.success(HttpStatus.OK, result);
+
         HttpHeaders headers = userService.createRefreshTokenCookie(refreshTokens.getData().getRefreshToken());
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(refreshTokens);
     }
@@ -52,7 +55,8 @@ public class UserController {
             @Valid
             @RequestBody UserRequestDto request
     ) {
-        ResponseApi<UserResponseDto> response = userService.register(request);
+        UserResponseDto result = userService.register(request);
+        ResponseApi<UserResponseDto> response = ResponseApi.success(HttpStatus.CREATED, result);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 

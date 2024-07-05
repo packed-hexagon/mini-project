@@ -2,9 +2,11 @@ package com.group6.accommodation.domain.auth.model.dto;
 
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import jakarta.validation.constraints.*;
+import lombok.Builder;
 import lombok.Getter;
 
 @Getter
+@Builder
 public class UserRequestDto {
     
     @NotEmpty(message = "이메일은 필수 입력 항목입니다.")
