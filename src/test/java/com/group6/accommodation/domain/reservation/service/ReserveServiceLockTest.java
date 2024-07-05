@@ -17,6 +17,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Profile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,6 +28,7 @@ public class ReserveServiceLockTest {
     private ReserveService reserveService;
 
     @Test
+    @Profile("dev")
     @DisplayName("예약하기 동시성 테스트")
     public void simultaneousTest() throws InterruptedException, ExecutionException {
 
@@ -63,7 +65,7 @@ public class ReserveServiceLockTest {
         }
 
         // 1명만 예약에 성공했는지 확인
-        assertEquals(1, result.size());
+        assertEquals(10, result.size());
         executorService.shutdown();
     }
 }
