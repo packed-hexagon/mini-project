@@ -7,6 +7,7 @@ import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
+import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
@@ -112,7 +113,7 @@ public class ReservationRepositoryTest {
         reservationRepository.save(reservation);
 
         // when
-        boolean existsReservation = reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(accommodation, room, userId);
+        boolean existsReservation = reservationRepository.checkIsReservedRoom(accommodation.getId(), room.getRoomId(), userId);
 
         // then
         assertTrue(existsReservation);
@@ -124,7 +125,7 @@ public class ReservationRepositoryTest {
         Long userId = user.getId();
 
         // when
-        boolean existsReservation = reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(accommodation, room, userId);
+        boolean existsReservation = reservationRepository.checkIsReservedRoom(accommodation.getId(), room.getRoomId(), userId);
 
         // then
         assertFalse(existsReservation);
@@ -184,11 +185,11 @@ public class ReservationRepositoryTest {
         reservationRepository.save(reservation2);
 
         // when
-//        Optional<ReservationEntity> reservation = reservationRepository.findByStartDateBeforeOrEndDateAfter(LocalDate.now(), LocalDate.now());
+        List<Long> reservations = reservationRepository.findByStartDateBeforeOrEndDateAfter(
+            LocalDate.now(), LocalDate.now());
 
         // then
-//        assertTrue(reservation.isPresent());
-//        assertEquals(reservation2.getReservationId(), reservation.get().getReservationId());
+        assertFalse(reservations.isEmpty());
     }
 
     private ReservationEntity createReservation() {

@@ -53,32 +53,29 @@ public class ReserveService {
         RoomEntity room = roomRepository.findById(roomId)
             .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_ROOM));
 
-
-        // 이미 예약되어 있는 객실인지 검증
-        if(reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(accommodation, room, userId)) {
+        // 비관적 락을 사용하여 이미 예약된 객실인지 검증
+        if (reservationRepository.checkIsReservedRoom(accommodation.getId(), room.getRoomId(), userId)) {
             throw new ReservationException(ReservationErrorCode.ALREADY_RESERVED);
         }
 
-
         // 방이 모두 예약 된 경우
-        if(Objects.equals(reservationRepository.countByRoom(room.getRoomId()), room.getRoomCount())) {
+        if (Objects.equals(reservationRepository.countByRoom(room.getRoomId()), room.getRoomCount())) {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
 
-
         // 인원 수가 초과 되는지 확인
-        if(room.getRoomMaxCount() < postReserveRequestDto.getHeadcount()) {
+        if (room.getRoomMaxCount() < postReserveRequestDto.getHeadcount()) {
             throw new ReservationException(ReservationErrorCode.FULL_PEOPLE);
         }
 
         // 금액 검증
         int price = room.getRoomOffseasonMinfee1();
         int overCount = postReserveRequestDto.getHeadcount() - room.getRoomBaseCount();
-        for(int i = 0; i < overCount; i++) {
+        for (int i = 0; i < overCount; i++) {
             price += OVER_PRICE;
         }
 
-        if(price != postReserveRequestDto.getPrice()) {
+        if (price != postReserveRequestDto.getPrice()) {
             throw new ReservationException(ReservationErrorCode.NOT_MATCH_PRICE);
         }
 
