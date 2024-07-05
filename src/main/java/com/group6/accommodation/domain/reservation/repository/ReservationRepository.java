@@ -24,7 +24,7 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
         @Param("userId") Long userId);
 
 
-
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("SELECT COUNT(r) FROM ReservationEntity r WHERE r.room.roomId = :roomId AND r.deletedAt IS NULL AND r.endDate > CURRENT_DATE")
     Integer countByRoom(@Param("roomId") Long roomId);
 

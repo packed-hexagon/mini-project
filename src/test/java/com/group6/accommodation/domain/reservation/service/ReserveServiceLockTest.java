@@ -2,6 +2,7 @@ package com.group6.accommodation.domain.reservation.service;
 
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
+import com.group6.accommodation.global.exception.type.ReservationException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,46 +13,43 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-public class RserveServiceLockTest {
+public class ReserveServiceLockTest {
+
     @Autowired
     private ReserveService reserveService;
 
     @Test
-    @Transactional
     @DisplayName("예약하기 동시성 테스트")
     public void simultaneousTest() throws InterruptedException, ExecutionException {
-        
-        // TODO: 동시성 이슈 해결 필요
-        
+
         Long userId = 1L;
-        Long accommodationId = 136213L;
-        Long roomId = 331L;
+        Long accommodationId = 1L;
+        Long roomId = 1L;
         int numberOfThreads = 10;
 
-        PostReserveRequestDto postReserveRequestDto = new PostReserveRequestDto(10, LocalDate.now().plusDays(1), LocalDate.now().plusDays(2), 800000);
-
+        PostReserveRequestDto postReserveRequestDto = new PostReserveRequestDto(2, LocalDate.now().plusDays(1), LocalDate.now().plusDays(2), 100);
 
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
         List<Callable<ReserveResponseDto>> tasks = new ArrayList<>();
 
         for (int i = 0; i < numberOfThreads; i++) {
             tasks.add(() -> {
-                ReserveResponseDto response = reserveService.postReserve(userId,
-                    accommodationId, roomId, postReserveRequestDto);
-                return response;
+                try {
+                    return reserveService.postReserve(userId, accommodationId, roomId, postReserveRequestDto);
+                } catch (ReservationException e) {
+                    // 예외가 발생하면 null 반환
+                    return null;
+                }
             });
         }
-
 
         List<Future<ReserveResponseDto>> futures = executorService.invokeAll(tasks);
 
@@ -59,13 +57,13 @@ public class RserveServiceLockTest {
 
         for (Future<ReserveResponseDto> future : futures) {
             ReserveResponseDto response = future.get();
-            result.add(response);
+            if (response != null) {
+                result.add(response);
+            }
         }
-        
-        // 개수 확인
-        assertEquals(numberOfThreads, result.size());
+
+        // 1명만 예약에 성공했는지 확인
+        assertEquals(1, result.size());
         executorService.shutdown();
-
     }
-
 }
