@@ -54,7 +54,7 @@ public class ReserveService {
             .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_ROOM));
 
         // 비관적 락을 사용하여 이미 예약된 객실인지 검증
-        if (reservationRepository.checkIsReservedRoom(accommodation.getId(), room.getRoomId(), userId)) {
+        if (!reservationRepository.findConflictingReservations(accommodation, room, userId).isEmpty()) {
             throw new ReservationException(ReservationErrorCode.ALREADY_RESERVED);
         }
 

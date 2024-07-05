@@ -1,6 +1,8 @@
 package com.group6.accommodation.domain.reservation.repository;
 
+import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
+import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import jakarta.persistence.LockModeType;
 import java.time.LocalDate;
 import java.util.List;
@@ -15,9 +17,10 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    @Query(value = "SELECT CASE WHEN COUNT(r) > 0 THEN true ELSE false END FROM reservation r WHERE r.accommodation_id = :accommodationId AND r.room_id = :roomId AND r.deleted_at IS NULL AND r.user_id <> :userId", nativeQuery = true)
-    Boolean checkIsReservedRoom(@Param("accommodationId") Long accommodationId,
-        @Param("roomId") Long roomId,
+    @Query("SELECT r FROM ReservationEntity r WHERE r.accommodation = :accommodation AND r.room = :room AND r.deletedAt IS NULL AND r.user.id <> :userId")
+    List<ReservationEntity> findConflictingReservations(
+        @Param("accommodation")AccommodationEntity accommodation,
+        @Param("room") RoomEntity room,
         @Param("userId") Long userId);
 
 

@@ -16,7 +16,6 @@ import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -142,11 +141,11 @@ class ReserveServiceTest {
         when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
         when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
 
-        when(reservationRepository.checkIsReservedRoom(
-                accommodation.getId(),
-                room.getRoomId(),
+        when(reservationRepository.findConflictingReservations(
+                accommodation,
+                room,
                 userId
-        )).thenReturn(false);
+        )).thenReturn(List.of());
 
 
         when(reservationRepository.save(any(ReservationEntity.class))).thenReturn(reservation);
@@ -162,7 +161,6 @@ class ReserveServiceTest {
 
     @Test
     @DisplayName("예약하기 - 이미 예약이 되어 있는 경우")
-    @Disabled
     public void alreadyReserve() {
         // given
         Long userId = 1L;
@@ -179,9 +177,9 @@ class ReserveServiceTest {
         when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
         when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
         when(reservationRepository
-            .checkIsReservedRoom(
-                anyLong(), anyLong(), anyLong())
-        ).thenReturn(true);
+            .findConflictingReservations(
+                any(AccommodationEntity.class), any(RoomEntity.class), anyLong())
+        ).thenReturn(List.of(reservation));
 
         // when
         ReservationException exception = assertThrows(ReservationException.class,
@@ -194,7 +192,6 @@ class ReserveServiceTest {
     }
 
     @Test
-    @Disabled
     @DisplayName("예약하기 - 인원 수가 초과 되는 경우")
     public void overPeopleReserve() {
         // given
@@ -214,9 +211,9 @@ class ReserveServiceTest {
         when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
         when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
         when(reservationRepository
-            .checkIsReservedRoom(
-                anyLong(), anyLong(), anyLong())
-        ).thenReturn(false);
+            .findConflictingReservations(
+                any(AccommodationEntity.class), any(RoomEntity.class), anyLong())
+        ).thenReturn(List.of());
 
         // when
         ReservationException exception = assertThrows(ReservationException.class,
@@ -229,7 +226,6 @@ class ReserveServiceTest {
 
     @Test
     @DisplayName("예약하기 - 금액이 맞지 않는 경우")
-    @Disabled
     public void notMatchPriceReserve() {
         Long userId = 1L;
         Long accommodationId = accommodation.getId();
@@ -247,9 +243,9 @@ class ReserveServiceTest {
         when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
         when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
         when(reservationRepository
-            .checkIsReservedRoom(
-                anyLong(), anyLong(), anyLong())
-        ).thenReturn(false);
+            .findConflictingReservations(
+                any(AccommodationEntity.class), any(RoomEntity.class), anyLong())
+        ).thenReturn(List.of());
 
         // when
         ReservationException exception = assertThrows(ReservationException.class,
