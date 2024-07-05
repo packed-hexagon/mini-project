@@ -115,12 +115,15 @@ public class RoomApiService {
         int roomoffseasonminfee1 = itemNode.path("roomoffseasonminfee1").asInt();
         int roomoffseasonmin1 = roomoffseasonminfee1 == 0 ? 100000 : roomoffseasonminfee1;
 
+        int roomcount = itemNode.path("roomcount").asInt();
+        int roomCount = roomcount == 0 ? 2 : roomcount;
+
         RoomEntity room = RoomEntity.builder()
             .id(itemNode.path("roomcode").asLong())
             .accommodation(accommodation)
             .roomTitle(itemNode.path("roomtitle").asText())
             .roomSize(itemNode.path("roomsize1").asInt())
-            .roomCount(itemNode.path("roomcount").asInt())
+            .roomCount(roomCount)
             .roomBaseCount(itemNode.path("roombasecount").asInt())
             .roomMaxCount(itemNode.path("roommaxcount").asInt())
             .roomOffseasonMinfee1(roomoffseasonmin1)

@@ -30,7 +30,14 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
     Page<ReservationEntity> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("select r.room.roomId from ReservationEntity r where not r.endDate < ?1 or r.startDate > ?2")
-    List<Long> findByStartDateBeforeOrEndDateAfter(LocalDate startDate, LocalDate endDate);
+    @Query("SELECT COUNT(r) FROM ReservationEntity r " +
+        "WHERE r.room.roomId = :roomId " +
+        "AND r.deletedAt IS NULL " +
+        "AND ((r.startDate <= :checkOut AND r.endDate >= :checkIn) " +
+        "OR (r.startDate <= :checkIn AND r.endDate >= :checkOut) " +
+        "OR (r.startDate >= :checkIn AND r.endDate <= :checkOut))")
+    int countOverlappingReservations(@Param("roomId") Long roomId,
+        @Param("checkIn") LocalDate checkIn,
+        @Param("checkOut") LocalDate checkOut);
 
 }

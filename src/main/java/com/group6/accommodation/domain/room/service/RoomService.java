@@ -72,14 +72,25 @@ public class RoomService {
 		return RoomConverter.toDto(roomEntity);
 	}
 
-	public List<RoomDto> availableRooms(AvailableRoomsReq req) {
+	// 룸 카운트 /
+	public AvailableRoomsRes availableRooms(AvailableRoomsReq req, Long id, Long roomId) {
 
-		List<Long> availableRoomIds = reservationRepository.findByStartDateBeforeOrEndDateAfter(
-			req.getCheckOut(), req.getCheckIn()
+		// 숙소 검증
+		List<RoomEntity> roomEntityList = roomRepository.findByAccommodation_Id(id);
+		if (roomEntityList.isEmpty()) {
+			throw new RoomException(RoomErrorCode.NOT_FOUND_ACCOMMODATION);
+		}
+
+		// 객실 검증
+		RoomEntity roomEntity = roomRepository.findByAccommodation_IdAndRoomId(id, roomId)
+			.orElseThrow(() -> new RoomException(RoomErrorCode.NOT_FOUND_ROOM));
+
+		int roomCount = roomEntity.getRoomCount();
+		int reservationRooms = reservationRepository.countOverlappingReservations(
+			roomId, req.getCheckIn(), req.getCheckOut()
 		);
 
-		List<RoomEntity> roomEntityList = roomRepository.findByRoomIdIn(availableRoomIds);
-
-		return RoomConverter.toDtoList(roomEntityList);
+		return roomCount > reservationRooms ? AvailableRoomsRes.builder().isReservable(true).build()
+			: AvailableRoomsRes.builder().isReservable(false).build();
 	}
 }
