@@ -1,17 +1,15 @@
 package com.group6.accommodation.domain.accommodation.service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group6.accommodation.domain.accommodation.config.OpenapiConfig;
+import com.group6.accommodation.domain.accommodation.model.dto.ApiResponseDto;
+import com.group6.accommodation.domain.accommodation.model.dto.ApiResponseDto.Item;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
-import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.likes.repository.UserLikeRepository;
 import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
 import com.group6.accommodation.global.exception.type.AccommodationException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.cache.annotation.Cacheable;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -57,7 +55,7 @@ public class AccommodationApiService {
                     .flatMap(List::stream)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new AccommodationException(AccommodationErrorCode.NOT_FOUND_DATA_PAGE);
+            throw new AccommodationException(AccommodationErrorCode.API_RESPONSE_ERROR);
         }
     }
 
@@ -70,8 +68,8 @@ public class AccommodationApiService {
             HttpStatusCode statusCode = responseEntity.getStatusCode();
 
             if (statusCode == HttpStatus.OK) {
-                JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
-                return rootNode.path("response").path("body").path("totalCount").asInt();
+                ApiResponseDto responseDto = objectMapper.readValue(responseEntity.getBody(), ApiResponseDto.class);
+                return responseDto.getResponse().getBody().getTotalCount();
             }
         } catch (URISyntaxException e) {
             throw new AccommodationException(AccommodationErrorCode.ERROR_URI); // URI가 잘못된 경우
@@ -91,45 +89,45 @@ public class AccommodationApiService {
             ResponseEntity<String> responseEntity = restTemplate.getForEntity(uri, String.class);
 
             if (responseEntity.getStatusCode() == HttpStatus.OK) {
-                JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
-                JsonNode itemsNode = rootNode.path("response").path("body").path("items").path("item");
-                List<AccommodationEntity> accommodations = new ArrayList<>();
-
-                for (JsonNode itemNode : itemsNode) {
-                    AccommodationEntity accommodation = parseAccommodation(itemNode);
-                    accommodations.add(accommodation);
-                }
+                ApiResponseDto responseDto = objectMapper.readValue(responseEntity.getBody(), ApiResponseDto.class);
+                List<Item> items = responseDto.getResponse().getBody().getItems().getItem();
+                List<AccommodationEntity> accommodations = items.stream()
+                        .map(this::parseAccommodation)
+                        .collect(Collectors.toList());
 
                 return CompletableFuture.completedFuture(accommodations);
             }
 
             return CompletableFuture.completedFuture(Collections.emptyList());
         } catch (Exception e) {
-            throw new AccommodationException(AccommodationErrorCode.NOT_FOUND_DATA_PAGE);
+            throw new AccommodationException(AccommodationErrorCode.API_RESPONSE_ERROR);
         }
     }
 
-    private AccommodationEntity parseAccommodation(JsonNode itemNode) {
-        Long id = itemNode.path("contentid").asLong();
-        String title = truncate(removeTextWithinBrackets(itemNode.path("title").asText()), 20);
-        String address = itemNode.path("addr1").asText();
-        String address2 = itemNode.path("addr2").asText("");
-        String areacode = itemNode.path("areacode").asText();
-        Integer sigungucode = itemNode.path("sigungucode").asInt();
-        String category = itemNode.path("cat3").asText();
+    private AccommodationEntity parseAccommodation(Item item) {
+        Long id = item.getContentid();
+        String title = truncate(removeTextWithinBrackets(item.getTitle()), 20);
+        String address = item.getAddr1() != null ? item.getAddr1() : "";
+        String address2 = item.getAddr2() != null ? item.getAddr2() : "";
+        String areacode = item.getAreacode() != null ? item.getAreacode() : "";
+        int sigungucode = 0;
+        try {
+            sigungucode = item.getSigungucode() != null ? Integer.parseInt(item.getSigungucode()) : 0;
+        } catch (NumberFormatException e) {
 
-        String firstImage = itemNode.path("firstimage").asText();
-        String image = firstImage.isEmpty() ? "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg" : firstImage;
+        }
+        String category = item.getCat3() != null ? item.getCat3() : "";
 
-        String thumbnail = itemNode.path("firstimage2").asText();
-        String thumbnailImage = thumbnail.isEmpty() ? "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg" : thumbnail;
+        String defaultImage = "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg";
+        String image = (item.getFirstimage() != null && !item.getFirstimage().isEmpty()) ? item.getFirstimage() : defaultImage;
+        String thumbnailImage = (item.getFirstimage2() != null && !item.getFirstimage2().isEmpty()) ? item.getFirstimage2() : defaultImage;
 
-        Double latitude = itemNode.path("mapy").asDouble();
-        Double longitude = itemNode.path("mapx").asDouble();
-        Integer mlevel = itemNode.path("mlevel").asInt(0);
+        Double latitude = item.getMapy() != null ? item.getMapy() : 0.0;
+        Double longitude = item.getMapx() != null ? item.getMapx() : 0.0;
+        Integer mlevel = item.getMlevel() != null ? item.getMlevel() : 0;
 
-        String tel = itemNode.path("tel").asText();
-        String telNumber = tel.isEmpty() ? "010-1234-5678" : truncate(replaceTextWithinAngleBrackets(tel), 255);
+        String telNumber = (item.getTel() != null && !item.getTel().isEmpty()) ?
+                truncate(replaceTextWithinAngleBrackets(item.getTel()), 255) : "010-1234-5678";
 
         int likeCount = userLikeRepository.countByAccommodationId(id);
 

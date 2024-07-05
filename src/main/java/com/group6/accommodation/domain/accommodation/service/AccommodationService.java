@@ -14,17 +14,13 @@ import com.group6.accommodation.global.exception.type.AccommodationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import static com.group6.accommodation.domain.accommodation.specification.AccommodationSpecification.*;
 
 @Service
 @RequiredArgsConstructor
@@ -111,8 +107,7 @@ public class AccommodationService {
                 .orElseThrow(() -> new AccommodationException(
                         AccommodationErrorCode.NOT_FOUND_ACCOMMODATION));
 
-        AccommodationDetailResponseDto accommodationDetailResponseDto = accommodationConverter.toDetailDto(accommodation);
-        return accommodationDetailResponseDto;
+        return accommodationConverter.toDetailDto(accommodation);
     }
 
     // 키워드로 숙소 조회
@@ -138,23 +133,18 @@ public class AccommodationService {
         }
 
         // 날짜 범위 조건 있을 경우
-//        if (startDate != null && endDate != null) {
-//            validateDateRange(startDate, endDate);
-//            spec = spec.and(AccommodationSpecification.withDateRange(startDate, endDate));
-//        }
-//
-//        // 인원수 조건 있을 경우
-//        if (headcount != null && headcount > 0) {
-//            spec = spec.and(AccommodationSpecification.withHeadcount(headcount));
-//        }
         if(startDate != null && endDate != null) {
-            validateDateRange(startDate, endDate);
+            // 인원수 조건도 있을 경우
             if(headcount != null && headcount > 0) {
                 spec = spec.and(AccommodationSpecification.withDateRangeAndHeadcount(startDate, endDate, headcount));
-            } else {
+            }
+            // 인원수 조건 없을 경우
+            else {
                 spec = spec.and(AccommodationSpecification.withDateRange(startDate, endDate));
             }
-        } else if(headcount != null && headcount > 0) {
+        }
+        // 날짜 범위 조건 없고 인원수 조건만 있을 경우
+        else if(headcount != null && headcount > 0) {
             spec = spec.and(AccommodationSpecification.withHeadcount(headcount));
         }
 
@@ -166,12 +156,6 @@ public class AccommodationService {
         Page<AccommodationEntity> accommodationPage = accommodationRepository.findAllWithCountQuery(allAccommodation, pageRequest);
 
         return getPagedDto(accommodationPage);
-    }
-
-    private void validateDateRange(LocalDate start, LocalDate end) {
-        if(start.isAfter(end)) {
-            throw new AccommodationException(AccommodationErrorCode.INVALID_DATE_RANGE);
-        }
     }
 
     // Page 정보값 포함한 PagedDto로 변환.(공통 로직)

@@ -22,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
-@Disabled
 public class RserveServiceLockTest {
     @Autowired
     private ReserveService reserveService;
@@ -32,7 +31,7 @@ public class RserveServiceLockTest {
     @DisplayName("예약하기 동시성 테스트")
     public void simultaneousTest() throws InterruptedException, ExecutionException {
         
-        // TODO: RollBack이 필요함
+        // TODO: 동시성 이슈 해결 필요
         
         Long userId = 1L;
         Long accommodationId = 136213L;

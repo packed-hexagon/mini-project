@@ -2,6 +2,7 @@ package com.group6.accommodation.domain.accommodation.annotation.validator;
 
 import com.group6.accommodation.domain.accommodation.annotation.ValidCategory;
 import com.group6.accommodation.domain.accommodation.model.enums.Category;
+import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
 import com.group6.accommodation.global.exception.type.AccommodationException;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
@@ -12,11 +13,10 @@ public class CategoryValidator implements ConstraintValidator<ValidCategory, Str
         if(value == null) {
             return true;
         }
-        try {
-            Category.getCodeByName(value);
+        if(Category.isValidCategoryName(value)) {
             return true;
-        } catch (AccommodationException e) {
-            return false;
+        } else {
+            throw new AccommodationException(AccommodationErrorCode.INVALID_CATEGORY);
         }
     }
 }

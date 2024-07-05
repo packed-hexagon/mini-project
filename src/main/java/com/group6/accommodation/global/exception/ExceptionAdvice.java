@@ -9,6 +9,9 @@ import com.group6.accommodation.global.exception.type.ValidException;
 import com.group6.accommodation.global.util.ResponseApi;
 import java.util.HashMap;
 import java.util.Map;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,6 +38,18 @@ public class ExceptionAdvice {
 
 		log.warn(validException.getMessage());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseApi.failed(validException, errorMessages));
+	}
+
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<?> constraintException(ConstraintViolationException ex) {
+		Map<String, String> errorMessage = new HashMap<>();
+		for(ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+			String message = violation.getMessage();
+			errorMessage.put("message", message);
+		}
+		ValidException validException = new ValidException(HttpStatus.BAD_REQUEST, errorMessage);
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseApi.failed(validException, errorMessage));
 	}
 
 	@ExceptionHandler(AuthException.class)

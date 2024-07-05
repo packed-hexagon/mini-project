@@ -1,17 +1,12 @@
 package com.group6.accommodation.domain.accommodation.model.entity;
 
-import com.group6.accommodation.domain.accommodation.model.enums.Area;
-import com.group6.accommodation.domain.accommodation.model.enums.Category;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 @Getter
 @Entity
