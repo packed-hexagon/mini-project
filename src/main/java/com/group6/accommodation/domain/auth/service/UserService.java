@@ -78,11 +78,10 @@ public class UserService {
         return passwordEncoder.encode(password);
     }
 
-    public ResponseApi<LoginTokenResponseDto> refreshTokens(String bearerAccessToken, String refreshToken) {
+    public LoginTokenResponseDto refreshTokens(String bearerAccessToken, String refreshToken) {
         String accessToken = resolveBearerAccessToken(bearerAccessToken);
         if (tokenProvider.isTokenExpired(accessToken)) {
-            LoginTokenResponseDto refreshTokens = tokenProvider.getRefreshTokens(refreshToken);
-            return ResponseApi.success(HttpStatus.OK, refreshTokens);
+            return tokenProvider.getRefreshTokens(refreshToken);
         } else {
             throw new AuthException(AuthErrorCode.INVALID_TOKEN);
         }

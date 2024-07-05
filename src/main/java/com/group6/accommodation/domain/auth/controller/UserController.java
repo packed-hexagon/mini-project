@@ -43,7 +43,9 @@ public class UserController {
             @RequestHeader(JwtFilter.AUTHORIZATION_HEADER) String accessToken,
             @CookieValue(value = "refreshToken", required = false) String refreshToken
     ) {
-        ResponseApi<LoginTokenResponseDto> refreshTokens = userService.refreshTokens(accessToken, refreshToken);
+        LoginTokenResponseDto result = userService.refreshTokens(accessToken, refreshToken);
+        ResponseApi<LoginTokenResponseDto> refreshTokens = ResponseApi.success(HttpStatus.OK, result);
+
         HttpHeaders headers = userService.createRefreshTokenCookie(refreshTokens.getData().getRefreshToken());
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(refreshTokens);
     }
