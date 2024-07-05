@@ -17,7 +17,6 @@ public class AccommodationApplication {
 	}
 
 	@Bean
-	@Profile({"prod", "dev"})
 	public ApplicationRunner applicationRunner(DatabaseInitializationService databaseInitializationService) {
 		return args -> databaseInitializationService.initializeDatabase();
 	}
