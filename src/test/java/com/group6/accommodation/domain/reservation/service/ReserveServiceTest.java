@@ -141,12 +141,6 @@ class ReserveServiceTest {
         when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
         when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
 
-        when(reservationRepository.findConflictingReservations(
-                accommodation,
-                room,
-                userId
-        )).thenReturn(List.of());
-
 
         when(reservationRepository.save(any(ReservationEntity.class))).thenReturn(reservation);
 
@@ -160,60 +154,24 @@ class ReserveServiceTest {
     }
 
     @Test
-    @DisplayName("예약하기 - 이미 예약이 되어 있는 경우")
-    public void alreadyReserve() {
-        // given
-        Long userId = 1L;
-        Long accommodationId = accommodation.getId();
-        Long roomId = room.getRoomId();
-        PostReserveRequestDto requestDto = new PostReserveRequestDto(
-            2,
-            LocalDate.now().plusDays(1),
-            LocalDate.now().plusDays(2),
-            100
-        );
-
-        when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
-        when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
-        when(reservationRepository
-            .findConflictingReservations(
-                any(AccommodationEntity.class), any(RoomEntity.class), anyLong())
-        ).thenReturn(List.of(reservation));
-
-        // when
-        ReservationException exception = assertThrows(ReservationException.class,
-            () -> reserveService.postReserve(userId, accommodationId, roomId, requestDto));
-
-        // then
-        assertNotNull(exception);
-        assertEquals(exception.getInfo(), ReservationErrorCode.ALREADY_RESERVED.getInfo());
-        assertEquals(exception.getStatusCode(), ReservationErrorCode.ALREADY_RESERVED.getCode());
-    }
-
-    @Test
     @DisplayName("예약하기 - 인원 수가 초과 되는 경우")
     public void overPeopleReserve() {
         // given
         Long userId = 1L;
         Long accommodationId = accommodation.getId();
         Long roomId = room.getRoomId();
-        int overPeople = 100;
+        int overPeople = 5;
 
         PostReserveRequestDto requestDto = new PostReserveRequestDto(
             overPeople,
             LocalDate.now().plusDays(1),
             LocalDate.now().plusDays(2),
-            100
+            150100
         );
 
         when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
         when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
         when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
-        when(reservationRepository
-            .findConflictingReservations(
-                any(AccommodationEntity.class), any(RoomEntity.class), anyLong())
-        ).thenReturn(List.of());
 
         // when
         ReservationException exception = assertThrows(ReservationException.class,
@@ -221,7 +179,7 @@ class ReserveServiceTest {
 
         // then
         assertNotNull(exception);
-        assertEquals(exception.getInfo(), ReservationErrorCode.FULL_PEOPLE.getInfo());
+        assertEquals(ReservationErrorCode.OVER_PEOPLE.getInfo(), exception.getInfo());
     }
 
     @Test
@@ -242,10 +200,6 @@ class ReserveServiceTest {
         when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
         when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
         when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
-        when(reservationRepository
-            .findConflictingReservations(
-                any(AccommodationEntity.class), any(RoomEntity.class), anyLong())
-        ).thenReturn(List.of());
 
         // when
         ReservationException exception = assertThrows(ReservationException.class,
@@ -290,7 +244,7 @@ class ReserveServiceTest {
                     .user(mock(UserEntity.class))
                     .room(mock(RoomEntity.class))
                     .accommodation(mock(AccommodationEntity.class))
-                    .headcount(2)
+                    .headcount(0)
                     .startDate(dto.getStartDate())
                     .endDate(dto.getEndDate())
                     .price(dto.getPrice())

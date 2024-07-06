@@ -2,7 +2,6 @@ package com.group6.accommodation.domain.reservation.service;
 
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
-import com.group6.accommodation.global.exception.type.ReservationException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -17,7 +16,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Profile;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -28,10 +26,9 @@ public class ReserveServiceLockTest {
     private ReserveService reserveService;
 
     @Test
-    @Profile("dev")
     @DisplayName("예약하기 동시성 테스트")
     public void simultaneousTest() throws InterruptedException, ExecutionException {
-
+        // TODO: 낙관적 락 걸어보기
         Long userId = 1L;
         Long accommodationId = 1L;
         Long roomId = 1L;
@@ -43,14 +40,7 @@ public class ReserveServiceLockTest {
         List<Callable<ReserveResponseDto>> tasks = new ArrayList<>();
 
         for (int i = 0; i < numberOfThreads; i++) {
-            tasks.add(() -> {
-                try {
-                    return reserveService.postReserve(userId, accommodationId, roomId, postReserveRequestDto);
-                } catch (ReservationException e) {
-                    // 예외가 발생하면 null 반환
-                    return null;
-                }
-            });
+            tasks.add(() -> reserveService.postReserve(userId, accommodationId, roomId, postReserveRequestDto));
         }
 
         List<Future<ReserveResponseDto>> futures = executorService.invokeAll(tasks);
