@@ -72,6 +72,13 @@ public class ReserveService {
 
         ReservationEntity reservation = reservationRepository.save(reservationEntity);
 
+        // 예약 후 다시 방의 예약 상태 확인하여 정합성 검증
+        long updatedReservations = reservationRepository.countByRoom(room);
+        if (updatedReservations > room.getRoomCount()) {
+            // 예약이 잘못되었다면 롤백 등의 처리
+            throw new ReservationException(ReservationErrorCode.FULL_ROOM);
+        }
+
         return ReservationConverter.toDto(reservation);
     }
 

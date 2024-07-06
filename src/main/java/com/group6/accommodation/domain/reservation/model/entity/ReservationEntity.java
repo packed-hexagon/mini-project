@@ -14,7 +14,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Version;
 import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -66,9 +65,6 @@ public class ReservationEntity {
 	@Setter
 	@Column(name = "deleted_at")
 	private Instant deletedAt;
-
-	@Version
-	private Integer version;
 
 	@Builder
 	public ReservationEntity(UserEntity user, AccommodationEntity accommodation, RoomEntity room, @NotNull int headcount, LocalDate startDate, LocalDate endDate, Integer price) {
