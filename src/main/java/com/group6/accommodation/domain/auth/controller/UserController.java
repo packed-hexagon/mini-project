@@ -7,6 +7,7 @@ import com.group6.accommodation.global.security.filter.JwtFilter;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.security.token.model.dto.LoginTokenResponseDto;
 import com.group6.accommodation.global.util.ResponseApi;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
+@Tag(name = "user", description = "사용자")
 public class UserController {
 
     private final UserService userService;

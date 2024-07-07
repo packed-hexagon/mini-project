@@ -8,6 +8,7 @@ import com.group6.accommodation.domain.accommodation.annotation.ValidCategory;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.service.AccommodationService;
 import com.group6.accommodation.global.util.ResponseApi;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/open-api")
+@Tag(name = "accommodation", description = "숙박")
 public class AccommodationController {
 
     private final AccommodationService accommodationService;
