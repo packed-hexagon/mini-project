@@ -9,19 +9,20 @@ import com.group6.accommodation.global.security.token.model.dto.LoginTokenRespon
 import com.group6.accommodation.global.util.ResponseApi;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping
@@ -43,6 +44,7 @@ public class UserController {
             @RequestHeader(JwtFilter.AUTHORIZATION_HEADER) String accessToken,
             @CookieValue(value = "refreshToken", required = false) String refreshToken
     ) {
+        log.info("refresh token: {}", refreshToken);
         LoginTokenResponseDto result = userService.refreshTokens(accessToken, refreshToken);
         ResponseApi<LoginTokenResponseDto> refreshTokens = ResponseApi.success(HttpStatus.OK, result);
 
