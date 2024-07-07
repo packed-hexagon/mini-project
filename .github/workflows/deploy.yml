@@ -71,6 +71,9 @@ jobs:
           echo "MYSQL_PASSWORD=${{ secrets.MYSQL_PASSWORD }}" >> /home/user/.env
           echo "SPRING_DATASOURCE_USERNAME=${{ secrets.SPRING_DATASOURCE_USERNAME }}" >> /home/user/.env
           echo "SPRING_DATASOURCE_PASSWORD=${{ secrets.SPRING_DATASOURCE_PASSWORD }}" >> /home/user/.env
+          echo "MYSQL_PORT=${{ secrets.MYSQL_PORT }}" >> /home/user/.env
+          echo "REDIS_PORT=${{ secrets.REDIS_PORT }}" >> /home/user/.env
+          echo "APPLICATION_PORT=${{ secrets.APPLICATION_PORT }}" >> /home/user/.env
           EOF
           rm private_key.pem
 

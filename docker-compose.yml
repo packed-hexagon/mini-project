@@ -11,7 +11,7 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - ${MYSQL_PORT}
     volumes:
       - db-data:/var/lib/mysql
 
@@ -21,7 +21,7 @@ services:
     restart: always
     container_name: redis
     ports:
-      - "6379:6379"
+      - ${REDIS_PORT}
 
 
 
@@ -35,7 +35,7 @@ services:
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     ports:
-      - "8080:8080"
+      - ${APPLICATION_PORT}
     depends_on:
       - db
 
