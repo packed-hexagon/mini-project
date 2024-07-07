@@ -72,7 +72,7 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
         refreshTokenCookie.setSecure(true);
         refreshTokenCookie.setPath("/");
         refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
-        refreshTokenCookie.setDomain("localhost:3000");
+        refreshTokenCookie.setDomain("localhost");
 
         response.addCookie(refreshTokenCookie);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
