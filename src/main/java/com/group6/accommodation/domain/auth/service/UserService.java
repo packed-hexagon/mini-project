@@ -7,7 +7,6 @@ import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.global.exception.error.AuthErrorCode;
 import com.group6.accommodation.global.exception.type.AuthException;
 import com.group6.accommodation.global.redis.repository.RefreshTokenRepository;
-import com.group6.accommodation.global.util.ResponseApi;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import com.group6.accommodation.global.security.filter.JwtFilter;
@@ -15,7 +14,6 @@ import com.group6.accommodation.global.security.token.model.dto.LoginTokenRespon
 import com.group6.accommodation.global.security.token.provider.TokenProvider;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
