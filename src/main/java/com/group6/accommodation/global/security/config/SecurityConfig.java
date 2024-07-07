@@ -28,7 +28,7 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final CorsConfig corsConfig;
 
-    String[] allowedUrls = {
+    public final static String[] allowedUrls = {
             "/open-api/**",
             "/resources/**",
             "/error",

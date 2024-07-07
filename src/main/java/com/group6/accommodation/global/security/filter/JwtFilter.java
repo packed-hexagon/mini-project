@@ -3,6 +3,7 @@ package com.group6.accommodation.global.security.filter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group6.accommodation.global.exception.error.AuthErrorCode;
 import com.group6.accommodation.global.exception.type.AuthException;
+import com.group6.accommodation.global.security.config.SecurityConfig;
 import com.group6.accommodation.global.security.token.provider.TokenProvider;
 import com.group6.accommodation.global.util.ResponseApi;
 import jakarta.servlet.FilterChain;
@@ -10,11 +11,14 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -23,15 +27,18 @@ import org.springframework.web.filter.OncePerRequestFilter;
 public class JwtFilter extends OncePerRequestFilter {
     private final TokenProvider tokenProvider;
     private final ObjectMapper objectMapper;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     public static final String AUTHORIZATION_HEADER = "Authorization";
     public static final String TOKEN_PREFIX = "Bearer ";
 
+    private final List<String> excludeUrlPatterns = Arrays.asList(SecurityConfig.allowedUrls);
+
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        String excludePath = "/open-api";
-        String path = request.getRequestURI();
-        return path.startsWith(excludePath);
+                String path = request.getRequestURI();
+        return excludeUrlPatterns.stream()
+                .anyMatch(pattern -> pathMatcher.match(pattern, path));
     }
 
     @Override
