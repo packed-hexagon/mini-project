@@ -7,6 +7,7 @@ import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.util.Response;
 import com.group6.accommodation.global.util.ResponseApi;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user-like")
 @RequiredArgsConstructor
 @RestController
+@Tag(name = "user-like", description = "찜")
 public class UserLikeController {
 
     private final UserLikeService userLikeService;

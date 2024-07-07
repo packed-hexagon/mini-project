@@ -7,6 +7,7 @@ import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
 import com.group6.accommodation.domain.reservation.service.ReserveService;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.util.ResponseApi;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/reservation")
 @RequiredArgsConstructor
+@Tag(name = "reservation", description = "예약")
 public class ReserveController {
 
     private final ReserveService reserveService;

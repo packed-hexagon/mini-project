@@ -5,6 +5,7 @@ import com.group6.accommodation.domain.room.model.dto.AvailableRoomsRes;
 import com.group6.accommodation.domain.room.model.dto.RoomDto;
 import com.group6.accommodation.domain.room.service.RoomService;
 import com.group6.accommodation.global.util.ResponseApi;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/open-api")
+@Tag(name = "room", description = "객실")
 public class RoomController {
 
 	private final RoomService roomService;
