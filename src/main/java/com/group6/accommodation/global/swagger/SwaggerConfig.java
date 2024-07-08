@@ -52,9 +52,8 @@ public class SwaggerConfig {
 
         // 로그인 엔드포인트 추가
         Operation loginOperation = new Operation()
-                .tags(List.of("user"))
-                .summary("User Login")
-                .description("Authenticate a user and receive JWT tokens")
+                .tags(List.of("User"))
+                .summary("로그인")
                 .requestBody(new RequestBody()
                         .content(new Content()
                                 .addMediaType("application/json", new MediaType()
