@@ -1,16 +1,26 @@
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/accommodation?serverTimezone=UTC&characterEncoding=UTF-8
-    username: root
-    password: kms900326
+    username: {id}
+    password: {pw}
     driver-class-name: com.mysql.cj.jdbc.Driver
 
-  jpa:
+jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create
     properties:
       hibernate:
         format_sql: true
+    show-sql: false
 
-  jwt:
-    secret: c3ByaW5nLWJvb3Qtc2VjdXJpdHktand0LXR1dG9yaWFsLWppd29vbi1zcHJpbmctYm9vdC1zZWN1cml0eS1qd3QtdHV0b3JpYWwK
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      connect-timeout: 30s
+      timeout: 10s
+
+jwt:
+  secret: 41386c3db6a3c794825df834ebb1bdf45a617a1b3b9c8baea7649bc0b8dd5e9b
+  access-expiration-time: 1800000
+  refresh-expiration-time: 604800000
