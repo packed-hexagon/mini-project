@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @Validated
 @RequiredArgsConstructor
 @RequestMapping("/open-api")
-@Tag(name = "accommodation", description = "숙박")
+@Tag(name = "Accommodation", description = "숙박 관련 API")
 public class AccommodationController {
 
     private final AccommodationService accommodationService;

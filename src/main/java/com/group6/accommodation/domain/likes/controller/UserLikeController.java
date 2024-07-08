@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/user-like")
 @RequiredArgsConstructor
 @RestController
-@Tag(name = "user-like", description = "찜")
+@Tag(name = "UserLike", description = "찜 관련 API")
 public class UserLikeController {
 
     private final UserLikeService userLikeService;

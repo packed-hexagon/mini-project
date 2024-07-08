@@ -17,6 +17,7 @@ import io.swagger.v3.oas.models.responses.ApiResponses;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -51,6 +52,7 @@ public class SwaggerConfig {
 
         // 로그인 엔드포인트 추가
         Operation loginOperation = new Operation()
+                .tags(List.of("user"))
                 .summary("User Login")
                 .description("Authenticate a user and receive JWT tokens")
                 .requestBody(new RequestBody()

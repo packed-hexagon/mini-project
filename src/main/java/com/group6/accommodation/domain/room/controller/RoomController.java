@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/open-api")
-@Tag(name = "room", description = "객실")
+@Tag(name = "Room", description = "객실 관련 API")
 public class RoomController {
 
 	private final RoomService roomService;
