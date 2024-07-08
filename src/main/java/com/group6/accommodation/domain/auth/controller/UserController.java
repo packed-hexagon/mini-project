@@ -7,6 +7,8 @@ import com.group6.accommodation.global.security.filter.JwtFilter;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.security.token.model.dto.LoginTokenResponseDto;
 import com.group6.accommodation.global.util.ResponseApi;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,15 +35,18 @@ public class UserController {
     private final UserService userService;
 
     @GetMapping("/api/user")
+    @Operation(summary = "유저 정보 조회", description = "로그인한 사용자의 정보를 조회합니다.")
     public ResponseEntity<ResponseApi<UserResponseDto>> getUserInfo(
             @AuthenticationPrincipal CustomUserDetails user
-            ) {
+    ) {
         UserResponseDto result = userService.getUserInfo(user.getUserId());
         ResponseApi<UserResponseDto> response = ResponseApi.success(HttpStatus.OK, result);
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
     @PostMapping("/open-api/user/refresh-tokens")
+    @Operation(summary = "Token 재발급", description = "AccessToken, RefreshToken을 새로 발급합니다.")
+    @Parameters
     public ResponseEntity<ResponseApi<LoginTokenResponseDto>> refreshTokens(
             @RequestHeader(JwtFilter.AUTHORIZATION_HEADER) String accessToken,
             @CookieValue(value = "refreshToken", required = false) String refreshToken
@@ -55,6 +60,7 @@ public class UserController {
     }
 
     @PostMapping("/open-api/user/register")
+    @Operation(summary = "회원가입")
     public ResponseEntity<ResponseApi<UserResponseDto>> register(
             @Valid
             @RequestBody UserRequestDto request
@@ -65,6 +71,8 @@ public class UserController {
     }
 
     @PostMapping("/api/user/logout")
+    @Operation(summary = "로그아웃")
+
     public ResponseEntity<?> logout(
             @AuthenticationPrincipal CustomUserDetails user
     ) {
