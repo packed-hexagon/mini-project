@@ -16,6 +16,7 @@ import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -57,8 +58,8 @@ public class ReserveService {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
 
-
-        validatePayable(room, postReserveRequestDto.getHeadcount(), postReserveRequestDto.getPrice());
+        // 금액 검증
+        validatePayable(room, postReserveRequestDto);
 
         ReservationEntity reservationEntity = ReservationEntity.builder()
             .accommodation(accommodation)
@@ -72,12 +73,6 @@ public class ReserveService {
 
         ReservationEntity reservation = reservationRepository.save(reservationEntity);
 
-        // 예약 후 다시 방의 예약 상태 확인하여 정합성 검증
-        long updatedReservations = reservationRepository.countByRoom(room);
-        if (updatedReservations > room.getRoomCount()) {
-            // 예약이 잘못되었다면 롤백 등의 처리
-            throw new ReservationException(ReservationErrorCode.FULL_ROOM);
-        }
 
         return ReservationConverter.toDto(reservation);
     }
@@ -132,12 +127,21 @@ public class ReserveService {
     }
 
 
-    private void validatePayable(RoomEntity room, int headCount, int amount) {
+    private void validatePayable(RoomEntity room, PostReserveRequestDto postReserveRequestDto) {
+
+        int headCount = postReserveRequestDto.getHeadcount();
+        int amount = postReserveRequestDto.getPrice();
         int price = room.getRoomOffseasonMinfee1();
+
+        int day = (int) ChronoUnit.DAYS.between(postReserveRequestDto.getStartDate(),
+            postReserveRequestDto.getEndDate());
+
         int overCount = headCount - room.getRoomBaseCount();
         for(int i = 0; i < overCount; i++) {
             price += OVER_PRICE;
         }
+        price *= day;
+
         if(price != amount) {
             throw new ReservationException(ReservationErrorCode.NOT_MATCH_PRICE);
         }
