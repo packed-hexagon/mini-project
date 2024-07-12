@@ -28,10 +28,14 @@ public class SecurityConfig {
     private final ObjectMapper objectMapper;
     private final CorsConfig corsConfig;
 
-    String[] allowedUrls = {
+    public final static String[] allowedUrls = {
             "/open-api/**",
             "/resources/**",
-            "/error"
+            "/error",
+            "/swagger-resources/**",
+            "/swagger-ui/**",
+            "/v3/api-docs/**",
+            "/v3/api-docs"
     };
 
     @Bean
@@ -55,13 +59,13 @@ public class SecurityConfig {
                 .formLogin(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
-                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfig.configurationSource()))
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfig.corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(allowedUrls)
                         .permitAll()
                         .anyRequest().authenticated()
                 )
-                .addFilterBefore(new JwtFilter(tokenProvider), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new JwtFilter(tokenProvider, objectMapper), UsernamePasswordAuthenticationFilter.class)
                 .addFilter(
                         new LoginAuthenticationFilter(authenticationManagerBean(), tokenProvider, objectMapper)
                 )

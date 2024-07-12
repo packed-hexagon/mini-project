@@ -16,6 +16,7 @@ import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +34,7 @@ public class ReserveService {
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
-    private final int OVER_PRICE = 5000;
+    private final int OVER_PRICE = 50000;
 
     @Transactional
     public ReserveResponseDto postReserve(Long userId, Long accommodationId, Long roomId,
@@ -52,32 +53,13 @@ public class ReserveService {
         RoomEntity room = roomRepository.findById(roomId)
             .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_ROOM));
 
-
-        // 이미 예약되어 있는 객실인지 검증
-        if(reservationRepository.existsByAccommodationAndRoomAndDeletedAtNotNullAndUserIdNot(accommodation, room, userId)) {
-            throw new ReservationException(ReservationErrorCode.ALREADY_RESERVED);
-        }
-
-        // 남는 객실이 있는지 검증
-        if(room.decrease() < 0) {
+        // 방이 모두 예약 된 경우
+        if (reservationRepository.countByRoom(room) >= room.getRoomCount()) {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
 
-        // 인원 수가 초과 되는지 확인
-        if(room.getRoomMaxCount() < postReserveRequestDto.getHeadcount()) {
-            throw new ReservationException(ReservationErrorCode.FULL_PEOPLE);
-        }
-        
         // 금액 검증
-        int price = room.getRoomOffseasonMinfee1();
-        int overCount = postReserveRequestDto.getHeadcount() - room.getRoomBaseCount();
-        for(int i = 0; i < overCount; i++) {
-            price += OVER_PRICE;
-        }
-
-        if(price != postReserveRequestDto.getPrice()) {
-            throw new ReservationException(ReservationErrorCode.NOT_MATCH_PRICE);
-        }
+        validatePayable(room, postReserveRequestDto);
 
         ReservationEntity reservationEntity = ReservationEntity.builder()
             .accommodation(accommodation)
@@ -91,21 +73,23 @@ public class ReserveService {
 
         ReservationEntity reservation = reservationRepository.save(reservationEntity);
 
+
         return ReservationConverter.toDto(reservation);
     }
+
+
 
     @Transactional
     public ReserveResponseDto cancelReserve(Long reservationId) {
         ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
             () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
 
-        // 이미 예약이 취소되어 있는 경우
+        // 이미 취소된 예약
         if(reservation.getDeletedAt() != null) {
             throw new ReservationException(ReservationErrorCode.ALREADY_CANCEL);
         }
 
         // 예약 취소
-        reservation.getRoom().increment();
         reservation.setDeletedAt(Instant.now());
 
         return ReservationConverter.toDto(reservation);
@@ -119,7 +103,17 @@ public class ReserveService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
         Page<ReserveListItemDto> result = reservationRepository.findAllByUserId(userId,
-            pageable).map(ReservationConverter::reserveListItemToDto);
+            pageable).map(item -> ReserveListItemDto.builder()
+            .id(item.getReservationId())
+            .accommodationTitle(item.getAccommodation().getTitle())
+            .roomTitle(item.getRoom().getRoomTitle())
+            .thumbnail(item.getAccommodation().getThumbnail())
+            .startDate(item.getStartDate())
+            .endDate(item.getEndDate())
+            .price(item.getPrice())
+            .createdAt(item.getCreatedAt())
+            .deletedAt(item.getDeletedAt())
+            .build());
 
 
         return PagedDto.<ReserveListItemDto>builder()
@@ -130,5 +124,26 @@ public class ReserveService {
             .content(result.getContent())
             .build();
 
+    }
+
+
+    private void validatePayable(RoomEntity room, PostReserveRequestDto postReserveRequestDto) {
+
+        int headCount = postReserveRequestDto.getHeadcount();
+        int amount = postReserveRequestDto.getPrice();
+        int price = room.getRoomOffseasonMinfee1();
+
+        int day = (int) ChronoUnit.DAYS.between(postReserveRequestDto.getStartDate(),
+            postReserveRequestDto.getEndDate());
+
+        int overCount = headCount - room.getRoomBaseCount();
+        for(int i = 0; i < overCount; i++) {
+            price += OVER_PRICE;
+        }
+        price *= day;
+
+        if(price != amount) {
+            throw new ReservationException(ReservationErrorCode.NOT_MATCH_PRICE);
+        }
     }
 }

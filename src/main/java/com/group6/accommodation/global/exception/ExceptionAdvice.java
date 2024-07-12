@@ -3,11 +3,15 @@ package com.group6.accommodation.global.exception;
 import com.group6.accommodation.global.exception.type.AccommodationException;
 import com.group6.accommodation.global.exception.type.AuthException;
 import com.group6.accommodation.global.exception.type.ReservationException;
+import com.group6.accommodation.global.exception.type.RoomException;
 import com.group6.accommodation.global.exception.type.UserLikeException;
 import com.group6.accommodation.global.exception.type.ValidException;
 import com.group6.accommodation.global.util.ResponseApi;
 import java.util.HashMap;
 import java.util.Map;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +40,18 @@ public class ExceptionAdvice {
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseApi.failed(validException, errorMessages));
 	}
 
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<?> constraintException(ConstraintViolationException ex) {
+		Map<String, String> errorMessage = new HashMap<>();
+		for(ConstraintViolation<?> violation : ex.getConstraintViolations()) {
+			String message = violation.getMessage();
+			errorMessage.put("message", message);
+		}
+		ValidException validException = new ValidException(HttpStatus.BAD_REQUEST, errorMessage);
+
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ResponseApi.failed(validException, errorMessage));
+	}
+
 	@ExceptionHandler(AuthException.class)
 	public ResponseEntity<ResponseApi<?>> authException(AuthException ex) {
 		log.warn(ex.getMessage());
@@ -56,6 +72,12 @@ public class ExceptionAdvice {
 
 	@ExceptionHandler(UserLikeException.class)
 	public ResponseEntity<ResponseApi<?>> userLikeException(UserLikeException ex) {
+		log.warn(ex.getMessage());
+		return ResponseEntity.status(ex.getStatusCode()).body(ResponseApi.failed(ex));
+	}
+
+	@ExceptionHandler(RoomException.class)
+	public ResponseEntity<ResponseApi<?>> roomException(RoomException ex) {
 		log.warn(ex.getMessage());
 		return ResponseEntity.status(ex.getStatusCode()).body(ResponseApi.failed(ex));
 	}

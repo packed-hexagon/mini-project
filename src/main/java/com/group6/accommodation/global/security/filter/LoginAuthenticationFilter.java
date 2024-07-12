@@ -7,6 +7,7 @@ import com.group6.accommodation.global.security.token.model.dto.LoginTokenRespon
 import com.group6.accommodation.global.security.token.provider.TokenProvider;
 import com.group6.accommodation.global.util.ResponseApi;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -66,6 +67,13 @@ public class LoginAuthenticationFilter extends UsernamePasswordAuthenticationFil
                 "refreshToken", generatedToken.getRefreshToken()
         ));
 
+        Cookie refreshTokenCookie = new Cookie("refreshToken", generatedToken.getRefreshToken());
+        refreshTokenCookie.setHttpOnly(true);
+        refreshTokenCookie.setSecure(true);
+        refreshTokenCookie.setPath("/");
+        refreshTokenCookie.setMaxAge(7 * 24 * 60 * 60);
+
+        response.addCookie(refreshTokenCookie);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setStatus(HttpStatus.OK.value());
         response.getWriter().write(objectMapper.writeValueAsString(responseBody));

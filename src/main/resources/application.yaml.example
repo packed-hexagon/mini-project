@@ -1,0 +1,8 @@
+spring:
+  profiles:
+    active: dev
+
+openapi:
+  api-key: "j8IMv0hFHRNLQXua7OfMclOdqcVnwqIoJaCwOztkVFWf9yWMaHtdRixlST11i8QKt4EnvNVr4z0JqJifhGZF9A%3D%3D"
+  base-url: "https://apis.data.go.kr/B551011/KorService1/searchStay1"
+  base-url-room : "http://apis.data.go.kr/B551011/KorService1/detailInfo1"

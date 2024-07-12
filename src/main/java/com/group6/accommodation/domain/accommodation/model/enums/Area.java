@@ -38,7 +38,7 @@ public enum Area {
                 return area.name;
             }
         }
-        throw new AccommodationException(AccommodationErrorCode.NOT_FOUND_AREA);
+        return null;
     }
 
     public static String getCodeByName(String name) {
@@ -47,6 +47,15 @@ public enum Area {
                 return area.code;
             }
         }
-        throw new AccommodationException(AccommodationErrorCode.NOT_FOUND_AREA);
+        return null;
+    }
+
+    public static boolean isValidAreaName(String name) {
+        for (Area area : values()) {
+            if (area.name.equals(name)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

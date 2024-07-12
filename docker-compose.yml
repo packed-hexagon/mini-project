@@ -11,20 +11,31 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
-      - "3306:3306"
+      - ${MYSQL_PORT}
     volumes:
       - db-data:/var/lib/mysql
+
+
+  redis:
+    image: redis
+    restart: always
+    container_name: redis
+    ports:
+      - ${REDIS_PORT}
+
+
 
   app:
     image: fastcampusgroup6/accommodation
     container_name: spring-boot-app
+    restart: always
     environment:
       SPRING_PROFILES_ACTIVE: prod
       SPRING_DATASOURCE_URL: jdbc:mysql://db:3306/accommodation?useSSL=false&useUnicode=true&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
       SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
       SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
     ports:
-      - "8080:8080"
+      - ${APPLICATION_PORT}
     depends_on:
       - db
 
