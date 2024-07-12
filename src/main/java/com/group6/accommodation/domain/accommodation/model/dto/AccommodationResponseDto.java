@@ -14,7 +14,6 @@ public class AccommodationResponseDto {
     private Long id;
     private String title;
     private String address;
-    private String address2;
     private String area;
     private String category;
     private String image;
@@ -23,6 +22,7 @@ public class AccommodationResponseDto {
     private double latitude;
     private double longitude;
     private int likeCount;
-    private double rating;
+    private int reviewCount;
+    private double totalRating;
 
 }

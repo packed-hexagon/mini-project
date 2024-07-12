@@ -26,7 +26,6 @@ public class AccommodationConverter {
                 .id(accommodation.getId())
                 .title(accommodation.getTitle())
                 .address(accommodation.getAddress())
-                .address2(accommodation.getAddress2())
                 .area(Area.getNameByCode(accommodation.getAreacode()))
                 .category(Category.getNameByCode(accommodation.getCategory()))
                 .image(accommodation.getImage())
@@ -35,7 +34,8 @@ public class AccommodationConverter {
                 .latitude(accommodation.getLatitude())
                 .longitude(accommodation.getLongitude())
                 .likeCount(accommodation.getLikeCount())
-                .rating(accommodation.getRating())
+                .reviewCount(accommodation.getReviewCount())
+                .totalRating(accommodation.getTotalRating())
                 .build();
     }
 
@@ -50,19 +50,17 @@ public class AccommodationConverter {
                 .id(accommodation.getId())
                 .title(accommodation.getTitle())
                 .address(accommodation.getAddress())
-                .address2(accommodation.getAddress2())
                 .areacode(Area.getNameByCode(accommodation.getAreacode()))
-                .sigungucode(accommodation.getSigungucode())
                 .category(Category.getNameByCode(accommodation.getCategory()))
                 .image(accommodation.getImage())
                 .thumbnail(accommodation.getThumbnail())
                 .price(minPrice)
                 .latitude(accommodation.getLatitude())
                 .longitude(accommodation.getLongitude())
-                .mlevel(accommodation.getMlevel())
                 .tel(accommodation.getTel())
                 .likeCount(accommodation.getLikeCount())
-                .rating(accommodation.getRating())
+                .reviewCount(accommodation.getReviewCount())
+                .totalRating(accommodation.getTotalRating())
                 .build();
     }
 

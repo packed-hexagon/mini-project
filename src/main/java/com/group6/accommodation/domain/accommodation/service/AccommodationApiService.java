@@ -108,14 +108,8 @@ public class AccommodationApiService {
         Long id = item.getContentid();
         String title = truncate(removeTextWithinBrackets(item.getTitle()), 20);
         String address = item.getAddr1() != null ? item.getAddr1() : "";
-        String address2 = item.getAddr2() != null ? item.getAddr2() : "";
-        String areacode = item.getAreacode() != null ? item.getAreacode() : "";
-        int sigungucode = 0;
-        try {
-            sigungucode = item.getSigungucode() != null ? Integer.parseInt(item.getSigungucode()) : 0;
-        } catch (NumberFormatException e) {
 
-        }
+        String areacode = item.getAreacode() != null ? item.getAreacode() : "";
         String category = item.getCat3() != null ? item.getCat3() : "";
 
         String defaultImage = "http://tong.visitkorea.or.kr/cms/resource/02/2493702_image2_1.jpg";
@@ -124,19 +118,19 @@ public class AccommodationApiService {
 
         Double latitude = item.getMapy() != null ? item.getMapy() : 0.0;
         Double longitude = item.getMapx() != null ? item.getMapx() : 0.0;
-        Integer mlevel = item.getMlevel() != null ? item.getMlevel() : 0;
 
-        String telNumber = (item.getTel() != null && !item.getTel().isEmpty()) ?
+        String tel = (item.getTel() != null && !item.getTel().isEmpty()) ?
                 truncate(replaceTextWithinAngleBrackets(item.getTel()), 255) : "010-1234-5678";
 
         int likeCount = userLikeRepository.countByAccommodationId(id);
+        int reviewCount = 0;
 
         double[] ratings = {2.5, 3.0, 3.5, 4.0, 4.5, 5.0};
         Random random = new Random();
         double rating = ratings[random.nextInt(ratings.length)];
 
-        return new AccommodationEntity(id, title, address, address2, areacode, sigungucode, category, image, thumbnailImage,
-                latitude, longitude, mlevel, telNumber, likeCount, rating);
+        return new AccommodationEntity(id, title, address, areacode, category, image, thumbnailImage,
+                latitude, longitude, tel, likeCount, reviewCount, rating);
     }
 
     private String removeTextWithinBrackets(String text) {
