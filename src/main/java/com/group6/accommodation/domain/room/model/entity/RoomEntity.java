@@ -30,7 +30,7 @@ public class RoomEntity {
 	private AccommodationEntity accommodation;
 
 	@Column(name = "room_title", nullable = false, length = 32)
-	private String roomTitle;
+	private String title;
 
 	@Column(name = "room_count", nullable = false)
 	private Integer count;
@@ -48,43 +48,43 @@ public class RoomEntity {
 	private Integer weekendsFee;
 
 	@Column(name = "room_bath", length = 32, nullable = false)
-	private boolean roomBath;
+	private boolean bath;
 
 	@Column(name = "room_hometheater", length = 32, nullable = false)
-	private boolean roomHometheater;
+	private boolean hometheater;
 
 	@Column(name = "room_aircondition", length = 32, nullable = false)
-	private boolean roomAircondition;
+	private boolean aircondition;
 
 	@Column(name = "room_tv", length = 32, nullable = false)
-	private boolean roomTv;
+	private boolean tv;
 
 	@Column(name = "room_pc", length = 32, nullable = false)
-	private boolean roomPc;
+	private boolean pc;
 
 	@Column(name = "room_cable", length = 32, nullable = false)
-	private boolean roomCable;
+	private boolean cable;
 
 	@Column(name = "room_internet", length = 32, nullable = false)
-	private boolean roomInternet;
+	private boolean internet;
 
 	@Column(name = "room_refrigerator", length = 32, nullable = false)
-	private boolean roomRefrigerator;
+	private boolean refrigerator;
 
 	@Column(name = "room_toiletries", length = 32, nullable = false)
-	private boolean roomToiletries;
+	private boolean toiletries;
 
 	@Column(name = "room_sofa", length = 32, nullable = false)
-	private boolean roomSofa;
+	private boolean sofa;
 
 	@Column(name = "room_cook", length = 32, nullable = false)
-	private boolean roomCook;
+	private boolean cook;
 
 	@Column(name = "room_table", length = 32, nullable = false)
-	private boolean roomTable;
+	private boolean table;
 
 	@Column(name = "room_hairdryer", length = 32, nullable = false)
-	private boolean roomHairdryer;
+	private boolean hairdryer;
 
 	@Column(name = "images", length = 500, nullable = false)
 	private String images;
@@ -97,53 +97,53 @@ public class RoomEntity {
 
 	public void updateRoomEntity(AccommodationEntity accommodation, RoomEntity entity) {
 		this.accommodation = accommodation;
-		this.roomTitle = entity.getRoomTitle();
+		this.title = entity.getTitle();
 		this.count = entity.getCount();
 		this.baseCount = entity.getBaseCount();
 		this.maxHeadCount = entity.getMaxHeadCount();
 		this.weekdaysFee = entity.getWeekdaysFee();
 		this.weekendsFee = entity.getWeekendsFee();
-		this.roomBath = entity.isRoomBath();
-		this.roomHometheater = entity.isRoomHometheater();
-		this.roomAircondition = entity.isRoomAircondition();
-		this.roomTv = entity.isRoomTv();
-		this.roomPc = entity.isRoomPc();
-		this.roomCable = entity.isRoomCable();
-		this.roomInternet = entity.isRoomInternet();
-		this.roomRefrigerator = entity.isRoomRefrigerator();
-		this.roomToiletries = entity.isRoomToiletries();
-		this.roomSofa = entity.isRoomSofa();
-		this.roomCook = entity.isRoomCook();
-		this.roomTable = entity.isRoomTable();
-		this.roomHairdryer = entity.isRoomHairdryer();
+		this.bath = entity.isBath();
+		this.hometheater = entity.isHometheater();
+		this.aircondition = entity.isAircondition();
+		this.tv = entity.isTv();
+		this.pc = entity.isPc();
+		this.cable = entity.isCable();
+		this.internet = entity.isInternet();
+		this.refrigerator = entity.isRefrigerator();
+		this.toiletries = entity.isToiletries();
+		this.sofa = entity.isSofa();
+		this.cook = entity.isCook();
+		this.table = entity.isTable();
+		this.hairdryer = entity.isHairdryer();
 		this.images = entity.getImages();
 		this.checkInTime = entity.getCheckInTime();
 		this.checkOutTime = entity.getCheckOutTime();
 	}
 
 	@Builder
-	public RoomEntity(Long id, AccommodationEntity accommodation, String roomTitle, Integer count, Integer baseCount, Integer maxHeadCount, Integer weekdaysFee, Integer weekendsFee, boolean roomBath, boolean roomHometheater, boolean roomAircondition, boolean roomTv, boolean roomPc, boolean roomCable, boolean roomInternet, boolean roomRefrigerator, boolean roomToiletries, boolean roomSofa, boolean roomCook, boolean roomTable, boolean roomHairdryer, String images, LocalDate checkInTime, LocalDate checkOutTime) {
+	public RoomEntity(Long id, AccommodationEntity accommodation, String title, Integer count, Integer baseCount, Integer maxHeadCount, Integer weekdaysFee, Integer weekendsFee, boolean bath, boolean hometheater, boolean aircondition, boolean tv, boolean pc, boolean cable, boolean internet, boolean refrigerator, boolean toiletries, boolean sofa, boolean cook, boolean table, boolean hairdryer, String images, LocalDate checkInTime, LocalDate checkOutTime) {
 		this.roomId = id;
 		this.accommodation = accommodation;
-		this.roomTitle = roomTitle;
+		this.title = title;
 		this.count = count;
 		this.baseCount = baseCount;
 		this.maxHeadCount = maxHeadCount;
 		this.weekdaysFee = weekdaysFee;
 		this.weekendsFee = weekendsFee;
-		this.roomBath = roomBath;
-		this.roomHometheater = roomHometheater;
-		this.roomAircondition = roomAircondition;
-		this.roomTv = roomTv;
-		this.roomPc = roomPc;
-		this.roomCable = roomCable;
-		this.roomInternet = roomInternet;
-		this.roomRefrigerator = roomRefrigerator;
-		this.roomToiletries = roomToiletries;
-		this.roomSofa = roomSofa;
-		this.roomCook = roomCook;
-		this.roomTable = roomTable;
-		this.roomHairdryer = roomHairdryer;
+		this.bath = bath;
+		this.hometheater = hometheater;
+		this.aircondition = aircondition;
+		this.tv = tv;
+		this.pc = pc;
+		this.cable = cable;
+		this.internet = internet;
+		this.refrigerator = refrigerator;
+		this.toiletries = toiletries;
+		this.sofa = sofa;
+		this.cook = cook;
+		this.table = table;
+		this.hairdryer = hairdryer;
 		this.images = images;
 		this.checkInTime = checkInTime;
 		this.checkOutTime = checkOutTime;
