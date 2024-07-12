@@ -75,5 +75,4 @@ public class ReviewEntity {
         this.comment = comment;
         this.image = image;
     }
-
 }
