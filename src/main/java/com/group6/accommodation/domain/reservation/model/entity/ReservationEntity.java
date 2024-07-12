@@ -23,6 +23,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(name = "reservation")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class ReservationEntity {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "reservation_id", nullable = false)
