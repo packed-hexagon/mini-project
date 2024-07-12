@@ -3,8 +3,6 @@ package com.group6.accommodation.domain.room.repository;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,7 +85,7 @@ public class RoomRepositoryTest {
 		// Then
 		assertFalse(rooms.isEmpty());
 		assertEquals(1, rooms.size());
-		assertEquals("Test Room", rooms.get(0).getRoomTitle());
+		assertEquals("Test Room", rooms.get(0).getTitle());
 	}
 
 	@Test
@@ -159,7 +157,7 @@ public class RoomRepositoryTest {
 
 		// Then
 		assertTrue(foundRoom.isPresent());
-		assertEquals("Test Room", foundRoom.get().getRoomTitle());
+		assertEquals("Test Room", foundRoom.get().getTitle());
 	}
 
 	@Test

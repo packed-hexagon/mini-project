@@ -106,7 +106,7 @@ public class ReserveService {
             pageable).map(item -> ReserveListItemDto.builder()
             .id(item.getReservationId())
             .accommodationTitle(item.getAccommodation().getTitle())
-            .roomTitle(item.getRoom().getRoomTitle())
+            .roomTitle(item.getRoom().getTitle())
             .thumbnail(item.getAccommodation().getThumbnail())
             .startDate(item.getStartDate())
             .endDate(item.getEndDate())

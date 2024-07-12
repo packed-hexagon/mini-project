@@ -85,7 +85,7 @@ public class RoomService {
 		RoomEntity roomEntity = roomRepository.findByAccommodation_IdAndRoomId(id, roomId)
 			.orElseThrow(() -> new RoomException(RoomErrorCode.NOT_FOUND_ROOM));
 
-		int roomCount = roomEntity.getRoomCount();
+		int roomCount = roomEntity.getCount();
 		int reservationRooms = reservationRepository.countOverlappingReservations(
 			roomId, req.getCheckIn(), req.getCheckOut()
 		);
