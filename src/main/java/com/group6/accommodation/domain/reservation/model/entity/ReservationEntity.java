@@ -11,12 +11,11 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
@@ -51,9 +50,8 @@ public class ReservationEntity {
 
 	@CreationTimestamp
 	@Column(name = "created_at", nullable = false)
-	private Instant createdAt;
+	private LocalDateTime createdAt;
 
-	@Setter
 	@Column(name = "deleted_at")
-	private Instant deletedAt;
+	private LocalDateTime deletedAt;
 }
