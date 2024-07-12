@@ -1,7 +1,7 @@
 package com.group6.accommodation.domain.reservation.service;
 
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
-import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -39,18 +39,18 @@ public class ReserveServiceLockTest {
         PostReserveRequestDto postReserveRequestDto = new PostReserveRequestDto(2, LocalDate.now().plusDays(1), LocalDate.now().plusDays(2), 100);
 
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
-        List<Callable<ReserveResponseDto>> tasks = new ArrayList<>();
+        List<Callable<ReservationResponseDto>> tasks = new ArrayList<>();
 
         for (int i = 0; i < numberOfThreads; i++) {
-            tasks.add(() -> reserveService.postReserve(userId, accommodationId, roomId, postReserveRequestDto));
+            tasks.add(() -> reserveService.createReservation(userId, accommodationId, roomId, postReserveRequestDto));
         }
 
-        List<Future<ReserveResponseDto>> futures = executorService.invokeAll(tasks);
+        List<Future<ReservationResponseDto>> futures = executorService.invokeAll(tasks);
 
-        Set<ReserveResponseDto> result = new HashSet<>();
+        Set<ReservationResponseDto> result = new HashSet<>();
 
-        for (Future<ReserveResponseDto> future : futures) {
-            ReserveResponseDto response = future.get();
+        for (Future<ReservationResponseDto> future : futures) {
+            ReservationResponseDto response = future.get();
             if (response != null) {
                 result.add(response);
             }

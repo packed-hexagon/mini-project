@@ -1,6 +1,9 @@
 package com.group6.accommodation.domain.room.model.entity;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
+import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
+import com.group6.accommodation.global.exception.error.ReservationErrorCode;
+import com.group6.accommodation.global.exception.type.ReservationException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +14,8 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -94,6 +99,29 @@ public class RoomEntity {
 
 	@Column(name = "check_out_time", nullable = false)
 	private LocalDate checkOutTime;
+
+
+
+    public int getPayment(PostReserveRequestDto postReserveRequestDto, int overPrice) {
+
+        int headCount = postReserveRequestDto.getHeadcount();
+        int price = weekdaysFee;
+
+        int day = (int) ChronoUnit.DAYS.between(postReserveRequestDto.getStartDate(),
+                postReserveRequestDto.getEndDate());
+
+        int overCount = headCount - baseCount;
+        for(int i = 0; i < overCount; i++) {
+            price += overPrice;
+        }
+        price *= day;
+        return price;
+    }
+
+    public int decrease() {
+        return --count;
+    }
+
 
 	public void updateRoomEntity(AccommodationEntity accommodation, RoomEntity entity) {
 		this.accommodation = accommodation;

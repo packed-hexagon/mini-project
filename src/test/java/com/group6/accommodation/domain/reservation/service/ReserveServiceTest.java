@@ -6,7 +6,7 @@ import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
-import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
@@ -14,6 +14,7 @@ import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.model.dto.PagedDto;
+
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -66,60 +67,37 @@ class ReserveServiceTest {
         accommodation = AccommodationEntity.builder()
                 .title("Sample Accommodation")
                 .address("123 Main St")
-                .address2("Apt 101")
                 .areacode("12345")
-                .sigungucode(123)
                 .category("Hotel")
                 .image("sample_image.jpg")
                 .thumbnail("sample_thumbnail.jpg")
                 .latitude(37.123456)
                 .longitude(-122.654321)
-                .mlevel(5)
                 .tel("123-456-7890")
                 .likeCount(100)
-                .rating(4.5)
+                .reviewCount(50)
+                .totalRating(4.5)
                 .build();
 
         room = RoomEntity.builder()
                 .accommodation(accommodation)
-                .roomTitle("Deluxe Room")
-                .roomSize(30)
-                .roomCount(2)
-                .roomBaseCount(2)
-                .roomMaxCount(4)
-                .roomOffseasonMinfee1(100)
-                .roomOffseasonMinfee2(120)
-                .roomPeakseasonMinfee1(200)
-                .roomPeakseasonMinfee2(220)
-                .roomIntro("A beautiful deluxe room")
-                .roomBath("Y")
-                .roomHometheater("Y")
-                .roomAircondition("Y")
-                .roomTv("Y")
-                .roomPc("Y")
-                .roomCable("Y")
-                .roomInternet("Y")
-                .roomRefrigerator("Y")
-                .roomToiletries("Y")
-                .roomSofa("Y")
-                .roomCook("Y")
-                .roomTable("Y")
-                .roomHairdryer("Y")
-                .roomImg1("img1.jpg")
-                .roomImg2("img2.jpg")
-                .roomImg3("img3.jpg")
-                .roomImg4("img4.jpg")
-                .roomImg5("img5.jpg")
+                .count(2)
+                .baseCount(2)
+                .maxHeadCount(4)
+                .weekdaysFee(10000)
+                .weekendsFee(20000)
+                .images("image1.png,image2.png")
+                .checkInTime(LocalDate.now().plusDays(1))
+                .checkOutTime(LocalDate.now().plusDays(2))
                 .build();
 
         reservation = ReservationEntity.builder()
                 .user(mock(UserEntity.class))
                 .room(room)
-                .accommodation(accommodation)
                 .headcount(2)
                 .startDate(LocalDate.now().plusDays(1))
                 .endDate(LocalDate.now().plusDays(2))
-                .price(100)
+                .price(10000)
                 .build();
     }
 
@@ -133,22 +111,19 @@ class ReserveServiceTest {
         PostReserveRequestDto requestDto = new PostReserveRequestDto(
                 2,
                 LocalDate.now().plusDays(1),
-                LocalDate.now().plusDays(2),
-                100
+                LocalDate.now().plusDays(2)
         );
 
-        when(accommodationRepository.findById(accommodationId)).thenReturn(Optional.of(accommodation));
-        when(roomRepository.findById(roomId)).thenReturn(Optional.of(room));
-        when(userRepository.findById(userId)).thenReturn(Optional.of(mock(UserEntity.class)));
-
-
+        when(roomRepository.getById(roomId)).thenReturn(room);
+        when(userRepository.getById(userId)).thenReturn(mock(UserEntity.class));
         when(reservationRepository.save(any(ReservationEntity.class))).thenReturn(reservation);
 
         // when
-        ReserveResponseDto result = reserveService.postReserve(userId, accommodationId, roomId, requestDto);
+        ReservationResponseDto result = reserveService.createReservation(userId, roomId, requestDto);
 
         // then
         assertNotNull(result);
+        assertEquals(1, room.getCount());
         assertEquals(accommodationId, result.getAccommodationId());
         assertEquals(roomId, result.getRoomId());
     }
@@ -175,7 +150,7 @@ class ReserveServiceTest {
 
         // when
         ReservationException exception = assertThrows(ReservationException.class,
-            () -> reserveService.postReserve(userId, accommodationId, roomId, requestDto));
+            () -> reserveService.createReservation(userId, accommodationId, roomId, requestDto));
 
         // then
         assertNotNull(exception);
@@ -203,7 +178,7 @@ class ReserveServiceTest {
 
         // when
         ReservationException exception = assertThrows(ReservationException.class,
-            () -> reserveService.postReserve(userId, accommodationId, roomId, requestDto));
+            () -> reserveService.createReservation(userId, accommodationId, roomId, requestDto));
 
         // then
         assertEquals(exception.getInfo(), ReservationErrorCode.NOT_MATCH_PRICE.getInfo());
@@ -283,7 +258,7 @@ class ReserveServiceTest {
         when(reservationRepository.findById(anyLong())).thenReturn(Optional.of(reservation));
 
         // when
-        ReserveResponseDto result = reserveService.cancelReserve(reservationId);
+        ReservationResponseDto result = reserveService.cancelReserve(reservationId);
 
         // then
         assertNotNull(result);

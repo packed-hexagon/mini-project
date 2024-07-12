@@ -11,7 +11,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
-import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.reservation.service.ReserveService;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -133,7 +133,7 @@ class ReserveControllerTest {
         PostReserveRequestDto body = new PostReserveRequestDto(4, LocalDate.now().plusDays(1),
             LocalDate.now().plusDays(2), 40000);
 
-        ReserveResponseDto response = ReserveResponseDto.builder()
+        ReservationResponseDto response = ReservationResponseDto.builder()
             .userId(user.getUserId())
             .headcount(4)
             .price(40000)
@@ -144,7 +144,7 @@ class ReserveControllerTest {
             .createdAt(Instant.now())
             .build();
 
-        when(reserveService.postReserve(user.getUserId(), 1L, 1L, body))
+        when(reserveService.createReservation(user.getUserId(), 1L, 1L, body))
             .thenReturn(response);
 
         mvc.perform(post("/api/reservation/{accommodationId}/room/{roomId}/reserve", 1, 1)
@@ -159,7 +159,7 @@ class ReserveControllerTest {
     @Test
     @DisplayName("예약 취소하기")
     public void cancelReservation() throws Exception{
-        ReserveResponseDto response = ReserveResponseDto.builder()
+        ReservationResponseDto response = ReservationResponseDto.builder()
             .userId(user.getUserId())
             .headcount(4)
             .price(40000)

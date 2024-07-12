@@ -1,14 +1,12 @@
 package com.group6.accommodation.domain.reservation.service;
 
+import com.group6.accommodation.domain.reservation.mapper.ReservationMapper;
 import com.group6.accommodation.global.model.dto.PagedDto;
-import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
-import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
-import com.group6.accommodation.domain.reservation.converter.ReservationConverter;
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
-import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
@@ -16,7 +14,6 @@ import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
 import java.time.Instant;
-import java.time.temporal.ChronoUnit;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -30,57 +27,42 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReserveService {
 
     private final ReservationRepository reservationRepository;
-    private final AccommodationRepository accommodationRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
     private final int OVER_PRICE = 50000;
 
     @Transactional
-    public ReserveResponseDto postReserve(Long userId, Long accommodationId, Long roomId,
-        PostReserveRequestDto postReserveRequestDto) {
+    public ReservationResponseDto createReservation(Long userId, Long roomId, PostReserveRequestDto postReserveRequestDto) {
+        UserEntity user = userRepository.getById(userId);
+        RoomEntity room = roomRepository.getById(roomId);
 
-        // 숙소가 있는지 검증
-        AccommodationEntity accommodation = accommodationRepository.findById(accommodationId)
-            .orElseThrow(() -> new ReservationException(
-                ReservationErrorCode.NOT_FOUND_ACCOMMODATION));
-
-        // 유저 정보 가져오기
-        UserEntity user = userRepository.findById(userId)
-            .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_USER));
-
-        // 방 정보 가져오기
-        RoomEntity room = roomRepository.findById(roomId)
-            .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_ROOM));
-
-        // 방이 모두 예약 된 경우
-        if (reservationRepository.countByRoom(room) >= room.getRoomCount()) {
+        // 모든 방이 예약이 된 경우
+        if(room.decrease() > 0) {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
 
-        // 금액 검증
-        validatePayable(room, postReserveRequestDto);
+        int price = room.getPayment(postReserveRequestDto, OVER_PRICE);
+
 
         ReservationEntity reservationEntity = ReservationEntity.builder()
-            .accommodation(accommodation)
             .room(room)
             .user(user)
             .headcount(postReserveRequestDto.getHeadcount())
             .startDate(postReserveRequestDto.getStartDate())
             .endDate(postReserveRequestDto.getEndDate())
-            .price(postReserveRequestDto.getPrice())
+            .price(price)
             .build();
 
+
         ReservationEntity reservation = reservationRepository.save(reservationEntity);
-
-
-        return ReservationConverter.toDto(reservation);
+        return ReservationMapper.toDto(reservation);
     }
 
 
 
     @Transactional
-    public ReserveResponseDto cancelReserve(Long reservationId) {
+    public ReservationResponseDto cancelReserve(Long reservationId) {
         ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
             () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
 
@@ -127,23 +109,5 @@ public class ReserveService {
     }
 
 
-    private void validatePayable(RoomEntity room, PostReserveRequestDto postReserveRequestDto) {
 
-        int headCount = postReserveRequestDto.getHeadcount();
-        int amount = postReserveRequestDto.getPrice();
-        int price = room.getRoomOffseasonMinfee1();
-
-        int day = (int) ChronoUnit.DAYS.between(postReserveRequestDto.getStartDate(),
-            postReserveRequestDto.getEndDate());
-
-        int overCount = headCount - room.getRoomBaseCount();
-        for(int i = 0; i < overCount; i++) {
-            price += OVER_PRICE;
-        }
-        price *= day;
-
-        if(price != amount) {
-            throw new ReservationException(ReservationErrorCode.NOT_MATCH_PRICE);
-        }
-    }
 }

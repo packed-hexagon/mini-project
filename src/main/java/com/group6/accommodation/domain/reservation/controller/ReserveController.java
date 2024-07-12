@@ -3,7 +3,7 @@ package com.group6.accommodation.domain.reservation.controller;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
-import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.reservation.service.ReserveService;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.util.ResponseApi;
@@ -31,16 +31,15 @@ public class ReserveController {
 
     private final ReserveService reserveService;
 
-    @PostMapping("/{accommodationId}/room/{roomId}/reserve")
+    @PostMapping("room/{roomId}/reserve")
     @Operation(summary = "예약하기")
-    public ResponseEntity<ResponseApi<ReserveResponseDto>> postReserve(
+    public ResponseEntity<ResponseApi<ReservationResponseDto>> postReserve(
             @AuthenticationPrincipal CustomUserDetails user,
-            @PathVariable Long accommodationId,
             @PathVariable Long roomId,
             @Valid
             @RequestBody PostReserveRequestDto requestDto
     ) {
-        ReserveResponseDto responseData = reserveService.postReserve(user.getUserId(), accommodationId, roomId,
+        ReservationResponseDto responseData = reserveService.createReservation(user.getUserId(), roomId,
                 requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseApi.success(HttpStatus.CREATED, responseData));
     }
@@ -48,10 +47,10 @@ public class ReserveController {
 
     @PutMapping("/{reservationId}")
     @Operation(summary = "예약 취소하기")
-    public ResponseEntity<ResponseApi<ReserveResponseDto>> cancelReserve(
+    public ResponseEntity<ResponseApi<ReservationResponseDto>> cancelReserve(
             @PathVariable Long reservationId
     ) {
-        ReserveResponseDto responseData = reserveService.cancelReserve(reservationId);
+        ReservationResponseDto responseData = reserveService.cancelReserve(reservationId);
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, responseData));
     }
 
