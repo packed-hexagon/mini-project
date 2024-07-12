@@ -1,10 +1,10 @@
 package com.group6.accommodation.domain.reservation.controller;
 
-import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
-import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
-import com.group6.accommodation.domain.reservation.service.ReserveService;
+import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
+import com.group6.accommodation.domain.reservation.service.ReservationService;
+import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.util.ResponseApi;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,9 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/api/reservation")
 @RequiredArgsConstructor
 @Tag(name = "Reservation", description = "예약 관련 API")
-public class ReserveController {
+public class ReservationController {
 
-    private final ReserveService reserveService;
+    private final ReservationService reservationService;
 
     @PostMapping("room/{roomId}/reserve")
     @Operation(summary = "예약하기")
@@ -39,7 +39,7 @@ public class ReserveController {
             @Valid
             @RequestBody PostReserveRequestDto requestDto
     ) {
-        ReservationResponseDto responseData = reserveService.createReservation(user.getUserId(), roomId,
+        ReservationResponseDto responseData = reservationService.createReservation(user.getUserId(), roomId,
                 requestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(ResponseApi.success(HttpStatus.CREATED, responseData));
     }
@@ -50,7 +50,7 @@ public class ReserveController {
     public ResponseEntity<ResponseApi<ReservationResponseDto>> cancelReserve(
             @PathVariable Long reservationId
     ) {
-        ReservationResponseDto responseData = reserveService.cancelReserve(reservationId);
+        ReservationResponseDto responseData = reservationService.cancelReserve(reservationId);
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, responseData));
     }
 
@@ -64,7 +64,7 @@ public class ReserveController {
             @RequestParam(name = "direction") String direction
 
     ) {
-        PagedDto<ReserveListItemDto> responseData = reserveService.getList(user.getUserId(), page, size, direction);
+        PagedDto<ReserveListItemDto> responseData = reservationService.getList(user.getUserId(), page, size, direction);
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, responseData));
     }
 }

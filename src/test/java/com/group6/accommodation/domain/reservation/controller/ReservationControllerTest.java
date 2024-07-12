@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
-import com.group6.accommodation.domain.reservation.service.ReserveService;
+import com.group6.accommodation.domain.reservation.service.ReservationService;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
@@ -36,8 +36,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@WebMvcTest(controllers = ReserveController.class)
-class ReserveControllerTest {
+@WebMvcTest(controllers = ReservationController.class)
+class ReservationControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -46,7 +46,7 @@ class ReserveControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ReserveService reserveService;
+    private ReservationService reservationService;
 
     @MockBean
     private TokenProvider tokenProvider;
@@ -106,7 +106,7 @@ class ReserveControllerTest {
             .content(reservations)
             .build();
 
-        when(reserveService.getList(1L, 1, 5, "asc")).thenReturn(pagedDto);
+        when(reservationService.getList(1L, 1, 5, "asc")).thenReturn(pagedDto);
 
         mvc.perform(
                 get("/api/reservation?page=1&size=5&direction=asc")
@@ -144,7 +144,7 @@ class ReserveControllerTest {
             .createdAt(Instant.now())
             .build();
 
-        when(reserveService.createReservation(user.getUserId(), 1L, 1L, body))
+        when(reservationService.createReservation(user.getUserId(), 1L, 1L, body))
             .thenReturn(response);
 
         mvc.perform(post("/api/reservation/{accommodationId}/room/{roomId}/reserve", 1, 1)
@@ -172,7 +172,7 @@ class ReserveControllerTest {
             .build();
 
 
-        when(reserveService.cancelReserve(anyLong())).thenReturn(response);
+        when(reservationService.cancelReserve(anyLong())).thenReturn(response);
 
         mvc.perform(put("/api/reservation/{reservationId}", 1)
             .with(csrf())

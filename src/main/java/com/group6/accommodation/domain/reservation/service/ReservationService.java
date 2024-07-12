@@ -1,11 +1,9 @@
 package com.group6.accommodation.domain.reservation.service;
 
 import com.group6.accommodation.domain.reservation.mapper.ReservationMapper;
-import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
-import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
@@ -13,18 +11,13 @@ import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
-import java.time.Instant;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ReserveService {
+public class ReservationService {
 
     private final ReservationRepository reservationRepository;
     private final RoomRepository roomRepository;
