@@ -11,6 +11,7 @@ import com.group6.accommodation.global.exception.error.RoomErrorCode;
 import com.group6.accommodation.global.exception.type.RoomException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -113,47 +114,37 @@ public class RoomApiService {
         String img5 = roomImg2.isEmpty() ? "https://cdn.visitkorea.or.kr/img/call?cmd=VIEW&id=3167c790-0aec-4541-b44b-eebb12fba2c4" : roomImg5;
 
         int roomoffseasonminfee1 = itemNode.path("roomoffseasonminfee1").asInt();
-        int roomoffseasonmin1 = roomoffseasonminfee1 == 0 ? 100000 : roomoffseasonminfee1;
+        int weekdaysFee = roomoffseasonminfee1 == 0 ? 100000 : roomoffseasonminfee1;
 
         int roomcount = itemNode.path("roomcount").asInt();
-        int roomCount = roomcount == 0 ? 2 : roomcount;
+        int count = roomcount == 0 ? 2 : roomcount;
 
         RoomEntity room = RoomEntity.builder()
             .id(itemNode.path("roomcode").asLong())
             .accommodation(accommodation)
-            .roomTitle(itemNode.path("roomtitle").asText())
-            .roomSize(itemNode.path("roomsize1").asInt())
-            .roomCount(roomCount)
-            .roomBaseCount(itemNode.path("roombasecount").asInt())
-            .roomMaxCount(itemNode.path("roommaxcount").asInt())
-            .roomOffseasonMinfee1(roomoffseasonmin1)
-            .roomOffseasonMinfee2(itemNode.path("roomoffseasonminfee2").asInt())
-            .roomPeakseasonMinfee1(itemNode.path("roompeakseasonminfee1").asInt())
-            .roomPeakseasonMinfee2(itemNode.path("roompeakseasonminfee2").asInt())
-            .roomIntro(itemNode.path("roomintro").asText())
-            .roomBath(itemNode.path("roombath").asText())
-            .roomHometheater(itemNode.path("roomhometheater").asText())
-            .roomAircondition(itemNode.path("roomaircondition").asText())
-            .roomTv(itemNode.path("roomtv").asText())
-            .roomPc(itemNode.path("roompc").asText())
-            .roomCable(itemNode.path("roomcable").asText())
-            .roomInternet(itemNode.path("roominternet").asText())
-            .roomRefrigerator(itemNode.path("roomrefrigerator").asText())
-            .roomToiletries(itemNode.path("roomtoiletries").asText())
-            .roomSofa(itemNode.path("roomsofa").asText())
-            .roomCook(itemNode.path("roomcook").asText())
-            .roomTable(itemNode.path("roomtable").asText())
-            .roomHairdryer(itemNode.path("roomhairdryer").asText())
-            .roomImg1(img1)
-            .roomImg2(img2)
-            .roomImg3(img3)
-            .roomImg4(img4)
-            .roomImg5(img5)
+            .title(itemNode.path("roomtitle").asText())
+            .count(count)
+            .baseCount(itemNode.path("roombasecount").asInt())
+            .maxHeadCount(itemNode.path("roommaxcount").asInt())
+            .weekdaysFee(weekdaysFee)
+            .weekendsFee(itemNode.path("roomoffseasonminfee2").asInt())
+            .bath(itemNode.path("roombath").asBoolean())
+            .hometheater(itemNode.path("roomhometheater").asBoolean())
+            .aircondition(itemNode.path("roomaircondition").asBoolean())
+            .tv(itemNode.path("roomtv").asBoolean())
+            .pc(itemNode.path("roompc").asBoolean())
+            .cable(itemNode.path("roomcable").asBoolean())
+            .internet(itemNode.path("roominternet").asBoolean())
+            .refrigerator(itemNode.path("roomrefrigerator").asBoolean())
+            .toiletries(itemNode.path("roomtoiletries").asBoolean())
+            .sofa(itemNode.path("roomsofa").asBoolean())
+            .cook(itemNode.path("roomcook").asBoolean())
+            .table(itemNode.path("roomtable").asBoolean())
+            .hairdryer(itemNode.path("roomhairdryer").asBoolean())
+            .images(img1)
+            .checkInTime(LocalDate.now())
+            .checkOutTime(LocalDate.now().plusDays(1))
             .build();
-
-//		Instant now = Instant.now();
-//		room.setCheckIn(now);
-//		room.setCheckOut(now.plusSeconds(3600));
 
         return room;
     }

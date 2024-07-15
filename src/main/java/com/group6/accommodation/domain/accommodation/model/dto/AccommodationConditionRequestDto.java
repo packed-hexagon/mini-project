@@ -17,17 +17,17 @@ import java.time.LocalDate;
 @StartBeforeEndAndNullable(startTime = "startDate", endTime = "endDate")
 public class AccommodationConditionRequestDto {
     @ValidArea
-    String area;
+    private String area;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @FutureOrPresent(message = "시작날짜가 과거일 수 없다.")
-    LocalDate startDate;
+    private LocalDate startDate;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @FutureOrPresent(message = "종료날짜가 과거일 수 없다.")
-    LocalDate endDate;
+    private LocalDate endDate;
 
     @Min(value = 1, message = "인원 수는 1명 이상이어야 합니다.")
-    Integer headcount;
+    private Integer headcount;
 
     @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.")
-    int page = 0;
+    private int page = 0;
 }

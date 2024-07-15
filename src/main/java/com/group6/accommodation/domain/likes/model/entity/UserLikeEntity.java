@@ -25,14 +25,12 @@ public class UserLikeEntity {
 	@EmbeddedId
 	private UserLikeId id;
 
-	@Setter
 	@MapsId("userId")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	@JoinColumn(name = "user_id", nullable = false)
 	private UserEntity user;
 
-	@Setter
 	@MapsId("accommodationId")
 	@ManyToOne(fetch = FetchType.LAZY, optional = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)

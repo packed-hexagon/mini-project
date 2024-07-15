@@ -40,18 +40,16 @@ public class AccommodationService {
                         .id(existing.getId()) // ID는 기존 엔티티의 ID를 유지
                         .title(accommodation.getTitle())
                         .address(accommodation.getAddress())
-                        .address2(accommodation.getAddress2())
                         .areacode(accommodation.getAreacode())
-                        .sigungucode(accommodation.getSigungucode())
                         .category(accommodation.getCategory())
                         .image(accommodation.getImage())
                         .thumbnail(accommodation.getThumbnail())
                         .latitude(accommodation.getLatitude())
                         .longitude(accommodation.getLongitude())
-                        .mlevel(accommodation.getMlevel())
                         .tel(accommodation.getTel())
                         .likeCount(accommodation.getLikeCount())
-                        .rating(existing.getRating()) // 필요에 따라 기존 엔티티의 다른 필드도 유지
+                        .reviewCount(accommodation.getReviewCount())
+                        .totalRating(existing.getTotalRating()) // 필요에 따라 기존 엔티티의 다른 필드도 유지
                         .build();
                 accommodationRepository.save(updated);
             } else {
