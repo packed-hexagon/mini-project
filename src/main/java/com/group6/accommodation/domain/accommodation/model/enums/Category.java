@@ -32,6 +32,8 @@ public enum Category {
         for (Category category : values()) {
             if (category.code.equals(code)) {
                 return category.name;
+            } else {
+                throw new AccommodationException(AccommodationErrorCode.INVALID_CATEGORY);
             }
         }
         return null;
@@ -41,17 +43,10 @@ public enum Category {
         for (Category category : values()) {
             if (category.name.equals(name)) {
                 return category.code;
+            } else {
+                throw new AccommodationException(AccommodationErrorCode.INVALID_CATEGORY);
             }
         }
         return null;
-    }
-
-    public static boolean isValidCategoryName(String name) {
-        for (Category category : values()) {
-            if (category.name.equals(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

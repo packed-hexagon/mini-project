@@ -36,6 +36,8 @@ public enum Area {
         for (Area area : values()) {
             if (area.code.equals(code)) {
                 return area.name;
+            } else {
+                throw new AccommodationException(AccommodationErrorCode.INVALID_AREA);
             }
         }
         return null;
@@ -45,17 +47,10 @@ public enum Area {
         for (Area area : values()) {
             if (area.name.equals(name)) {
                 return area.code;
+            } else {
+                throw new AccommodationException(AccommodationErrorCode.INVALID_AREA);
             }
         }
         return null;
-    }
-
-    public static boolean isValidAreaName(String name) {
-        for (Area area : values()) {
-            if (area.name.equals(name)) {
-                return true;
-            }
-        }
-        return false;
     }
 }

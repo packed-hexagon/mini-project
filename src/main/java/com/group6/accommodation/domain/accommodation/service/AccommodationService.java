@@ -59,34 +59,10 @@ public class AccommodationService {
         }
     }
 
-    // 매개변수에 따라 숙소 조회
-    public PagedDto<AccommodationResponseDto> findByParameter(String areaCode, String categoryCode, int page) {
-        PagedDto<AccommodationResponseDto> responsePagedDto = new PagedDto<>();
-        int customSize = 12;
-        if(areaCode == null && categoryCode == null) {
-            responsePagedDto = findAllPage(page, customSize);
-        } else if(areaCode == null && categoryCode != null) {
-            responsePagedDto = findByCategoryPaged(categoryCode, page, customSize);
-        } else if(areaCode != null && categoryCode == null) {
-            responsePagedDto = findByAreaPaged(areaCode, page, 9);
-        }
-
-        return responsePagedDto;
-    }
-
-
-    // 숙소 전체 조회
-    public PagedDto<AccommodationResponseDto> findAllPage(int page, int size) {
-        PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likeCount"));
-        Page<AccommodationEntity> accommodationPage = accommodationRepository.findAll(pageRequest);
-
-        return getPagedDto(accommodationPage);
-    }
-
-    // 숙소 종류별 조회
-    public PagedDto<AccommodationResponseDto> findByCategoryPaged(String category, int page, int size) {
+    // 숙소 전체 조회 or 테마별 조회
+    public PagedDto<AccommodationResponseDto> findByCategoryOrAll(String category, int page) {
         String categoryCode = Category.getCodeByName(category);
-        Page<AccommodationEntity> accommodationPage = accommodationRepository.findByCategory(categoryCode, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likeCount")));
+        Page<AccommodationEntity> accommodationPage = accommodationRepository.findByCategoryWithNullCheck(categoryCode, PageRequest.of(page, 12, Sort.by(Sort.Direction.DESC, "likeCount")));
 
         return getPagedDto(accommodationPage);
     }
