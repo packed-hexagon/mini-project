@@ -36,107 +36,111 @@ public class ReserveService {
 
     private final int OVER_PRICE = 50000;
 
-    @Transactional
-    public ReserveResponseDto postReserve(Long userId, Long accommodationId, Long roomId,
-        PostReserveRequestDto postReserveRequestDto) {
+    // TODO: 임시 주석처리
 
-        // 숙소가 있는지 검증
-        AccommodationEntity accommodation = accommodationRepository.findById(accommodationId)
-            .orElseThrow(() -> new ReservationException(
-                ReservationErrorCode.NOT_FOUND_ACCOMMODATION));
-
-        // 유저 정보 가져오기
-        UserEntity user = userRepository.findById(userId)
-            .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_USER));
-
-        // 방 정보 가져오기
-        RoomEntity room = roomRepository.findById(roomId)
-            .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_ROOM));
-
-        // 방이 모두 예약 된 경우
-        if (reservationRepository.countByRoom(room) >= room.getRoomCount()) {
-            throw new ReservationException(ReservationErrorCode.FULL_ROOM);
-        }
-
-        // 금액 검증
-        validatePayable(room, postReserveRequestDto);
-
-        ReservationEntity reservationEntity = ReservationEntity.builder()
-            .accommodation(accommodation)
-            .room(room)
-            .user(user)
-            .headcount(postReserveRequestDto.getHeadcount())
-            .startDate(postReserveRequestDto.getStartDate())
-            .endDate(postReserveRequestDto.getEndDate())
-            .price(postReserveRequestDto.getPrice())
-            .build();
-
-        ReservationEntity reservation = reservationRepository.save(reservationEntity);
-
-
-        return ReservationConverter.toDto(reservation);
-    }
-
-
-
-    @Transactional
-    public ReserveResponseDto cancelReserve(Long reservationId) {
-        ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
-            () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
-
-        // 이미 취소된 예약
-        if(reservation.getDeletedAt() != null) {
-            throw new ReservationException(ReservationErrorCode.ALREADY_CANCEL);
-        }
-
-        // 예약 취소
-        reservation.setDeletedAt(Instant.now());
-
-        return ReservationConverter.toDto(reservation);
-    }
+//    @Transactional
+//    public ReserveResponseDto postReserve(Long userId, Long accommodationId, Long roomId,
+//        PostReserveRequestDto postReserveRequestDto) {
+//
+//        // 숙소가 있는지 검증
+//        AccommodationEntity accommodation = accommodationRepository.findById(accommodationId)
+//            .orElseThrow(() -> new ReservationException(
+//                ReservationErrorCode.NOT_FOUND_ACCOMMODATION));
+//
+//        // 유저 정보 가져오기
+//        UserEntity user = userRepository.findById(userId)
+//            .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_USER));
+//
+//        // 방 정보 가져오기
+//        RoomEntity room = roomRepository.findById(roomId)
+//            .orElseThrow(() -> new ReservationException(ReservationErrorCode.NOT_FOUND_ROOM));
+//
+//        // 방이 모두 예약 된 경우
+//        if (reservationRepository.countByRoom(room) >= room.getCount()) {
+//            throw new ReservationException(ReservationErrorCode.FULL_ROOM);
+//        }
+//
+//        // 금액 검증
+//        validatePayable(room, postReserveRequestDto);
+//
+//        ReservationEntity reservationEntity = ReservationEntity.builder()
+//            .accommodation(accommodation)
+//            .room(room)
+//            .user(user)
+//            .headcount(postReserveRequestDto.getHeadcount())
+//            .startDate(postReserveRequestDto.getStartDate())
+//            .endDate(postReserveRequestDto.getEndDate())
+//            .price(postReserveRequestDto.getPrice())
+//            .build();
+//
+//        ReservationEntity reservation = reservationRepository.save(reservationEntity);
+//
+//
+//        return ReservationConverter.toDto(reservation);
+//    }
 
 
-    @Transactional(readOnly = true)
-    public PagedDto<ReserveListItemDto> getList(Long userId, int page, int size, String directionStr) {
-        Sort.Direction direction =
-            directionStr.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+    // TODO: 임시 주석처리
 
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
-        Page<ReserveListItemDto> result = reservationRepository.findAllByUserId(userId,
-            pageable).map(item -> ReserveListItemDto.builder()
-            .id(item.getReservationId())
-            .accommodationTitle(item.getAccommodation().getTitle())
-            .roomTitle(item.getRoom().getTitle())
-            .thumbnail(item.getAccommodation().getThumbnail())
-            .startDate(item.getStartDate())
-            .endDate(item.getEndDate())
-            .price(item.getPrice())
-            .createdAt(item.getCreatedAt())
-            .deletedAt(item.getDeletedAt())
-            .build());
+//    @Transactional
+//    public ReserveResponseDto cancelReserve(Long reservationId) {
+//        ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
+//            () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
+//
+//        // 이미 취소된 예약
+//        if(reservation.getDeletedAt() != null) {
+//            throw new ReservationException(ReservationErrorCode.ALREADY_CANCEL);
+//        }
+//
+//        // 예약 취소
+////        reservation.setDeletedAt(Instant.now());
+//
+//        return ReservationConverter.toDto(reservation);
+//    }
 
+    // TODO: 임시 주석처리
 
-        return PagedDto.<ReserveListItemDto>builder()
-            .totalElements((int) result.getTotalElements())
-            .totalPages(result.getTotalPages())
-            .size(result.getSize())
-            .currentPage(result.getNumber())
-            .content(result.getContent())
-            .build();
-
-    }
+//    @Transactional(readOnly = true)
+//    public PagedDto<ReserveListItemDto> getList(Long userId, int page, int size, String directionStr) {
+//        Sort.Direction direction =
+//            directionStr.equalsIgnoreCase("desc") ? Sort.Direction.DESC : Sort.Direction.ASC;
+//
+//        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, "createdAt"));
+//        Page<ReserveListItemDto> result = reservationRepository.findAllByUserId(userId,
+//            pageable).map(item -> ReserveListItemDto.builder()
+//            .id(item.getReservationId())
+//            .accommodationTitle(item.getAccommodation().getTitle())
+//            .roomTitle(item.getRoom().getTitle())
+//            .thumbnail(item.getAccommodation().getThumbnail())
+//            .startDate(item.getStartDate())
+//            .endDate(item.getEndDate())
+//            .price(item.getPrice())
+//            .createdAt(item.getCreatedAt())
+//            .deletedAt(item.getDeletedAt())
+//            .build());
+//
+//
+//        return PagedDto.<ReserveListItemDto>builder()
+//            .totalElements((int) result.getTotalElements())
+//            .totalPages(result.getTotalPages())
+//            .size(result.getSize())
+//            .currentPage(result.getNumber())
+//            .content(result.getContent())
+//            .build();
+//
+//    }
 
 
     private void validatePayable(RoomEntity room, PostReserveRequestDto postReserveRequestDto) {
 
         int headCount = postReserveRequestDto.getHeadcount();
         int amount = postReserveRequestDto.getPrice();
-        int price = room.getRoomOffseasonMinfee1();
+        int price = room.getWeekdaysFee();
 
         int day = (int) ChronoUnit.DAYS.between(postReserveRequestDto.getStartDate(),
             postReserveRequestDto.getEndDate());
 
-        int overCount = headCount - room.getRoomBaseCount();
+        int overCount = headCount - room.getBaseCount();
         for(int i = 0; i < overCount; i++) {
             price += OVER_PRICE;
         }
