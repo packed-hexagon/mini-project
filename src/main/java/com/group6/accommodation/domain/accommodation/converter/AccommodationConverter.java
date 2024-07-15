@@ -69,8 +69,8 @@ public class AccommodationConverter {
         int minPrice = Integer.MAX_VALUE;
 
         for(RoomEntity room : byAccommodationId) {
-            if(minPrice > room.getRoomOffseasonMinfee1()) {
-                minPrice = room.getRoomOffseasonMinfee1();
+            if(minPrice > room.getWeekdaysFee()) {
+                minPrice = room.getWeekdaysFee();
             }
         }
         return minPrice;
