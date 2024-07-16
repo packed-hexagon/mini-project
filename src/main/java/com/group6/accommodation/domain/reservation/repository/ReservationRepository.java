@@ -14,8 +14,9 @@ import org.springframework.data.repository.query.Param;
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
 
     
-    @Query("SELECT r FROM ReservationEntity r WHERE r.room = :room AND r.deletedAt IS NULL AND r.user.id <> :userId")
+    @Query("SELECT r FROM ReservationEntity r WHERE r.room = :accommodation AND r.room = :room AND r.deletedAt IS NULL AND r.user.id <> :userId")
     List<ReservationEntity> findConflictingReservations(
+        @Param("accommodation")AccommodationEntity accommodation,
         @Param("room") RoomEntity room,
         @Param("userId") Long userId);
 

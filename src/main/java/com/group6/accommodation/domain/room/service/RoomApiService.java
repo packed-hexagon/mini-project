@@ -12,6 +12,7 @@ import com.group6.accommodation.global.exception.type.RoomException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -142,8 +143,8 @@ public class RoomApiService {
             .table(itemNode.path("roomtable").asBoolean())
             .hairdryer(itemNode.path("roomhairdryer").asBoolean())
             .images(img1)
-            .checkInTime(LocalDate.now())
-            .checkOutTime(LocalDate.now().plusDays(1))
+            .checkInTime(LocalDateTime.now())
+            .checkOutTime(LocalDateTime.now().plusDays(1))
             .build();
 
         return room;

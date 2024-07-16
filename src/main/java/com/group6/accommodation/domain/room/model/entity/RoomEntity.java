@@ -1,7 +1,6 @@
 package com.group6.accommodation.domain.room.model.entity;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
-import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -12,8 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -93,37 +91,10 @@ public class RoomEntity {
 	private String images;
 
 	@Column(name = "check_in_time", nullable = false)
-	private LocalDate checkInTime;
+	private LocalDateTime checkInTime;
 
 	@Column(name = "check_out_time", nullable = false)
-	private LocalDate checkOutTime;
-
-
-
-    public int getPayment(PostReservationRequestDto postReservationRequestDto, int overPrice) {
-
-        int headCount = postReservationRequestDto.getHeadcount();
-        int price = weekdaysFee;
-
-        int day = (int) ChronoUnit.DAYS.between(postReservationRequestDto.getStartDate(),
-                postReservationRequestDto.getEndDate());
-
-        int overCount = headCount - baseCount;
-        for(int i = 0; i < overCount; i++) {
-            price += overPrice;
-        }
-        price *= day;
-        return price;
-    }
-
-    public int decrease() {
-        return --count;
-    }
-
-	public boolean isOverCapacity(int headcount) {
-
-	}
-
+	private LocalDateTime checkOutTime;
 
 	public void updateRoomEntity(AccommodationEntity accommodation, RoomEntity entity) {
 		this.accommodation = accommodation;
@@ -152,7 +123,7 @@ public class RoomEntity {
 	}
 
 	@Builder
-	public RoomEntity(Long id, AccommodationEntity accommodation, String title, Integer count, Integer baseCount, Integer maxHeadCount, Integer weekdaysFee, Integer weekendsFee, boolean bath, boolean hometheater, boolean aircondition, boolean tv, boolean pc, boolean cable, boolean internet, boolean refrigerator, boolean toiletries, boolean sofa, boolean cook, boolean table, boolean hairdryer, String images, LocalDate checkInTime, LocalDate checkOutTime) {
+	public RoomEntity(Long id, AccommodationEntity accommodation, String title, Integer count, Integer baseCount, Integer maxHeadCount, Integer weekdaysFee, Integer weekendsFee, boolean bath, boolean hometheater, boolean aircondition, boolean tv, boolean pc, boolean cable, boolean internet, boolean refrigerator, boolean toiletries, boolean sofa, boolean cook, boolean table, boolean hairdryer, String images, LocalDateTime checkInTime, LocalDateTime checkOutTime) {
 		this.roomId = id;
 		this.accommodation = accommodation;
 		this.title = title;
