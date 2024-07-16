@@ -32,21 +32,20 @@ public enum Category {
         for (Category category : values()) {
             if (category.code.equals(code)) {
                 return category.name;
-            } else {
-                throw new AccommodationException(AccommodationErrorCode.INVALID_CATEGORY);
             }
         }
-        return null;
+        throw new AccommodationException(AccommodationErrorCode.INVALID_CATEGORY);
     }
 
     public static String getCodeByName(String name) {
+        if(name == null) {
+            return null;
+        }
         for (Category category : values()) {
             if (category.name.equals(name)) {
                 return category.code;
-            } else {
-                throw new AccommodationException(AccommodationErrorCode.INVALID_CATEGORY);
             }
         }
-        return null;
+        throw new AccommodationException(AccommodationErrorCode.INVALID_CATEGORY);
     }
 }

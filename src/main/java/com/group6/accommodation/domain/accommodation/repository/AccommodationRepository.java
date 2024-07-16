@@ -17,8 +17,8 @@ public interface AccommodationRepository extends JpaRepository<AccommodationEnti
     Page<AccommodationEntity> findByAreacode(String areaCode, Pageable pageable);
 
     // 숙소 전체 조회 or 테마별 조회
-    @Query("SELECT a FROM AccommodationEntity a WHERE (:categorycode IS NULL OR a.category = :categorycode)")
-    Page<AccommodationEntity> findByCategoryWithNullCheck(String categoryCode, Pageable pageable);
+    @Query("SELECT a FROM AccommodationEntity a WHERE (:categoryCode IS NULL OR a.category = :categoryCode)")
+    Page<AccommodationEntity> findByCategoryWithNullCheck(@Param("categoryCode") String categoryCode, Pageable pageable);
 
     // 숙소명이나 주소에 키워드를 포함한 숙소 조회
     @Query("SELECT a FROM AccommodationEntity a WHERE a.title LIKE %:keyword% OR a.address LIKE %:keyword%")
