@@ -29,36 +29,6 @@ public class AccommodationService {
     private final AccommodationRepository accommodationRepository;
     private final AccommodationConverter accommodationConverter;
 
-    // Open api에서 불러온 데이터 저장
-    public void saveAccommodations(List<AccommodationEntity> accommodations) {
-        for (AccommodationEntity accommodation : accommodations) {
-            Optional<AccommodationEntity> existingAccommodation = accommodationRepository.findById(accommodation.getId());
-            if (existingAccommodation.isPresent()) {
-                // 업데이트 로직
-                AccommodationEntity existing = existingAccommodation.get();
-                AccommodationEntity updated = AccommodationEntity.builder()
-                        .id(existing.getId()) // ID는 기존 엔티티의 ID를 유지
-                        .title(accommodation.getTitle())
-                        .address(accommodation.getAddress())
-                        .areacode(accommodation.getAreacode())
-                        .category(accommodation.getCategory())
-                        .image(accommodation.getImage())
-                        .thumbnail(accommodation.getThumbnail())
-                        .latitude(accommodation.getLatitude())
-                        .longitude(accommodation.getLongitude())
-                        .tel(accommodation.getTel())
-                        .likeCount(accommodation.getLikeCount())
-                        .reviewCount(accommodation.getReviewCount())
-                        .totalRating(existing.getTotalRating()) // 필요에 따라 기존 엔티티의 다른 필드도 유지
-                        .build();
-                accommodationRepository.save(updated);
-            } else {
-                // 새로운 데이터 추가
-                accommodationRepository.save(accommodation);
-            }
-        }
-    }
-
     // 숙소 전체 조회 or 테마별 조회
     public PagedDto<AccommodationResponseDto> findByCategoryOrAll(String category, int page) {
         String categoryCode = Category.getCodeByName(category);
@@ -132,15 +102,43 @@ public class AccommodationService {
 
     // Page 정보값 포함한 PagedDto로 변환.(공통 로직)
     public PagedDto getPagedDto(Page<AccommodationEntity> entity) {
-        List<AccommodationResponseDto> accommodationList = accommodationConverter.toDtoList(entity.getContent());
-
         PagedDto pagedDto = new PagedDto<>(
                 (int) entity.getTotalElements(),
                 entity.getTotalPages(),
                 entity.getSize(),
                 entity.getNumber(),
-                accommodationList
+                accommodationConverter.toDtoList(entity.getContent())
         );
         return pagedDto;
+    }
+
+    // Open api에서 불러온 데이터 저장
+    public void saveAccommodations(List<AccommodationEntity> accommodations) {
+        for (AccommodationEntity accommodation : accommodations) {
+            Optional<AccommodationEntity> existingAccommodation = accommodationRepository.findById(accommodation.getId());
+            if (existingAccommodation.isPresent()) {
+                // 업데이트 로직
+                AccommodationEntity existing = existingAccommodation.get();
+                AccommodationEntity updated = AccommodationEntity.builder()
+                        .id(existing.getId()) // ID는 기존 엔티티의 ID를 유지
+                        .title(accommodation.getTitle())
+                        .address(accommodation.getAddress())
+                        .areacode(accommodation.getAreacode())
+                        .category(accommodation.getCategory())
+                        .image(accommodation.getImage())
+                        .thumbnail(accommodation.getThumbnail())
+                        .latitude(accommodation.getLatitude())
+                        .longitude(accommodation.getLongitude())
+                        .tel(accommodation.getTel())
+                        .likeCount(accommodation.getLikeCount())
+                        .reviewCount(accommodation.getReviewCount())
+                        .totalRating(existing.getTotalRating()) // 필요에 따라 기존 엔티티의 다른 필드도 유지
+                        .build();
+                accommodationRepository.save(updated);
+            } else {
+                // 새로운 데이터 추가
+                accommodationRepository.save(accommodation);
+            }
+        }
     }
 }
