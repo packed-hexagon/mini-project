@@ -42,7 +42,7 @@ public class AccommodationController {
     @GetMapping("/accommodation/{id}")
     @Operation(summary = "숙박시설 단일 조회")
     public ResponseEntity<ResponseApi<AccommodationDetailResponseDto>> read(
-            @PathVariable(name = "id") Long id
+            @PathVariable Long id
     ) {
 
         AccommodationDetailResponseDto accommodationDetail = accommodationService.findById(id);
