@@ -30,61 +30,61 @@ public class RoomEntity {
 	@JoinColumn(name="accommodation_id", referencedColumnName = "accommodation_id")
 	private AccommodationEntity accommodation;
 
-	@Column(name = "room_title", nullable = false, length = 32)
+	@Column(name = "title", nullable = false, length = 32)
 	private String title;
 
-	@Column(name = "room_count", nullable = false)
+	@Column(name = "count", nullable = false)
 	private Integer count;
 
-	@Column(name = "room_base_count", nullable = false)
+	@Column(name = "base_count", nullable = false)
 	private Integer baseCount;
 
-	@Column(name = "room_max_count", nullable = false)
+	@Column(name = "max_head_count", nullable = false)
 	private Integer maxHeadCount;
 
-	@Column(name = "room_offseason_minfee1", nullable = false)
+	@Column(name = "week_days_fee", nullable = false)
 	private Integer weekdaysFee;
 
-	@Column(name = "room_offseason_minfee2", nullable = false)
+	@Column(name = "weekends_fee", nullable = false)
 	private Integer weekendsFee;
 
-	@Column(name = "room_bath", length = 32, nullable = false)
+	@Column(name = "bath", nullable = false)
 	private boolean bath;
 
-	@Column(name = "room_hometheater", length = 32, nullable = false)
+	@Column(name = "hometheater", nullable = false)
 	private boolean hometheater;
 
-	@Column(name = "room_aircondition", length = 32, nullable = false)
+	@Column(name = "aircondition", nullable = false)
 	private boolean aircondition;
 
-	@Column(name = "room_tv", length = 32, nullable = false)
+	@Column(name = "tv", nullable = false)
 	private boolean tv;
 
-	@Column(name = "room_pc", length = 32, nullable = false)
+	@Column(name = "pc", nullable = false)
 	private boolean pc;
 
-	@Column(name = "room_cable", length = 32, nullable = false)
+	@Column(name = "cable", nullable = false)
 	private boolean cable;
 
-	@Column(name = "room_internet", length = 32, nullable = false)
+	@Column(name = "internet", nullable = false)
 	private boolean internet;
 
-	@Column(name = "room_refrigerator", length = 32, nullable = false)
+	@Column(name = "refrigerator", nullable = false)
 	private boolean refrigerator;
 
-	@Column(name = "room_toiletries", length = 32, nullable = false)
+	@Column(name = "toiletries", nullable = false)
 	private boolean toiletries;
 
-	@Column(name = "room_sofa", length = 32, nullable = false)
+	@Column(name = "sofa", nullable = false)
 	private boolean sofa;
 
-	@Column(name = "room_cook", length = 32, nullable = false)
+	@Column(name = "cook", nullable = false)
 	private boolean cook;
 
-	@Column(name = "room_table", length = 32, nullable = false)
+	@Column(name = "table", nullable = false)
 	private boolean table;
 
-	@Column(name = "room_hairdryer", length = 32, nullable = false)
+	@Column(name = "hairdryer", nullable = false)
 	private boolean hairdryer;
 
 	@Column(name = "images", length = 500, nullable = false)
