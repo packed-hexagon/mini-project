@@ -2,9 +2,7 @@ package com.group6.accommodation.domain.room.service;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
-import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
-import com.group6.accommodation.domain.room.converter.RoomConverter;
 import com.group6.accommodation.domain.room.model.dto.AvailableRoomsReq;
 import com.group6.accommodation.domain.room.model.dto.AvailableRoomsRes;
 import com.group6.accommodation.domain.room.model.dto.RoomDto;
@@ -54,7 +52,7 @@ public class RoomService {
 			throw new RoomException(RoomErrorCode.NOT_FOUND_ACCOMMODATION);
 		}
 
-		return RoomConverter.toDtoList(roomEntityList);
+		return RoomDto.toDtoList(roomEntityList);
 	}
 
 	public RoomDto findByAccommodationIdAndRoomId(Long accommodationId, Long roomId) {
@@ -69,7 +67,7 @@ public class RoomService {
 		RoomEntity roomEntity = roomRepository.findByAccommodation_IdAndRoomId(accommodationId, roomId)
 			.orElseThrow(() -> new RoomException(RoomErrorCode.NOT_FOUND_ROOM));
 
-		return RoomConverter.toDto(roomEntity);
+		return RoomDto.toDto(roomEntity);
 	}
 
 	// 룸 카운트 /
