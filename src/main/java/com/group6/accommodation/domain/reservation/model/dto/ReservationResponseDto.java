@@ -1,8 +1,8 @@
 package com.group6.accommodation.domain.reservation.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +22,6 @@ public class ReservationResponseDto {
     private Integer headcount;
     private LocalDate startDate;
     private LocalDate endDate;
-    private Instant createdAt;
-    private Instant deletedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime deletedAt;
 }

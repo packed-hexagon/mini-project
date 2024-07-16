@@ -32,4 +32,9 @@ public class PostReservationRequestDto {
     @NotNull
     @FutureOrPresent(message = "끝나는 날짜는 과거가 될 수 없습니다.")
     private LocalDate endDate;
+
+    @NotNull
+    @Positive(message = "가격은 0이하가 될 수 없습니다.")
+    private int price;
+
 }

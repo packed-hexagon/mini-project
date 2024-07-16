@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.reservation.model.entity;
 
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,4 +57,17 @@ public class ReservationEntity {
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
+
+	public static ReservationResponseDto toDto(ReservationEntity entity) {
+		return ReservationResponseDto.builder()
+			.id(entity.reservationId)
+			.userId(entity.user.getId())
+			.headcount(entity.headcount)
+			.price(entity.price)
+			.startDate(entity.startDate)
+			.endDate(entity.endDate)
+			.deletedAt(entity.deletedAt)
+			.build();
+	}
+
 }
