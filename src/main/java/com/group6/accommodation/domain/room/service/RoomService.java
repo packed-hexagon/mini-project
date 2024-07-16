@@ -47,10 +47,7 @@ public class RoomService {
 	public List<RoomDto> findByAccommodationId(Long accommodationId) {
 
 		// 숙소 검증
-		List<RoomEntity> roomEntityList = roomRepository.findByAccommodation_Id(accommodationId);
-		if (roomEntityList.isEmpty()) {
-			throw new RoomException(RoomErrorCode.NOT_FOUND_ACCOMMODATION);
-		}
+		List<RoomEntity> roomEntityList = roomRepository.getByAccommodation_Id(accommodationId);
 
 		return RoomDto.toDtoList(roomEntityList);
 	}
@@ -58,14 +55,10 @@ public class RoomService {
 	public RoomDto findByAccommodationIdAndRoomId(Long accommodationId, Long roomId) {
 
 		// 숙소 검증
-		List<RoomEntity> roomEntityList = roomRepository.findByAccommodation_Id(accommodationId);
-		if (roomEntityList.isEmpty()) {
-			throw new RoomException(RoomErrorCode.NOT_FOUND_ACCOMMODATION);
-		}
+		List<RoomEntity> roomEntityList = roomRepository.getByAccommodation_Id(accommodationId);
 
 		// 객실 검증
-		RoomEntity roomEntity = roomRepository.findByAccommodation_IdAndRoomId(accommodationId, roomId)
-			.orElseThrow(() -> new RoomException(RoomErrorCode.NOT_FOUND_ROOM));
+		RoomEntity roomEntity = roomRepository.getByAccommodation_IdAndRoomId(accommodationId, roomId);
 
 		return RoomDto.toDto(roomEntity);
 	}
@@ -74,14 +67,10 @@ public class RoomService {
 	public AvailableRoomsRes availableRooms(AvailableRoomsReq req, Long id, Long roomId) {
 
 		// 숙소 검증
-		List<RoomEntity> roomEntityList = roomRepository.findByAccommodation_Id(id);
-		if (roomEntityList.isEmpty()) {
-			throw new RoomException(RoomErrorCode.NOT_FOUND_ACCOMMODATION);
-		}
+		List<RoomEntity> roomEntityList = roomRepository.getByAccommodation_Id(id);
 
 		// 객실 검증
-		RoomEntity roomEntity = roomRepository.findByAccommodation_IdAndRoomId(id, roomId)
-			.orElseThrow(() -> new RoomException(RoomErrorCode.NOT_FOUND_ROOM));
+		RoomEntity roomEntity = roomRepository.getByAccommodation_IdAndRoomId(id, roomId);
 
 		int roomCount = roomEntity.getCount();
 		int reservationRooms = reservationRepository.countOverlappingReservations(

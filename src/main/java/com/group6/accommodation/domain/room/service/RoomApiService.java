@@ -51,7 +51,7 @@ public class RoomApiService {
             int contentId = Math.toIntExact(accommodation.getId());
             futures.add(fetchRoomsAsync(contentId));
         }
-        //futures.add(fetchRoomsAsync(138900));
+
         return futures.stream()
             .map(CompletableFuture::join)
             .flatMap(List::stream)
