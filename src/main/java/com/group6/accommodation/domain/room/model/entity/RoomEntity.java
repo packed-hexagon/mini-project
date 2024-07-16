@@ -11,6 +11,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -90,10 +91,10 @@ public class RoomEntity {
 	private String images;
 
 	@Column(name = "check_in_time", nullable = false)
-	private LocalDate checkInTime;
+	private LocalDateTime checkInTime;
 
 	@Column(name = "check_out_time", nullable = false)
-	private LocalDate checkOutTime;
+	private LocalDateTime checkOutTime;
 
 	public void updateRoomEntity(AccommodationEntity accommodation, RoomEntity entity) {
 		this.accommodation = accommodation;
@@ -122,7 +123,7 @@ public class RoomEntity {
 	}
 
 	@Builder
-	public RoomEntity(Long id, AccommodationEntity accommodation, String title, Integer count, Integer baseCount, Integer maxHeadCount, Integer weekdaysFee, Integer weekendsFee, boolean bath, boolean hometheater, boolean aircondition, boolean tv, boolean pc, boolean cable, boolean internet, boolean refrigerator, boolean toiletries, boolean sofa, boolean cook, boolean table, boolean hairdryer, String images, LocalDate checkInTime, LocalDate checkOutTime) {
+	public RoomEntity(Long id, AccommodationEntity accommodation, String title, Integer count, Integer baseCount, Integer maxHeadCount, Integer weekdaysFee, Integer weekendsFee, boolean bath, boolean hometheater, boolean aircondition, boolean tv, boolean pc, boolean cable, boolean internet, boolean refrigerator, boolean toiletries, boolean sofa, boolean cook, boolean table, boolean hairdryer, String images, LocalDateTime checkInTime, LocalDateTime checkOutTime) {
 		this.roomId = id;
 		this.accommodation = accommodation;
 		this.title = title;

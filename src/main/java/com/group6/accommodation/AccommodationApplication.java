@@ -18,9 +18,9 @@ public class AccommodationApplication {
 		SpringApplication.run(AccommodationApplication.class, args);
 	}
 
-	@Bean
-	public ApplicationRunner applicationRunner(DatabaseInitializationService databaseInitializationService) {
-		return args -> databaseInitializationService.initializeDatabase();
-	}
+//	@Bean
+//	public ApplicationRunner applicationRunner(DatabaseInitializationService databaseInitializationService) {
+//		return args -> databaseInitializationService.initializeDatabase();
+//	}
 
 }
