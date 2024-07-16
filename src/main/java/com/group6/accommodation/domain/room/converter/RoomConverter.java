@@ -32,8 +32,8 @@ public class RoomConverter {
 			.table(room.isTable())
 			.hairdryer(room.isHairdryer())
 			.images(room.getImages())
-			.checkIn(room.getCheckInTime())
-			.checkOut(room.getCheckOutTime())
+			.checkInTime(room.getCheckInTime())
+			.checkOutTime(room.getCheckOutTime())
 			.build();
 	}
 

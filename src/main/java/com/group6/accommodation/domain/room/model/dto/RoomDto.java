@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.room.model.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,6 +35,6 @@ public class RoomDto {
 	private boolean table;
 	private boolean hairdryer;
 	private String images;
-	private LocalDate checkIn;
-	private LocalDate checkOut;
+	private LocalDateTime checkInTime;
+	private LocalDateTime checkOutTime;
 }
