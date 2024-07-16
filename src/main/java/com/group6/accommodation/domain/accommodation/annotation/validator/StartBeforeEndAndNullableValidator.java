@@ -50,7 +50,7 @@ public class StartBeforeEndAndNullableValidator implements ConstraintValidator<S
             return isValid;
         } catch (Exception e) {
             log.warn(e.getMessage());
-            return false; // 예외가 발생한거지 검증 실패가 아닌데 왜 false냐
+            return false;
         }
     }
 }
