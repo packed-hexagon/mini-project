@@ -1,6 +1,8 @@
 package com.group6.accommodation.domain.room.repository;
 
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
+import com.group6.accommodation.global.exception.error.RoomErrorCode;
+import com.group6.accommodation.global.exception.type.RoomException;
 import jakarta.validation.constraints.NotNull;
 import java.time.LocalDate;
 import java.util.List;

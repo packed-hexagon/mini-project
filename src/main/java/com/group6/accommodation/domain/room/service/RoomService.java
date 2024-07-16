@@ -88,7 +88,7 @@ public class RoomService {
 			roomId, req.getCheckIn(), req.getCheckOut()
 		);
 
-		return roomCount > reservationRooms ? AvailableRoomsRes.builder().reservalbe(true).build()
-			: AvailableRoomsRes.builder().reservalbe(false).build();
+		return roomCount > reservationRooms ? AvailableRoomsRes.builder().reservable(true).build()
+			: AvailableRoomsRes.builder().reservable(false).build();
 	}
 }
