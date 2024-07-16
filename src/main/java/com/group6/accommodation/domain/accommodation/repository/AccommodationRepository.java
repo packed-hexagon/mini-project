@@ -2,9 +2,12 @@ package com.group6.accommodation.domain.accommodation.repository;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import java.util.Optional;
+
+import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
+import com.group6.accommodation.global.exception.type.AccommodationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import java.time.LocalDate;
+
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -14,6 +17,11 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface AccommodationRepository extends JpaRepository<AccommodationEntity, Long>, JpaSpecificationExecutor<AccommodationEntity> {
+    default AccommodationEntity getById(final Long id) {
+        return findById(id)
+                .orElseThrow(() -> new AccommodationException(AccommodationErrorCode.NOT_FOUND_ACCOMMODATION));
+    }
+
     Page<AccommodationEntity> findByAreacode(String areaCode, Pageable pageable);
 
     // 숙소 전체 조회 or 테마별 조회

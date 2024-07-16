@@ -77,9 +77,7 @@ public class AccommodationService {
 
     // 숙소 단건 조회
     public AccommodationDetailResponseDto findById(Long id) {
-        AccommodationEntity accommodation = accommodationRepository.findById(id)
-                .orElseThrow(() -> new AccommodationException(
-                        AccommodationErrorCode.NOT_FOUND_ACCOMMODATION));
+        AccommodationEntity accommodation = accommodationRepository.getById(id);
 
         return accommodationConverter.toDetailDto(accommodation);
     }
