@@ -9,7 +9,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
+import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.reservation.service.ReservationService;
@@ -130,7 +130,7 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약 하기")
     public void reserve() throws Exception {
-        PostReserveRequestDto body = new PostReserveRequestDto(4, LocalDate.now().plusDays(1),
+        PostReservationRequestDto body = new PostReservationRequestDto(4, LocalDate.now().plusDays(1),
             LocalDate.now().plusDays(2), 40000);
 
         ReservationResponseDto response = ReservationResponseDto.builder()

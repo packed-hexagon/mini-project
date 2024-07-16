@@ -19,7 +19,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @StartBeforeEnd(startTime = "startDate", endTime = "endDate")
-public class PostReserveRequestDto {
+public class PostReservationRequestDto {
 
     @NotNull
     @Positive(message = "인원 수는 한명 이상이여야 합니다.")

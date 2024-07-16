@@ -1,9 +1,7 @@
 package com.group6.accommodation.domain.room.model.entity;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
-import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
-import com.group6.accommodation.global.exception.error.ReservationErrorCode;
-import com.group6.accommodation.global.exception.type.ReservationException;
+import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -102,13 +100,13 @@ public class RoomEntity {
 
 
 
-    public int getPayment(PostReserveRequestDto postReserveRequestDto, int overPrice) {
+    public int getPayment(PostReservationRequestDto postReservationRequestDto, int overPrice) {
 
-        int headCount = postReserveRequestDto.getHeadcount();
+        int headCount = postReservationRequestDto.getHeadcount();
         int price = weekdaysFee;
 
-        int day = (int) ChronoUnit.DAYS.between(postReserveRequestDto.getStartDate(),
-                postReserveRequestDto.getEndDate());
+        int day = (int) ChronoUnit.DAYS.between(postReservationRequestDto.getStartDate(),
+                postReservationRequestDto.getEndDate());
 
         int overCount = headCount - baseCount;
         for(int i = 0; i < overCount; i++) {
@@ -121,6 +119,10 @@ public class RoomEntity {
     public int decrease() {
         return --count;
     }
+
+	public boolean isOverCapacity(int headcount) {
+
+	}
 
 
 	public void updateRoomEntity(AccommodationEntity accommodation, RoomEntity entity) {

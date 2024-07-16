@@ -1,11 +1,9 @@
 package com.group6.accommodation.domain.reservation.service;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
-import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
-import com.group6.accommodation.domain.likes.model.entity.UserLikeEntity;
-import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
+import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
@@ -17,7 +15,6 @@ import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.model.dto.PagedDto;
 
 import java.util.Optional;
-import org.junit.Ignore;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
@@ -108,7 +105,7 @@ public class ReservationServiceTest {
         Long userId = 1L;
         Long accommodationId = accommodation.getId();
         Long roomId = room.getRoomId();
-        PostReserveRequestDto requestDto = new PostReserveRequestDto(
+        PostReservationRequestDto requestDto = new PostReservationRequestDto(
                 2,
                 LocalDate.now().plusDays(1),
                 LocalDate.now().plusDays(2)
@@ -138,7 +135,7 @@ public class ReservationServiceTest {
         Long roomId = room.getRoomId();
         int overPeople = 5;
 
-        PostReserveRequestDto requestDto = new PostReserveRequestDto(
+        PostReservationRequestDto requestDto = new PostReservationRequestDto(
             overPeople,
             LocalDate.now().plusDays(1),
             LocalDate.now().plusDays(2),
@@ -167,7 +164,7 @@ public class ReservationServiceTest {
         Long roomId = room.getRoomId();
         int overPrice = 1000;
 
-        PostReserveRequestDto requestDto = new PostReserveRequestDto(
+        PostReservationRequestDto requestDto = new PostReservationRequestDto(
             2,
             LocalDate.now().plusDays(1),
             LocalDate.now().plusDays(2),
