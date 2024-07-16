@@ -37,7 +37,7 @@ public class StartBeforeEndAndNullableValidator implements ConstraintValidator<S
                 return true;
             }
 
-            boolean isValid = start.isBefore(end);
+            boolean isValid = start.isBefore(end) || start.isEqual(end);
             if (!isValid) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
@@ -47,7 +47,7 @@ public class StartBeforeEndAndNullableValidator implements ConstraintValidator<S
 
             return isValid;
         } catch (Exception e) {
-            return false;
+            return false; // 예외가 발생한거지 검증 실패가 아닌데 왜 false냐
         }
     }
 }
