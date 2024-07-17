@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.reservation.model.entity;
 
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.global.model.entity.TimeStamp;
 import jakarta.persistence.Column;
@@ -14,15 +15,16 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Getter
 @Entity
 @Table(name = "reservation")
+@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Builder
 public class ReservationEntity extends TimeStamp {
 
 	@Id
@@ -56,4 +58,17 @@ public class ReservationEntity extends TimeStamp {
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
+
+	public static ReservationResponseDto toDto(ReservationEntity entity) {
+		return ReservationResponseDto.builder()
+			.id(entity.reservationId)
+			.userId(entity.user.getId())
+			.headcount(entity.headcount)
+			.price(entity.price)
+			.startDate(entity.startDate)
+			.endDate(entity.endDate)
+			.deletedAt(entity.deletedAt)
+			.build();
+	}
+
 }

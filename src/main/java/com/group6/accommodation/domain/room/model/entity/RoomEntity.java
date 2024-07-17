@@ -2,6 +2,7 @@ package com.group6.accommodation.domain.room.model.entity;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.global.model.entity.TimeStamp;
+import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,8 +12,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -96,6 +97,30 @@ public class RoomEntity extends TimeStamp {
 
 	@Column(name = "check_out_time", nullable = false)
 	private LocalDateTime checkOutTime;
+
+	public int getPrice(PostReservationRequestDto postReservationRequestDto, int overPrice) {
+		int headCount = postReservationRequestDto.getHeadcount();
+		int price = getWeekdaysFee();
+
+		int day = (int) ChronoUnit.DAYS.between(postReservationRequestDto.getStartDate(),
+			postReservationRequestDto.getEndDate());
+
+		int overCount = headCount - baseCount;
+		for(int i = 0; i < overCount; i++) {
+			price += overPrice;
+		}
+		price *= day;
+		return price;
+	}
+
+	public boolean reserve() {
+		return --count >= 0;
+	}
+
+	public boolean isOverHeadcount(int headcount) {
+		return maxHeadCount < headcount;
+	}
+
 
 	public void updateRoomEntity(AccommodationEntity accommodation, RoomEntity entity) {
 		this.accommodation = accommodation;
