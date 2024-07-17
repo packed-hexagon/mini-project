@@ -5,7 +5,6 @@ import com.group6.accommodation.domain.reservation.annotation.StartBeforeEnd;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 import java.time.LocalDate;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +19,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 @StartBeforeEnd(startTime = "startDate", endTime = "endDate")
-public class PostReserveRequestDto {
+public class PostReservationRequestDto {
 
     @NotNull
     @Positive(message = "인원 수는 한명 이상이여야 합니다.")
@@ -35,6 +34,7 @@ public class PostReserveRequestDto {
     private LocalDate endDate;
 
     @NotNull
-    @PositiveOrZero(message = "가격은 음수가 될 수 없습니다.")
-    private Integer price;
+    @Positive(message = "가격은 0이하가 될 수 없습니다.")
+    private int price;
+
 }
