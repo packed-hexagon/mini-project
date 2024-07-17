@@ -2,6 +2,7 @@ package com.group6.accommodation.domain.auth.model.entity;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
+import com.group6.accommodation.global.model.entity.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -27,7 +28,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "user")
-public class UserEntity {
+public class UserEntity extends TimeStamp {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "user_id", nullable = false)

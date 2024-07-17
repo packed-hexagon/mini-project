@@ -2,6 +2,7 @@ package com.group6.accommodation.domain.accommodation.model.entity;
 
 import com.group6.accommodation.domain.likes.model.entity.UserLikeEntity;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
+import com.group6.accommodation.global.model.entity.TimeStamp;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,7 +14,7 @@ import java.util.List;
 @Entity
 @NoArgsConstructor
 @Table(name = "accommodation")
-public class AccommodationEntity {
+public class AccommodationEntity extends TimeStamp {
 	@Id
 	@Column(name = "accommodation_id", nullable = false)
 	private Long id;

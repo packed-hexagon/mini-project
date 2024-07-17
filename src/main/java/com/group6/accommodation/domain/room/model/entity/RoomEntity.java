@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.room.model.entity;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
+import com.group6.accommodation.global.model.entity.TimeStamp;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +21,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @NoArgsConstructor
 @Table(name = "room")
-public class RoomEntity {
+public class RoomEntity extends TimeStamp {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "room_id", nullable = false)
