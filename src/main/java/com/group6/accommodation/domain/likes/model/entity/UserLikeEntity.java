@@ -2,6 +2,7 @@ package com.group6.accommodation.domain.likes.model.entity;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
+import com.group6.accommodation.global.model.entity.TimeStamp;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,7 +22,7 @@ import org.hibernate.annotations.OnDeleteAction;
 @Entity
 @Table(name = "user_like")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class UserLikeEntity {
+public class UserLikeEntity extends TimeStamp {
 	@EmbeddedId
 	private UserLikeId id;
 

@@ -3,6 +3,7 @@ package com.group6.accommodation.domain.reservation.model.entity;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
+import com.group6.accommodation.global.model.entity.TimeStamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -24,7 +25,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Builder
-public class ReservationEntity {
+public class ReservationEntity extends TimeStamp {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
