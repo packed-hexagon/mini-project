@@ -9,10 +9,10 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import com.group6.accommodation.domain.reservation.model.dto.PostReserveRequestDto;
+import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
-import com.group6.accommodation.domain.reservation.model.dto.ReserveResponseDto;
-import com.group6.accommodation.domain.reservation.service.ReserveService;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
+import com.group6.accommodation.domain.reservation.service.ReservationService;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
@@ -36,8 +36,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-@WebMvcTest(controllers = ReserveController.class)
-class ReserveControllerTest {
+@WebMvcTest(controllers = ReservationController.class)
+class ReservationControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -46,7 +46,7 @@ class ReserveControllerTest {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private ReserveService reserveService;
+    private ReservationService reservationService;
 
     @MockBean
     private TokenProvider tokenProvider;
@@ -106,7 +106,7 @@ class ReserveControllerTest {
             .content(reservations)
             .build();
 
-        when(reserveService.getList(1L, 1, 5, "asc")).thenReturn(pagedDto);
+        when(reservationService.getList(1L, 1, 5, "asc")).thenReturn(pagedDto);
 
         mvc.perform(
                 get("/api/reservation?page=1&size=5&direction=asc")
@@ -130,10 +130,10 @@ class ReserveControllerTest {
     @Test
     @DisplayName("예약 하기")
     public void reserve() throws Exception {
-        PostReserveRequestDto body = new PostReserveRequestDto(4, LocalDate.now().plusDays(1),
+        PostReservationRequestDto body = new PostReservationRequestDto(4, LocalDate.now().plusDays(1),
             LocalDate.now().plusDays(2), 40000);
 
-        ReserveResponseDto response = ReserveResponseDto.builder()
+        ReservationResponseDto response = ReservationResponseDto.builder()
             .userId(user.getUserId())
             .headcount(4)
             .price(40000)
@@ -144,7 +144,7 @@ class ReserveControllerTest {
             .createdAt(Instant.now())
             .build();
 
-        when(reserveService.postReserve(user.getUserId(), 1L, 1L, body))
+        when(reservationService.createReservation(user.getUserId(), 1L, 1L, body))
             .thenReturn(response);
 
         mvc.perform(post("/api/reservation/{accommodationId}/room/{roomId}/reserve", 1, 1)
@@ -159,7 +159,7 @@ class ReserveControllerTest {
     @Test
     @DisplayName("예약 취소하기")
     public void cancelReservation() throws Exception{
-        ReserveResponseDto response = ReserveResponseDto.builder()
+        ReservationResponseDto response = ReservationResponseDto.builder()
             .userId(user.getUserId())
             .headcount(4)
             .price(40000)
@@ -172,7 +172,7 @@ class ReserveControllerTest {
             .build();
 
 
-        when(reserveService.cancelReserve(anyLong())).thenReturn(response);
+        when(reservationService.cancelReserve(anyLong())).thenReturn(response);
 
         mvc.perform(put("/api/reservation/{reservationId}", 1)
             .with(csrf())
