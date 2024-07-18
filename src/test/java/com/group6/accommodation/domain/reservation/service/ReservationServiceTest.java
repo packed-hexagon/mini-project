@@ -4,7 +4,7 @@ import com.group6.accommodation.domain.accommodation.model.entity.AccommodationE
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
-import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationListItemDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
@@ -196,9 +196,9 @@ public class ReservationServiceTest {
         int totalPage = (count + size - 1) / size;
         String direction = "asc";
 
-        List<ReserveListItemDto> dataList = new ArrayList<>();
+        List<ReservationListItemDto> dataList = new ArrayList<>();
         for (int i = 0; i < count; i++) {
-            dataList.add(ReserveListItemDto.builder()
+            dataList.add(ReservationListItemDto.builder()
                 .id((long) i)
                 .createdAt(Instant.now())
                 .accommodationTitle("테스트" + i)
@@ -212,7 +212,7 @@ public class ReservationServiceTest {
         for (int i = 0; i < totalPage; i++) {
             int start = i * size;
             int end = Math.min(start + size, count);
-            List<ReserveListItemDto> subList = dataList.subList(start, end);
+            List<ReservationListItemDto> subList = dataList.subList(start, end);
 
             List<ReservationEntity> reservationEntities = subList.stream().map(dto ->
                 ReservationEntity.builder()
@@ -233,7 +233,7 @@ public class ReservationServiceTest {
                 .thenReturn(page);
 
             // when
-            PagedDto<ReserveListItemDto> list = reserveService.getList(userId, i, size, direction);
+            PagedDto<ReservationListItemDto> list = reserveService.getList(userId, i, size, direction);
 
             // Then
             assertNotNull(list);

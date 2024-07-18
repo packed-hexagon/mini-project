@@ -30,7 +30,7 @@ public class ReservationEntity extends TimeStamp {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "reservation_id", nullable = false)
-	private Long reservationId;
+	private Long id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="user_id", referencedColumnName = "user_id")
@@ -61,7 +61,7 @@ public class ReservationEntity extends TimeStamp {
 
 	public static ReservationResponseDto toDto(ReservationEntity entity) {
 		return ReservationResponseDto.builder()
-			.id(entity.reservationId)
+			.id(entity.id)
 			.userId(entity.user.getId())
 			.headcount(entity.headcount)
 			.price(entity.price)
