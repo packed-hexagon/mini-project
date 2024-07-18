@@ -1,7 +1,6 @@
 package com.group6.accommodation.domain.accommodation.model.dto;
 
 import com.group6.accommodation.domain.accommodation.annotation.StartBeforeEndAndNullable;
-import com.group6.accommodation.domain.accommodation.annotation.ValidArea;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 @ToString
 @StartBeforeEndAndNullable(startTime = "startDate", endTime = "endDate")
 public class AccommodationConditionRequestDto {
-    @ValidArea
     private String area;
 
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @FutureOrPresent(message = "시작날짜가 과거일 수 없다.")

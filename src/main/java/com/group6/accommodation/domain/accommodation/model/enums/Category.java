@@ -34,24 +34,18 @@ public enum Category {
                 return category.name;
             }
         }
-        return null;
+        throw new AccommodationException(AccommodationErrorCode.INVALID_CATEGORY);
     }
 
     public static String getCodeByName(String name) {
+        if(name == null) {
+            return null;
+        }
         for (Category category : values()) {
             if (category.name.equals(name)) {
                 return category.code;
             }
         }
-        return null;
-    }
-
-    public static boolean isValidCategoryName(String name) {
-        for (Category category : values()) {
-            if (category.name.equals(name)) {
-                return true;
-            }
-        }
-        return false;
+        throw new AccommodationException(AccommodationErrorCode.INVALID_CATEGORY);
     }
 }

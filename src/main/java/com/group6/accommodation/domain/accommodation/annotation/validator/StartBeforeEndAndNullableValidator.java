@@ -3,10 +3,12 @@ package com.group6.accommodation.domain.accommodation.annotation.validator;
 import com.group6.accommodation.domain.accommodation.annotation.StartBeforeEndAndNullable;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
+import lombok.extern.slf4j.Slf4j;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 
+@Slf4j
 public class StartBeforeEndAndNullableValidator implements ConstraintValidator<StartBeforeEndAndNullable, Object> {
 
     private String startTime;
@@ -37,7 +39,7 @@ public class StartBeforeEndAndNullableValidator implements ConstraintValidator<S
                 return true;
             }
 
-            boolean isValid = start.isBefore(end);
+            boolean isValid = start.isBefore(end) || start.isEqual(end);
             if (!isValid) {
                 context.disableDefaultConstraintViolation();
                 context.buildConstraintViolationWithTemplate(context.getDefaultConstraintMessageTemplate())
@@ -47,6 +49,7 @@ public class StartBeforeEndAndNullableValidator implements ConstraintValidator<S
 
             return isValid;
         } catch (Exception e) {
+            log.warn(e.getMessage());
             return false;
         }
     }

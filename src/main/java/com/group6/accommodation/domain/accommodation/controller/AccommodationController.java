@@ -3,8 +3,6 @@ package com.group6.accommodation.domain.accommodation.controller;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationConditionRequestDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailResponseDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
-import com.group6.accommodation.domain.accommodation.annotation.ValidArea;
-import com.group6.accommodation.domain.accommodation.annotation.ValidCategory;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.service.AccommodationService;
 import com.group6.accommodation.global.util.ResponseApi;
@@ -27,15 +25,16 @@ public class AccommodationController {
 
     private final AccommodationService accommodationService;
 
+    // 숙소 전체 조회 or 테마별 조회
     @GetMapping("/accommodation")
-    @Operation(summary = "숙박시설 리스트 조회")
+    @Operation(summary = "숙박시설 전체 or 테마별 조회")
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> readAll(
-            @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page,
-            @RequestParam(required = false) @ValidArea String area,
-            @RequestParam(required = false) @ValidCategory String category
+            @RequestParam(required = false) String category,
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page
     ) {
 
-        PagedDto<AccommodationResponseDto> response = accommodationService.findByParameter(area, category, page);
+        PagedDto<AccommodationResponseDto> response = accommodationService.findByCategoryOrAll(category, page);
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, response));
     }
 
@@ -43,7 +42,7 @@ public class AccommodationController {
     @GetMapping("/accommodation/{id}")
     @Operation(summary = "숙박시설 단일 조회")
     public ResponseEntity<ResponseApi<AccommodationDetailResponseDto>> read(
-            @PathVariable(name = "id") Long id
+            @PathVariable Long id
     ) {
 
         AccommodationDetailResponseDto accommodationDetail = accommodationService.findById(id);
