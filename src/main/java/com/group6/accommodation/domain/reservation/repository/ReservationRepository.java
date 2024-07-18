@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.reservation.repository;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationListItemDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import java.time.LocalDate;
@@ -23,7 +24,15 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
     Integer countByRoom(@Param("roomId") RoomEntity room);
 
-    Page<ReservationEntity> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
+    @Query("""
+        SELECT new com.group6.accommodation.domain.reservation.model.dto.ReservationListItemDto(
+        re.id, ac.title, ro.title, ac.thumbnail, re.startDate, re.endDate, re.price, re.createdAt, re.deletedAt)
+        FROM ReservationEntity re
+        LEFT JOIN re.room ro
+        LEFT JOIN ro.accommodation ac
+        WHERE re.user.id = :userId
+    """)
+    Page<ReservationListItemDto> findAllByUserId(@Param("userId") Long userId, Pageable pageable);
 
     @Query("SELECT COUNT(r) FROM ReservationEntity r " +
         "WHERE r.room.roomId = :roomId " +

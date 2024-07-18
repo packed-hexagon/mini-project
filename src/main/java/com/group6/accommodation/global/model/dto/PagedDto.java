@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
 
 @Data
 @NoArgsConstructor
@@ -26,4 +27,15 @@ public class PagedDto<T> {
 
     // 숙소 정보 List
     private List<T> content;
+
+
+    public static <T> PagedDto<T> from(Page<T> page) {
+        return new PagedDto<>(
+            (int) page.getTotalElements(),
+            page.getTotalPages(),
+            page.getSize(),
+            page.getNumber(),
+            page.getContent()
+        );
+    }
 }

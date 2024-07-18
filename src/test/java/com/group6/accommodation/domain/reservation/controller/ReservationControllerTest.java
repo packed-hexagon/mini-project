@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
-import com.group6.accommodation.domain.reservation.model.dto.ReserveListItemDto;
+import com.group6.accommodation.domain.reservation.model.dto.ReservationListItemDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.reservation.service.ReservationService;
 import com.group6.accommodation.global.model.dto.PagedDto;
@@ -82,10 +82,10 @@ class ReservationControllerTest {
     @Test
     @DisplayName("예약 리스트 조회")
     public void getReservations() throws Exception {
-        List<ReserveListItemDto> reservations = new ArrayList<>();
+        List<ReservationListItemDto> reservations = new ArrayList<>();
 
         for (int i = 1; i <= 5; i++) {
-            ReserveListItemDto item = ReserveListItemDto.builder()
+            ReservationListItemDto item = ReservationListItemDto.builder()
                 .id((long) i)
                 .price(10000 * i)
                 .accommodationTitle("테스트 숙소")
@@ -98,7 +98,7 @@ class ReservationControllerTest {
             reservations.add(item);
         }
 
-        PagedDto<ReserveListItemDto> pagedDto = PagedDto.<ReserveListItemDto>builder()
+        PagedDto<ReservationListItemDto> pagedDto = PagedDto.<ReservationListItemDto>builder()
             .totalElements(5)
             .totalPages(1)
             .size(5)
