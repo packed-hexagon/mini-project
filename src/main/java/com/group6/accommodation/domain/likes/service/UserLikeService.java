@@ -36,7 +36,7 @@ public class UserLikeService {
     public UserLikeResponseDto addLike(Long accommodationId, Long userId) {
         AccommodationEntity accommodationEntity = getAccommodationById(accommodationId);
         UserEntity authEntity = getUserById(userId);
-        checkIfAlreadyLiked(accommodationId, userId);
+        validateAlreadyLikedAccommodation(accommodationId, userId);
 
         UserLikeId userLikeId = new UserLikeId(userId, accommodationId);
         UserLikeEntity addUserLike = UserLikeEntity.builder()
@@ -97,7 +97,7 @@ public class UserLikeService {
             .orElseThrow(() -> new UserLikeException(UserLikeErrorCode.UNAUTHORIZED));
     }
 
-    private void checkIfAlreadyLiked(Long accommodationId, Long userId) {
+    private void validateAlreadyLikedAccommodation(Long accommodationId, Long userId) {
         Optional<UserLikeEntity> isExistUserLike = userLikeRepository.findByAccommodationIdAndUserId(accommodationId, userId);
         if (isExistUserLike.isPresent()) {
             throw new UserLikeException(UserLikeErrorCode.ALREADY_ADD_LIKE);
