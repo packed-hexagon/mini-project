@@ -92,12 +92,6 @@ public class ReservationService {
         Pageable pageable = PageRequest.of(requestParam.getPage(), requestParam.getSize(), Sort.by(direction, "createdAt"));
         Page<ReservationListItemDto> result = reservationRepository.findAllByUserId(userId, pageable);
 
-        return PagedDto.<ReservationListItemDto>builder()
-            .totalElements((int) result.getTotalElements())
-            .totalPages(result.getTotalPages())
-            .size(result.getSize())
-            .currentPage(result.getNumber())
-            .content(result.getContent())
-            .build();
+        return PagedDto.from(result);
     }
 }
