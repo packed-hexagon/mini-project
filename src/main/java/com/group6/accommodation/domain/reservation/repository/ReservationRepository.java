@@ -17,7 +17,7 @@ import org.springframework.data.repository.query.Param;
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
 
 
-    default ReservationEntity getById(Long id) {
+    default ReservationEntity getByIdOrElseThrow(Long id) {
         ReservationEntity reservation = findById(id).orElseThrow(
             () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
 
