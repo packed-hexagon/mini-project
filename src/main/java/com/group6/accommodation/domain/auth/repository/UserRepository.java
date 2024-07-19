@@ -19,4 +19,10 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
                 () -> new AuthException(AuthErrorCode.NOT_FOUND_USER_BY_USER_ID)
         );
     }
+
+    default void checkExistsUserByIdOrElseThrow(@NonNull Long id) {
+        if (!existsById(id)) {
+            throw new AuthException(AuthErrorCode.NOT_FOUND_USER_BY_USER_ID);
+        }
+    }
 }
