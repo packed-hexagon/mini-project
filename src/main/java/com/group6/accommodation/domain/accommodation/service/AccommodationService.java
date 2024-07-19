@@ -1,6 +1,5 @@
 package com.group6.accommodation.domain.accommodation.service;
 
-import com.group6.accommodation.domain.accommodation.converter.AccommodationConverter;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailResponseDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
 import com.group6.accommodation.domain.accommodation.specification.AccommodationSpecification;
@@ -59,11 +58,8 @@ public class AccommodationService {
         int customSize = 9;
         Page<AccommodationEntity> accommodationPage = accommodationRepository.findByTitleOrAddressContainingKeyword(keyword, PageRequest.of(page, customSize, Sort.by(Sort.Direction.DESC, "likeCount")));
 
-        if (accommodationPage.isEmpty()) {
-            throw new AccommodationException(AccommodationErrorCode.NOT_FOUND_KEYWORD_ACCOMMODATION);
-        } else {
-            return getPagedDto(accommodationPage);
-        }
+        return getPagedDto(accommodationPage);
+
     }
 
     // 조건에 부합하는 숙소 조회
