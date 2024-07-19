@@ -4,6 +4,7 @@ import com.group6.accommodation.domain.accommodation.converter.AccommodationConv
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailResponseDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
 import com.group6.accommodation.domain.accommodation.specification.AccommodationSpecification;
+import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.model.enums.Area;
@@ -12,6 +13,7 @@ import com.group6.accommodation.domain.accommodation.repository.AccommodationRep
 import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
 import com.group6.accommodation.global.exception.type.AccommodationException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -22,12 +24,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class AccommodationService {
 
     private final AccommodationRepository accommodationRepository;
-    private final AccommodationConverter accommodationConverter;
+    private final RoomRepository roomRepository;
 
     // 숙소 전체 조회 or 테마별 조회
     public PagedDto<AccommodationResponseDto> findByCategoryOrAll(String category, int page) {
@@ -41,7 +44,6 @@ public class AccommodationService {
     public PagedDto<AccommodationResponseDto> findByAreaPaged(String area, int page, int size) {
         String areaCode = Area.getCodeByName(area);
         Page<AccommodationEntity> accommodationPage = accommodationRepository.findByAreacode(areaCode, PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "likeCount")));
-
         return getPagedDto(accommodationPage);
     }
 
@@ -49,7 +51,7 @@ public class AccommodationService {
     public AccommodationDetailResponseDto findById(Long id) {
         AccommodationEntity accommodation = accommodationRepository.getById(id);
 
-        return accommodationConverter.toDetailDto(accommodation);
+        return AccommodationDetailResponseDto.fromEntity(accommodation, this);
     }
 
     // 키워드로 숙소 조회
@@ -100,6 +102,11 @@ public class AccommodationService {
         return getPagedDto(accommodationPage);
     }
 
+    // 해당 숙소의 객실 중 가장 저렴한 객실 가격 출력
+    public Integer getMinRoomPrice(Long accommodationId) {
+        return roomRepository.findMinWeekDaysFeeByAccommodation_Id(accommodationId);
+    }
+
     // Page 정보값 포함한 PagedDto로 변환.(공통 로직)
     public PagedDto getPagedDto(Page<AccommodationEntity> entity) {
         PagedDto pagedDto = new PagedDto<>(
@@ -107,7 +114,7 @@ public class AccommodationService {
                 entity.getTotalPages(),
                 entity.getSize(),
                 entity.getNumber(),
-                accommodationConverter.toDtoList(entity.getContent())
+                AccommodationResponseDto.fromEntites(entity.getContent(), this)
         );
         return pagedDto;
     }
