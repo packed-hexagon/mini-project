@@ -1,7 +1,6 @@
 package com.group6.accommodation.domain.reservation.model.entity;
 
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
-import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.global.model.entity.TimeStamp;
 import jakarta.persistence.Column;
@@ -18,12 +17,14 @@ import java.time.LocalDateTime;
 
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.SQLDelete;
 
 @Getter
 @Entity
 @Table(name = "reservation")
 @AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@SQLDelete(sql = "UPDATE reservation SET deleted_at = NOW() WHERE reservation_id = ?")
 @Builder
 public class ReservationEntity extends TimeStamp {
 
@@ -58,7 +59,4 @@ public class ReservationEntity extends TimeStamp {
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
-
-
-
 }

@@ -18,8 +18,13 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
 
 
     default ReservationEntity getById(Long id) {
-        return findById(id).orElseThrow(
+        ReservationEntity reservation = findById(id).orElseThrow(
             () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
+
+        if(reservation.getDeletedAt() != null) {
+            throw new ReservationException(ReservationErrorCode.ALREADY_CANCEL);
+        }
+        return reservation;
     }
 
     @Query("SELECT r FROM ReservationEntity r WHERE r.room = :accommodation AND r.room = :room AND r.deletedAt IS NULL AND r.user.id <> :userId")

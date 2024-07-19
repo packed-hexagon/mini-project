@@ -5,7 +5,6 @@ import java.util.Optional;
 
 import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
 import com.group6.accommodation.global.exception.type.AccommodationException;
-import lombok.NonNull;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import java.util.List;
@@ -50,10 +49,4 @@ public interface AccommodationRepository extends JpaRepository<AccommodationEnti
             countQuery = "SELECT COUNT(DISTINCT a) FROM AccommodationEntity a LEFT JOIN a.rooms r WHERE a IN :accommodations")
     Page<AccommodationEntity> findAllWithCountQuery(@Param("accommodations") List<AccommodationEntity> accommodations, Pageable pageable);
 
-    @NonNull
-    default AccommodationEntity getById(@NonNull Long id) {
-        return this.findById(id).orElseThrow(
-                () -> new AccommodationException(AccommodationErrorCode.NOT_FOUND_ACCOMMODATION)
-        );
-    }
 }

@@ -65,15 +65,10 @@ public class ReservationService {
         return ReservationResponseDto.from(reservationEntity);
     }
 
-
-    // TODO: 임시 주석처리
-
     @Transactional
     public ReservationResponseDto cancelReserve(Long reservationId) {
         ReservationEntity reservation = reservationRepository.getById(reservationId);
-        
-        // TODO: soft 삭제 로직 필요
-
+        reservationRepository.delete(reservation);
         return ReservationResponseDto.from(reservation);
     }
 
