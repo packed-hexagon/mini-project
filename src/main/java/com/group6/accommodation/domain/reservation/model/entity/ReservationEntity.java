@@ -59,16 +59,6 @@ public class ReservationEntity extends TimeStamp {
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
 
-	public static ReservationResponseDto toDto(ReservationEntity entity) {
-		return ReservationResponseDto.builder()
-			.id(entity.id)
-			.userId(entity.user.getId())
-			.headcount(entity.headcount)
-			.price(entity.price)
-			.startDate(entity.startDate)
-			.endDate(entity.endDate)
-			.deletedAt(entity.deletedAt)
-			.build();
-	}
+
 
 }

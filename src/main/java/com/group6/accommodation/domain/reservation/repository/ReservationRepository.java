@@ -4,6 +4,8 @@ import com.group6.accommodation.domain.accommodation.model.entity.AccommodationE
 import com.group6.accommodation.domain.reservation.model.dto.ReservationListItemDto;
 import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
+import com.group6.accommodation.global.exception.error.ReservationErrorCode;
+import com.group6.accommodation.global.exception.type.ReservationException;
 import java.time.LocalDate;
 import java.util.List;
 import org.springframework.data.domain.Page;
@@ -14,7 +16,12 @@ import org.springframework.data.repository.query.Param;
 
 public interface ReservationRepository extends JpaRepository<ReservationEntity, Long> {
 
-    
+
+    default ReservationEntity getById(Long id) {
+        return findById(id).orElseThrow(
+            () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
+    }
+
     @Query("SELECT r FROM ReservationEntity r WHERE r.room = :accommodation AND r.room = :room AND r.deletedAt IS NULL AND r.user.id <> :userId")
     List<ReservationEntity> findConflictingReservations(
         @Param("accommodation")AccommodationEntity accommodation,
