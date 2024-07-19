@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.reservation.model.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.group6.accommodation.domain.reservation.model.entity.ReservationEntity;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
@@ -24,4 +25,19 @@ public class ReservationResponseDto {
     private LocalDate endDate;
     private LocalDateTime createdAt;
     private LocalDateTime deletedAt;
+
+    public static ReservationResponseDto from(ReservationEntity entity) {
+        return ReservationResponseDto.builder()
+            .id(entity.getId())
+            .userId(entity.getUser().getId())
+            .headcount(entity.getHeadcount())
+            .price(entity.getPrice())
+            .startDate(entity.getStartDate())
+            .endDate(entity.getEndDate())
+            .deletedAt(entity.getDeletedAt())
+            .build();
+    }
+
+
+
 }

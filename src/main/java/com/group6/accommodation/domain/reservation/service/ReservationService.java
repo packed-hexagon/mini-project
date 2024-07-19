@@ -59,31 +59,18 @@ public class ReservationService {
             .endDate(requestDto.getEndDate())
             .price(price)
             .build();
+
         reservationRepository.save(reservationEntity);
 
-        return ReservationEntity.toDto(reservationEntity);
+        return ReservationResponseDto.from(reservationEntity);
     }
 
-
-    // TODO: 임시 주석처리
-
-//    @Transactional
-//    public ReserveResponseDto cancelReserve(Long reservationId) {
-//        ReservationEntity reservation = reservationRepository.findById(reservationId).orElseThrow(
-//            () -> new ReservationException(ReservationErrorCode.NOT_FOUND_RESERVATION));
-//
-//        // 이미 취소된 예약
-//        if(reservation.getDeletedAt() != null) {
-//            throw new ReservationException(ReservationErrorCode.ALREADY_CANCEL);
-//        }
-//
-//        // 예약 취소
-////        reservation.setDeletedAt(Instant.now());
-//
-//        return ReservationConverter.toDto(reservation);
-//    }
-
-    // TODO: 임시 주석처리
+    @Transactional
+    public ReservationResponseDto cancelReserve(Long reservationId) {
+        ReservationEntity reservation = reservationRepository.getById(reservationId);
+        reservationRepository.delete(reservation);
+        return ReservationResponseDto.from(reservation);
+    }
 
     @Transactional(readOnly = true)
     public PagedDto<ReservationListItemDto> getList(Long userId, ReservationRequestParamDto requestParam) {
