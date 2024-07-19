@@ -16,6 +16,5 @@ public interface UserLikeRepository extends JpaRepository<UserLikeEntity, UserLi
 
     List<UserLikeEntity> findByUserId(Long userId);
 
-    @Query("SELECT COUNT(u) FROM UserLikeEntity u WHERE u.accommodation.id = :accommodationId")
     int countByAccommodationId(@Param("accommodationId")Long accommodationId);
 }
