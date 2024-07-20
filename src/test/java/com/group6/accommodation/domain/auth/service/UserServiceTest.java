@@ -90,7 +90,7 @@ public class UserServiceTest {
         AuthException exception = assertThrows(AuthException.class,
                 () -> userService.getUserInfo(2L));
 
-        assertEquals(AuthErrorCode.NOT_FOUNT_USER_BY_USER_ID.getInfo(), exception.getInfo());
+        assertEquals(AuthErrorCode.NOT_FOUND_USER_BY_USER_ID.getInfo(), exception.getInfo());
     }
 
     @Test
@@ -149,7 +149,7 @@ public class UserServiceTest {
         AuthException exception = assertThrows(AuthException.class,
                 () -> userService.logout(user.getId()));
 
-        assertEquals(AuthErrorCode.NOT_FOUNT_USER_BY_USER_ID.getInfo(), exception.getInfo());
+        assertEquals(AuthErrorCode.NOT_FOUND_USER_BY_USER_ID.getInfo(), exception.getInfo());
     }
 
     @Test
