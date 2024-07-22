@@ -32,8 +32,7 @@ public class UserService {
     private Long refreshTokenExpireTime;
 
     public UserResponseDto getUserInfo(Long userId) {
-        UserEntity result = userRepository.findById(userId)
-                .orElseThrow(() -> new AuthException(AuthErrorCode.NOT_FOUNT_USER_BY_USER_ID));
+        UserEntity result = userRepository.getById(userId);
 
         return UserResponseDto.toResponse(result);
     }
@@ -54,9 +53,7 @@ public class UserService {
     }
 
     public HttpHeaders logout(Long userId) {
-        if (!userRepository.existsById(userId)) {
-            throw new AuthException(AuthErrorCode.NOT_FOUNT_USER_BY_USER_ID);
-        }
+        userRepository.checkExistsUserByIdOrElseThrow(userId);
 
         if (refreshTokenRepository.existsById(userId)) {
             refreshTokenRepository.deleteById(userId);
