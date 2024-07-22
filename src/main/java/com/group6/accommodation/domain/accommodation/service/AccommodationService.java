@@ -2,15 +2,14 @@ package com.group6.accommodation.domain.accommodation.service;
 
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationDetailResponseDto;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
-import com.group6.accommodation.domain.accommodation.specification.AccommodationSpecification;
+import com.group6.accommodation.domain.accommodation.service.command.AccommodationSearchCommand;
+import com.group6.accommodation.domain.accommodation.service.specification.AccommodationSpecification;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
 import com.group6.accommodation.global.model.dto.PagedDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.model.enums.Area;
 import com.group6.accommodation.domain.accommodation.model.enums.Category;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
-import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
-import com.group6.accommodation.global.exception.type.AccommodationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -18,10 +17,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -63,38 +65,12 @@ public class AccommodationService {
     }
 
     // 조건에 부합하는 숙소 조회
-    public PagedDto<AccommodationResponseDto> findAvaliableAccommodation(String area, LocalDate startDate, LocalDate endDate, Integer headcount, int page) {
-        Specification<AccommodationEntity> spec = Specification.where(AccommodationSpecification.withDistinctAndGroupBy());
+    public PagedDto<AccommodationResponseDto> findAvaliableAccommodation(AccommodationSearchCommand command) {
+        Specification<AccommodationEntity> spec = AccommodationSpecification.findAvailableAccommodation(command);
 
-        // 위치 조건이 있을 경우
-        if (area != null && !area.isEmpty()) {
-            String areaCode = Area.getCodeByName(area);
-            spec = spec.and(AccommodationSpecification.withArea(areaCode));
-        }
-
-        // 날짜 범위 조건 있을 경우
-        if(startDate != null && endDate != null) {
-            // 인원수 조건도 있을 경우
-            if(headcount != null && headcount > 0) {
-                spec = spec.and(AccommodationSpecification.withDateRangeAndHeadcount(startDate, endDate, headcount));
-            }
-            // 인원수 조건 없을 경우
-            else {
-                spec = spec.and(AccommodationSpecification.withDateRange(startDate, endDate));
-            }
-        }
-        // 날짜 범위 조건 없고 인원수 조건만 있을 경우
-        else if(headcount != null && headcount > 0) {
-            spec = spec.and(AccommodationSpecification.withHeadcount(headcount));
-        }
-
-        spec = spec.and(AccommodationSpecification.withAvailableRooms());
-
+        PageRequest pageRequest = PageRequest.of(command.getPage(), 9, Sort.by(Sort.Direction.DESC, "likeCount"));
         List<AccommodationEntity> allAccommodation = accommodationRepository.findAll(spec);
-
-        PageRequest pageRequest = PageRequest.of(page, 9, Sort.by(Sort.Direction.DESC, "likeCount"));
         Page<AccommodationEntity> accommodationPage = accommodationRepository.findAllWithCountQuery(allAccommodation, pageRequest);
-
         return getPagedDto(accommodationPage);
     }
 
@@ -116,28 +92,22 @@ public class AccommodationService {
     }
 
     // Open api에서 불러온 데이터 저장
+    @Transactional
     public void saveAccommodations(List<AccommodationEntity> accommodations) {
+        // Accommodation의 Id를 모두 가져온다.
+        Set<Long> accommodationIds = accommodations.stream()
+                .map(AccommodationEntity::getId)
+                .collect(Collectors.toSet());
+
+        // 모든 ID를 통해 모든 Accommodation 정보를 불러온다.
+        Map<Long, AccommodationEntity> existingAccommodations = accommodationRepository.findAllByIdIn(accommodationIds).stream()
+                .collect(Collectors.toMap(AccommodationEntity::getId, Function.identity()));
+
         for (AccommodationEntity accommodation : accommodations) {
-            Optional<AccommodationEntity> existingAccommodation = accommodationRepository.findById(accommodation.getId());
-            if (existingAccommodation.isPresent()) {
+            AccommodationEntity existingAccommodation = existingAccommodations.get(accommodation.getId());
+            if (existingAccommodation != null) {
                 // 업데이트 로직
-                AccommodationEntity existing = existingAccommodation.get();
-                AccommodationEntity updated = AccommodationEntity.builder()
-                        .id(existing.getId()) // ID는 기존 엔티티의 ID를 유지
-                        .title(accommodation.getTitle())
-                        .address(accommodation.getAddress())
-                        .areacode(accommodation.getAreacode())
-                        .category(accommodation.getCategory())
-                        .image(accommodation.getImage())
-                        .thumbnail(accommodation.getThumbnail())
-                        .latitude(accommodation.getLatitude())
-                        .longitude(accommodation.getLongitude())
-                        .tel(accommodation.getTel())
-                        .likeCount(accommodation.getLikeCount())
-                        .reviewCount(accommodation.getReviewCount())
-                        .totalRating(existing.getTotalRating()) // 필요에 따라 기존 엔티티의 다른 필드도 유지
-                        .build();
-                accommodationRepository.save(updated);
+                existingAccommodation.update(accommodation);
             } else {
                 // 새로운 데이터 추가
                 accommodationRepository.save(accommodation);
