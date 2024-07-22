@@ -35,7 +35,7 @@ public class UserLikeService {
     @Transactional
     public UserLikeResponseDto addLike(Long accommodationId, Long userId) {
         AccommodationEntity accommodationEntity = getAccommodationById(accommodationId);
-        UserEntity authEntity = getUserById(userId);
+        UserEntity authEntity = checkUser(userId);
         checkIfAlreadyLiked(accommodationId, userId);
 
         UserLikeId userLikeId = new UserLikeId(userId, accommodationId);
@@ -54,7 +54,7 @@ public class UserLikeService {
     @Transactional
     public String cancelLike(Long accommodationId, long userId) {
         getAccommodationById(accommodationId);
-        getUserById(userId);
+        checkUser(userId);
 
         Optional<UserLikeEntity> isExistUserLike = userLikeRepository.findByAccommodationIdAndUserId(accommodationId, userId);
 
@@ -67,7 +67,7 @@ public class UserLikeService {
     }
 
     public PagedDto<AccommodationResponseDto> getLikedAccommodation(Long userId, int page, int size) {
-        getUserById(userId);
+        checkUser(userId);
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.ASC, "id"));
 
         List<UserLikeEntity> userLikes = userLikeRepository.findByUserId(userId);
@@ -92,7 +92,7 @@ public class UserLikeService {
             .orElseThrow(() -> new UserLikeException(UserLikeErrorCode.ACCOMMODATION_NOT_EXIST));
     }
 
-    private UserEntity getUserById(Long userId) {
+    private UserEntity checkUser(Long userId) {
         return userRepository.findById(userId)
             .orElseThrow(() -> new UserLikeException(UserLikeErrorCode.UNAUTHORIZED));
     }

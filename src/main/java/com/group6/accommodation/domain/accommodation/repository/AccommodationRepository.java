@@ -50,10 +50,18 @@ public interface AccommodationRepository extends JpaRepository<AccommodationEnti
             countQuery = "SELECT COUNT(DISTINCT a) FROM AccommodationEntity a LEFT JOIN a.rooms r WHERE a IN :accommodations")
     Page<AccommodationEntity> findAllWithCountQuery(@Param("accommodations") List<AccommodationEntity> accommodations, Pageable pageable);
 
-    @NonNull
-    default AccommodationEntity getById(@NonNull Long id) {
-        return this.findById(id).orElseThrow(
-                () -> new AccommodationException(AccommodationErrorCode.NOT_FOUND_ACCOMMODATION)
-        );
-    }
+    @Transactional
+    @Modifying
+    @Query("UPDATE AccommodationEntity a SET a.reviewCount = a.reviewCount + 1 WHERE a.id = :accommodationId")
+    void incrementReviewCount(@Param("accommodationId")Long accommodationId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE AccommodationEntity a SET a.reviewCount = a.reviewCount - 1 WHERE a.id = :accommodationId")
+    void decrementReviewCount(@Param("accommodationId")Long accommodationId);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE AccommodationEntity a SET a.totalRating = :newRating WHERE a.id = :accommodationId")
+    void updateRating(@Param("accommodationId")Long accommodationId, @Param("newRating")Double newRating);
 }

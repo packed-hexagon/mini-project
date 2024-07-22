@@ -48,4 +48,6 @@ public interface ReservationRepository extends JpaRepository<ReservationEntity, 
     @Query("SELECT r.room.roomId FROM ReservationEntity r WHERE r.startDate <= :endDate AND r.endDate >= :startDate AND r.deletedAt IS NULL")
     List<Long> findByStartDateBeforeOrEndDateAfter(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+    @Query("SELECT r.user.id FROM ReservationEntity r WHERE r.id = :reservationId")
+    Long findUserIdByReservationId(@Param("reservationId") Long reservationId);
 }
