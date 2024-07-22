@@ -81,10 +81,7 @@ public class AccommodationController {
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> searchAccommodations(
             @Valid AccommodationConditionRequestDto request
     ) {
-
-        PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findAvaliableAccommodation(
-                request.getArea(), request.getStartDate(), request.getEndDate(), request.getHeadcount(),
-                request.getPage());
+        PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findAvaliableAccommodation(request.toCommand());
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, accommodationPage));
     }
 }
