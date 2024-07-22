@@ -3,7 +3,6 @@ package com.group6.accommodation.domain.reservation.service;
 import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationRequestParamDto;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationResponseDto;
-import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.domain.reservation.model.dto.ReservationListItemDto;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class ReservationService {
 
     private final ReservationRepository reservationRepository;
-    private final AccommodationRepository accommodationRepository;
     private final RoomRepository roomRepository;
     private final UserRepository userRepository;
 
@@ -67,7 +65,7 @@ public class ReservationService {
 
     @Transactional
     public ReservationResponseDto cancelReserve(Long reservationId) {
-        ReservationEntity reservation = reservationRepository.getById(reservationId);
+        ReservationEntity reservation = reservationRepository.getByIdOrElseThrow(reservationId);
         reservationRepository.delete(reservation);
         return ReservationResponseDto.from(reservation);
     }
