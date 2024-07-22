@@ -1,9 +1,9 @@
 package com.group6.accommodation.domain.likes.service;
 
-import com.group6.accommodation.domain.accommodation.converter.AccommodationConverter;
 import com.group6.accommodation.domain.accommodation.model.dto.AccommodationResponseDto;
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
 import com.group6.accommodation.domain.accommodation.repository.AccommodationRepository;
+import com.group6.accommodation.domain.accommodation.service.AccommodationService;
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
 import com.group6.accommodation.domain.auth.repository.UserRepository;
 import com.group6.accommodation.domain.likes.model.dto.UserLikeResponseDto;
@@ -29,8 +29,8 @@ public class UserLikeService {
 
     private final UserLikeRepository userLikeRepository;
     private final AccommodationRepository accommodationRepository;
-    private final AccommodationConverter accommodationConverter;
     private final UserRepository userRepository;
+    private final AccommodationService accommodationService;
 
     @Transactional
     public UserLikeResponseDto addLike(Long accommodationId, Long userId) {
@@ -76,7 +76,7 @@ public class UserLikeService {
             .collect(Collectors.toList());
 
         Page<AccommodationEntity> accommodationPage = accommodationRepository.findByIdIn(accommodationIds, pageRequest);
-        List<AccommodationResponseDto> accommodationDtoList = accommodationConverter.toDtoList(accommodationPage.getContent());
+        List<AccommodationResponseDto> accommodationDtoList = AccommodationResponseDto.fromEntites(accommodationPage.getContent(), accommodationService);
 
         return new PagedDto<>(
             (int) accommodationPage.getTotalElements(),
