@@ -1,6 +1,8 @@
 package com.group6.accommodation.domain.accommodation.repository;
 
 import com.group6.accommodation.domain.accommodation.model.entity.AccommodationEntity;
+
+import java.util.Collection;
 import java.util.Optional;
 
 import com.group6.accommodation.global.exception.error.AccommodationErrorCode;
@@ -31,7 +33,11 @@ public interface AccommodationRepository extends JpaRepository<AccommodationEnti
     // 숙소명이나 주소에 키워드를 포함한 숙소 조회
     @Query("SELECT a FROM AccommodationEntity a WHERE a.title LIKE %:keyword% OR a.address LIKE %:keyword%")
     Page<AccommodationEntity> findByTitleOrAddressContainingKeyword(@Param("keyword") String keyword, Pageable pageable);
+
     Page<AccommodationEntity> findByIdIn(List<Long> ids, Pageable pageable);
+
+    @Query("SELECT a FROM AccommodationEntity a WHERE a.id IN :ids")
+    List<AccommodationEntity> findAllByIdIn(Collection<Long> ids);
 
     @Transactional
     @Modifying
