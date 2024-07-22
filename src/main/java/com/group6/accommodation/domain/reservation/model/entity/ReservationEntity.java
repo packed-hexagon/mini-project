@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
 
 @Getter
@@ -52,10 +51,6 @@ public class ReservationEntity extends TimeStamp {
 
 	@Column(name = "end_date", nullable = false)
 	private LocalDate endDate;
-
-	@CreationTimestamp
-	@Column(name = "created_at", nullable = false)
-	private LocalDateTime createdAt;
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
