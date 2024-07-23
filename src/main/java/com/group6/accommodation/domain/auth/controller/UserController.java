@@ -6,6 +6,7 @@ import com.group6.accommodation.domain.auth.service.UserService;
 import com.group6.accommodation.global.security.filter.JwtFilter;
 import com.group6.accommodation.global.security.service.CustomUserDetails;
 import com.group6.accommodation.global.security.token.model.dto.LoginTokenResponseDto;
+import com.group6.accommodation.global.util.CookieUtil;
 import com.group6.accommodation.global.util.ResponseApi;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -55,7 +56,7 @@ public class UserController {
         LoginTokenResponseDto result = userService.refreshTokens(accessToken, refreshToken);
         ResponseApi<LoginTokenResponseDto> refreshTokens = ResponseApi.success(HttpStatus.OK, result);
 
-        HttpHeaders headers = userService.createRefreshTokenCookie(refreshTokens.getData().getRefreshToken());
+        HttpHeaders headers = CookieUtil.createRefreshTokenCookie(refreshTokens.getData().getRefreshToken());
         return ResponseEntity.status(HttpStatus.OK).headers(headers).body(refreshTokens);
     }
 
@@ -72,11 +73,12 @@ public class UserController {
 
     @PostMapping("/api/user/logout")
     @Operation(summary = "로그아웃")
-
     public ResponseEntity<?> logout(
             @AuthenticationPrincipal CustomUserDetails user
     ) {
-        HttpHeaders headers = userService.logout(user.getUserId());
+        userService.logout(user.getUserId());
+
+        HttpHeaders headers = CookieUtil.deleteRefreshTokenCookie();
         return ResponseEntity.status(HttpStatus.NO_CONTENT).headers(headers).build();
     }
 }
