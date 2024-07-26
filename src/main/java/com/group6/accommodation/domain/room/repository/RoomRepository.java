@@ -7,6 +7,7 @@ import jakarta.persistence.LockModeType;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.Lock;
 
 public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
@@ -25,5 +26,8 @@ public interface RoomRepository extends JpaRepository<RoomEntity, Long> {
             () -> new RoomException(RoomErrorCode.NOT_FOUND_ROOM)
         );
     }
+
+    @Query("SELECT MIN(r.weekdaysFee) FROM RoomEntity r WHERE r.accommodation.id = :accommodationId AND r.weekdaysFee > 0")
+    Integer findMinWeekDaysFeeByAccommodation_Id(Long accommodationId);
 
 }

@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.accommodation.model.dto;
 
 import com.group6.accommodation.domain.accommodation.annotation.StartBeforeEndAndNullable;
+import com.group6.accommodation.domain.accommodation.service.command.AccommodationSearchCommand;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -28,4 +29,13 @@ public class AccommodationConditionRequestDto {
 
     @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.")
     private int page = 0;
+
+    public AccommodationSearchCommand toCommand() {
+        return AccommodationSearchCommand.builder()
+                .area(this.area)
+                .startDate(this.startDate)
+                .endDate(this.endDate)
+                .headcount(this.headcount)
+                .page(this.page).build();
+    }
 }

@@ -38,6 +38,19 @@ public class AccommodationController {
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, response));
     }
 
+    // 숙소 지역별 조회
+    @GetMapping("/accommodation/region")
+    @Operation(summary = "숙박시설 지역별 조회")
+    public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> readByArea(
+            @RequestParam(required = false) String area,
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page
+    ) {
+
+        PagedDto<AccommodationResponseDto> response = accommodationService.findByAreaPaged(area, page, 9);
+        return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, response));
+    }
+
     // 숙소 단건 조회
     @GetMapping("/accommodation/{id}")
     @Operation(summary = "숙박시설 단일 조회")
@@ -54,7 +67,8 @@ public class AccommodationController {
     @Operation(summary = "숙소시설 검색", description = "숙박시설 이름이나 주소로 숙박시설을 검색합니다.")
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> searchByKeyword(
             @RequestParam String keyword,
-            @RequestParam(defaultValue = "0") @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page
+            @RequestParam(defaultValue = "0")
+            @Min(value = 0, message = "페이지 번호는 0 이상이어야 합니다.") int page
     ) {
 
         PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findByKeywordPaged(keyword, page);
@@ -67,10 +81,7 @@ public class AccommodationController {
     public ResponseEntity<ResponseApi<PagedDto<AccommodationResponseDto>>> searchAccommodations(
             @Valid AccommodationConditionRequestDto request
     ) {
-
-        PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findAvaliableAccommodation(
-                request.getArea(), request.getStartDate(), request.getEndDate(), request.getHeadcount(),
-                request.getPage());
+        PagedDto<AccommodationResponseDto> accommodationPage = accommodationService.findAvaliableAccommodation(request.toCommand());
         return ResponseEntity.ok(ResponseApi.success(HttpStatus.OK, accommodationPage));
     }
 }

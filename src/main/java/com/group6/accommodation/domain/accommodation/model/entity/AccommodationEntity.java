@@ -1,12 +1,15 @@
 package com.group6.accommodation.domain.accommodation.model.entity;
 
 import com.group6.accommodation.domain.likes.model.entity.UserLikeEntity;
+import com.group6.accommodation.domain.review.model.entity.ReviewEntity;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.global.model.entity.TimeStamp;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,8 +64,8 @@ public class AccommodationEntity extends TimeStamp {
 	@OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<UserLikeEntity> userLikes = new ArrayList<>();
 
-//	@OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
-//	private List<ReviewEntity> reviews = new ArrayList<>();
+	@OneToMany(mappedBy = "accommodation", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<ReviewEntity> reviews = new ArrayList<>();
 
 	@Builder
 	public AccommodationEntity(
@@ -82,5 +85,19 @@ public class AccommodationEntity extends TimeStamp {
 		this.likeCount = likeCount;
 		this.reviewCount = reviewCount;
 		this.totalRating = totalRating;
+	}
+
+	public void update(AccommodationEntity newData) {
+		this.title = newData.getTitle();
+		this.address = newData.getAddress();
+		this.areacode = newData.getAreacode();
+		this.category = newData.getCategory();
+		this.image = newData.getImage();
+		this.thumbnail = newData.getThumbnail();
+		this.latitude = newData.getLatitude();
+		this.longitude = newData.getLongitude();
+		this.tel = newData.getTel();
+		this.likeCount = newData.getLikeCount();
+		this.reviewCount = newData.getReviewCount();
 	}
 }
