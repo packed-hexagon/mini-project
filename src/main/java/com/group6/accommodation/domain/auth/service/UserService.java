@@ -12,9 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import com.group6.accommodation.global.security.filter.JwtFilter;
 import com.group6.accommodation.global.security.token.model.dto.LoginTokenResponseDto;
 import com.group6.accommodation.global.security.token.provider.TokenProvider;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -28,8 +25,7 @@ public class UserService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenProvider tokenProvider;
-    @Value("${jwt.refresh-expiration-time}")
-    private Long refreshTokenExpireTime;
+
 
     public UserResponseDto getUserInfo(Long userId) {
         UserEntity result = userRepository.findById(userId)
@@ -53,7 +49,7 @@ public class UserService {
         return UserResponseDto.toResponse(result);
     }
 
-    public HttpHeaders logout(Long userId) {
+    public void logout(Long userId) {
         if (!userRepository.existsById(userId)) {
             throw new AuthException(AuthErrorCode.NOT_FOUNT_USER_BY_USER_ID);
         }
@@ -63,13 +59,6 @@ public class UserService {
         } else {
             throw new AuthException(AuthErrorCode.ALREADY_LOGOUT);
         }
-
-        ResponseCookie refreshTokenCookie = deleteRefreshTokenCookie();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
-
-        return headers;
     }
 
     private String encodePassword(String password) {
@@ -99,26 +88,4 @@ public class UserService {
         }
     }
 
-    public HttpHeaders createRefreshTokenCookie(String refreshToken) {
-        ResponseCookie refreshTokenCookie = ResponseCookie
-                .from("refreshToken", refreshToken)
-                .maxAge(refreshTokenExpireTime)
-                .path("/")
-                .httpOnly(true)
-                .secure(true)
-                .build();
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
-
-        return headers;
-    }
-
-    private ResponseCookie deleteRefreshTokenCookie() {
-        return ResponseCookie
-                .from("refreshToken", "")
-                .maxAge(0)
-                .path("/api")
-                .build();
-    }
 }
