@@ -18,7 +18,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.transaction.annotation.Transactional;
 
 public interface AccommodationRepository extends JpaRepository<AccommodationEntity, Long>, JpaSpecificationExecutor<AccommodationEntity> {
-    @NonNull
+
     default AccommodationEntity getById(final Long id) {
         return findById(id)
                 .orElseThrow(() -> new AccommodationException(AccommodationErrorCode.NOT_FOUND_ACCOMMODATION));
