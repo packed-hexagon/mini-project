@@ -33,7 +33,6 @@ public class ReservationService {
     private final int OVER_PRICE = 50000;
 
     @RedissonLock(key = "#roomId")
-    @Transactional(timeout = 10)
     public ReservationResponseDto postReservation(Long userId, Long roomId, PostReservationRequestDto requestDto) {
         UserEntity user = userRepository.getById(userId);
         RoomEntity room = roomRepository.getById(roomId);

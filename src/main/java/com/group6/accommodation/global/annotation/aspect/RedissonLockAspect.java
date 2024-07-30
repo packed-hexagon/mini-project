@@ -20,10 +20,11 @@ import org.springframework.stereotype.Component;
 public class RedissonLockAspect {
 
     private final RedissonClient redissonClient;
+    private final AopForTransaction transaction;
 
     // 이 메소드는 @RedissonLock 애노테이션이 붙은 메소드가 호출될 때 실행됩니다.
     @Around("@annotation(com.group6.accommodation.global.annotation.RedissonLock)")
-    public void redissonLock(ProceedingJoinPoint joinPoint) throws Throwable {
+    public Object redissonLock(ProceedingJoinPoint joinPoint) throws Throwable {
         // 메소드 시그니처를 가져옵니다.
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
@@ -31,20 +32,24 @@ public class RedissonLockAspect {
         // @RedissonLock 애노테이션을 가져옵니다.
         RedissonLock annotation = method.getAnnotation(RedissonLock.class);
 
-        // 락 키를 생성합니다.
+        // 락 키를 생성합니다. postReservation1
         String lockKey = method.getName() + ElParser.getDynamicValue(signature.getParameterNames(), joinPoint.getArgs(), annotation.key());
+        log.error("Generated lock key: {}", lockKey);
+
         // 락 객체를 가져옵니다.
         RLock lock = redissonClient.getLock(lockKey);
+        log.error("Acquired lock object for key: {}", lockKey);
+
 
         try {
             // 주어진 시간 동안 락을 시도합니다.
             boolean lockable = lock.tryLock(annotation.waitTime(), annotation.leaseTime(), TimeUnit.MILLISECONDS);
             if (!lockable) {
-                return;
+                return false;
             }
 
             // 실제 메소드를 호출합니다.
-            joinPoint.proceed();
+            return transaction.proceed(joinPoint);
         } catch (InterruptedException e) {
             throw e;
         } finally {

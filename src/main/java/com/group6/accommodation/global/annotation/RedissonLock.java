@@ -9,6 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RedissonLock {
     String key();
-    long waitTime() default 10000;
-    long leaseTime() default 5000;
+    long waitTime() default 6000;
+    long leaseTime() default 3000;
 }
