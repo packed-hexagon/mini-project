@@ -1,6 +1,7 @@
 package com.group6.accommodation.domain.reservation.model.entity;
 
 import com.group6.accommodation.domain.auth.model.entity.UserEntity;
+import com.group6.accommodation.domain.reservation.model.dto.PostReservationRequestDto;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.global.model.entity.TimeStamp;
 import jakarta.persistence.Column;
@@ -54,4 +55,17 @@ public class ReservationEntity extends TimeStamp {
 
 	@Column(name = "deleted_at")
 	private LocalDateTime deletedAt;
+
+
+	public static ReservationEntity of(RoomEntity room, UserEntity user, int price, PostReservationRequestDto requestDto) {
+		return ReservationEntity.builder()
+			.user(user)
+			.room(room)
+			.price(price)
+			.headcount(requestDto.getHeadcount())
+			.startDate(requestDto.getStartDate())
+			.endDate(requestDto.getEndDate())
+			.build();
+	}
+
 }

@@ -10,6 +10,7 @@ import com.group6.accommodation.domain.reservation.model.entity.ReservationEntit
 import com.group6.accommodation.domain.reservation.repository.ReservationRepository;
 import com.group6.accommodation.domain.room.model.entity.RoomEntity;
 import com.group6.accommodation.domain.room.repository.RoomRepository;
+import com.group6.accommodation.global.annotation.RedissonLock;
 import com.group6.accommodation.global.exception.error.ReservationErrorCode;
 import com.group6.accommodation.global.exception.type.ReservationException;
 import com.group6.accommodation.global.model.dto.PagedDto;
@@ -31,7 +32,7 @@ public class ReservationService {
 
     private final int OVER_PRICE = 50000;
 
-    @Transactional
+    @RedissonLock(key = "#roomId")
     public ReservationResponseDto postReservation(Long userId, Long roomId, PostReservationRequestDto requestDto) {
         UserEntity user = userRepository.getById(userId);
         RoomEntity room = roomRepository.getById(roomId);
@@ -49,14 +50,7 @@ public class ReservationService {
             throw new ReservationException(ReservationErrorCode.FULL_ROOM);
         }
 
-        ReservationEntity reservationEntity = ReservationEntity.builder()
-            .room(room)
-            .user(user)
-            .headcount(requestDto.getHeadcount())
-            .startDate(requestDto.getStartDate())
-            .endDate(requestDto.getEndDate())
-            .price(price)
-            .build();
+        ReservationEntity reservationEntity = ReservationEntity.of(room, user, price, requestDto);
 
         reservationRepository.save(reservationEntity);
 
